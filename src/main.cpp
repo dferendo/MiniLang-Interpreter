@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include "Lexer/Lexer.h"
 
 bool checkExtension(char *programPassed);
 std::string covertFileToString(std::ifstream & program);
@@ -12,7 +13,7 @@ int main(int argc, char **argv) {
         std::cout << "Extension of file not compatible" << std::endl;
     } else {
         std::ifstream program(argv[1]);
-        std::cout << covertFileToString(program) << std::endl;
+        lexer::Lexer(covertFileToString(program));
     }
     return 0;
 }
