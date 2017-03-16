@@ -18,7 +18,14 @@ namespace lexer {
      *
      */
     enum TOKEN {
-        TOK_EOF = -1, TOK_LeftCurlyBracket = -2, TOK_RightCurlyBracket = -3, TOK_Number = -4, TOK_ArithmeticOP = -5
+        TOK_EOF = 0,
+        TOK_LeftCurlyBracket = 1,
+        TOK_RightCurlyBracket = 2,
+
+    };
+
+    const std::string TOKEN_STRING[] = {
+            "TOK_EOF", "TOK_LeftCurlyBracket", "TOK_RightCurlyBracket", "TOK_Number", "TOK_ArithmeticOP"
     };
 
     class Token {
@@ -36,6 +43,8 @@ namespace lexer {
         Token(TOKEN tokenType, const std::string &tokenName);
 
         Token(TOKEN tokenType, const std::string &tokenName, double tokenValue);
+
+        std::string toString();
     };
 
     Token determineToken(std::string &lexeme, STATE &acceptState);

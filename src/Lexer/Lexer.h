@@ -22,9 +22,10 @@ namespace lexer {
 
     private:
         STATE miniLangTable[S_TOTAL][CLASSIFIER_TOTAL] = {
-                {S_01, S_ERR},
-                {S_ERR, S_ERR},
-                {S_ERR, S_ERR}
+                {S_01, S_02, S_ERR},
+                {S_ERR, S_ERR, S_ERR},
+                {S_ERR, S_ERR, S_ERR},
+                {S_ERR, S_ERR, S_ERR}
         };
 
         void tokenization(std::string &program);

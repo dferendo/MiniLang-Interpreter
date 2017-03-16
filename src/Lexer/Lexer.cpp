@@ -22,6 +22,7 @@ namespace lexer {
             currentToken = nextWord(program, charIndex);
             allTokens.push_back(currentToken);
         }
+        printTokens();
     }
 
     Token Lexer::nextWord(std::string &program, int &charIndex) {
@@ -39,11 +40,14 @@ namespace lexer {
                 clear(stack);
             }
             stack.push(currentState);
-            currentState = *miniLangTable[currentState, getClassifier(currentChar)];
+            currentState = miniLangTable[currentState][getClassifier(currentChar)];
+            if (currentChar == EOF) {
+                break;
+            }
         }
 
         // Rollback Loop
-        while (checkFinalState(currentState) && currentState != S_ERR) {
+        while (!checkFinalState(currentState) && currentState == S_ERR) {
             currentState = stack.top();
             stack.pop();
             lexeme.pop_back();
@@ -61,19 +65,19 @@ namespace lexer {
 
     char Lexer::nextChar(std::string &program, int &charIndex) {
         while (true) {
-            if (program[++charIndex] == '\n' || program[charIndex] == ' ') {
-                continue;
-            } else {
-                return program[charIndex];
+            if (charIndex == program.length()) {
+                return EOF;
+            } else if (program[charIndex] != '\n' && program[charIndex] != ' ') {
+                return program[charIndex++];
             }
+            charIndex++;
         }
     }
 
     void Lexer::printTokens() {
-        for (auto const &token : allTokens) {
-
+        for (auto &token : allTokens) {
+            cout << token.toString() << endl;
         }
-
     }
 
     void Lexer::clear(std::stack<STATE> &filledStack) {

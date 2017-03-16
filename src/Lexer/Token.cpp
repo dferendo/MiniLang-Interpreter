@@ -2,6 +2,7 @@
 // Created by dylan on 15/03/2017.
 //
 
+#include <sstream>
 #include "Token.h"
 using namespace std;
 
@@ -16,6 +17,12 @@ namespace lexer {
     Token::Token(lexer::TOKEN tokenType, const string &tokenName, double tokenValue) : tokenType(tokenType),
                                                                                               tokenName(tokenName),
                                                                                               tokenValue(tokenValue) {}
+
+    std::string Token::toString() {
+        stringstream temp;
+        temp << "[" << TOKEN_STRING[tokenType] << ", " << tokenName << ", " << tokenValue << "]";
+        return temp.str();
+    }
 
     Token determineToken(std::string &lexeme, lexer::STATE &acceptState) {
         switch (acceptState) {
