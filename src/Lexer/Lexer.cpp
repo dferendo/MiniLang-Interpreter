@@ -15,8 +15,7 @@ namespace lexer {
 
     void Lexer::tokenization(std::string &program) {
         int charIndex = 0;
-        // TODO: Remove?
-        Token currentToken(TOK_LeftCurlyBracket);
+        Token currentToken(TOK_Error);
 
         while (currentToken.tokenType != TOK_EOF) {
             currentToken = nextWord(program, charIndex);
@@ -34,7 +33,7 @@ namespace lexer {
 
         // Scanning loop
         while (currentState != S_ERR) {
-            currentChar = nextChar(program, charIndex);
+            currentChar = nextChar(program, charIndex, lexeme);
             lexeme += currentChar;
             if (checkFinalState(currentState)) {
                 clear(stack);
@@ -63,14 +62,19 @@ namespace lexer {
         }
     }
 
-    char Lexer::nextChar(std::string &program, int &charIndex) {
+    char Lexer::nextChar(string &program, int &charIndex, string &lexeme) {
         while (true) {
             if (charIndex == program.length()) {
                 return EOF;
-            } else if (program[charIndex] != '\n' && program[charIndex] != ' ') {
+            } else if (lexeme.length() == 0){
+                if (program[charIndex] == ' ' || program[charIndex] == '\n') {
+                    charIndex++;
+                } else {
+                    return program[charIndex++];
+                }
+            } else {
                 return program[charIndex++];
             }
-            charIndex++;
         }
     }
 

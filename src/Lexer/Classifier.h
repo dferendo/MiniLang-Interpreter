@@ -29,7 +29,8 @@ namespace lexer {
         RELATIONAL_OPERATORS = 11,
         EXCLAMATION_MARK = 12,
         EQUALS = 13,
-        OTHER = 14,
+        FULL_STOP = 14,
+        OTHER = 15,
         CLASSIFIER_TOTAL = OTHER + 1
     };
 

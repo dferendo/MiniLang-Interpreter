@@ -16,7 +16,6 @@ int lexer::getClassifier(char &currentCharacter) {
         case ',':
         case ':':
         case ';':
-        case '.':
             return PUNCTUATION;
         case EOF:
             return END_OF_FILE;
@@ -51,6 +50,8 @@ int lexer::getClassifier(char &currentCharacter) {
             return EXCLAMATION_MARK;
         case '=':
             return EQUALS;
+        case '.':
+            return FULL_STOP;
         default:
             if (isalpha(currentCharacter)) {
                 return LETTER;

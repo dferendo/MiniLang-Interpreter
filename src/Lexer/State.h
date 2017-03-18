@@ -32,7 +32,6 @@ namespace lexer {
         S_17 = 17,
         S_18 = 18,
         S_19 = 19,
-        S_20 = 20,
         S_ERR = 21,
         S_TOTAL = S_ERR + 1
     };
