@@ -8,8 +8,10 @@
 namespace lexer {
 
     /**
-     * Shows all the states available for the machine. There are in total 22 states, including an error State.
-     * TODO
+     * Shows all the states available for the machine. There are in total 21 states, including an error State.
+     * All states, final states and their transitions can be viewed graphically in
+     * documentations/FiniteStateMachine.png. S_Total indicated the total amount of rows needed for the
+     * transitions table found in {@link lexer::Lexer}.
      */
     enum STATE {
         S_00 = 0,
@@ -37,9 +39,10 @@ namespace lexer {
     };
 
     /**
-     * TODO:
-     * @param currentState
-     * @return
+     * Check if a state is final. The final states are indicated in the image found  at
+     * documentations/FiniteStateMachine.png.
+     * @param currentState The state to check if it is final or not.
+     * @return True if the state is final, false otherwise.
      */
     bool checkFinalState(STATE &currentState);
 }

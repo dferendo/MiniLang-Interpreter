@@ -58,8 +58,9 @@ namespace lexer {
             case S_17:
             case S_ERR:
             case S_TOTAL:
-                return Token(TOK_Error, "A non-final state was selected");
+                return Token(TOK_Error, "A non-final state was selected.");
         }
+        return Token(TOK_Error, "A non-final state was selected.");
     }
 
     Token determinePunctuationToken(std::string &lexeme) {
@@ -81,8 +82,6 @@ namespace lexer {
             return Token(TOK_Colon);
         } else if (lexeme.find(";") != string::npos) {
             return Token(TOK_SemiColon);
-        } else if (lexeme.find(".") != string::npos) {
-            return Token(TOK_Period);
         } else {
             return Token(TOK_Error, "Punctuation not found.");
         }

@@ -6,7 +6,7 @@
 #include <iostream>
 using namespace std;
 
-// TODO regex
+// TODO: regex?
 int lexer::getClassifier(char &currentCharacter) {
     switch (currentCharacter) {
         case '{':

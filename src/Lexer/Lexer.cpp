@@ -19,7 +19,10 @@ namespace lexer {
 
         while (currentToken.tokenType != TOK_EOF) {
             currentToken = nextWord(program, charIndex);
-            allTokens.push_back(currentToken);
+            // Comments TOKENS will be ignored.
+            if (currentToken.tokenType != TOK_Comment) {
+                allTokens.push_back(currentToken);
+            }
         }
         printTokens();
     }
@@ -39,7 +42,7 @@ namespace lexer {
                 clear(stack);
             }
             stack.push(currentState);
-            currentState = miniLangTable[currentState][getClassifier(currentChar)];
+            currentState = miniLangTransitions[currentState][getClassifier(currentChar)];
             if (currentChar == EOF) {
                 break;
             }
@@ -53,11 +56,12 @@ namespace lexer {
             charIndex--;
         }
 
+        // Determine Token or Error.
         if (checkFinalState(currentState)) {
             return determineToken(lexeme, currentState);
         } else {
-            cout << "Error occorded";
-            // TODO
+            cout << "Lexer failed at Line: " << determineErrorLine(program, charIndex) << ". Please "
+                    "fix and try again. The Lexer will terminate." << endl;
             exit(1);
         }
     }
@@ -67,7 +71,11 @@ namespace lexer {
             if (charIndex == program.length()) {
                 return EOF;
             } else if (lexeme.length() == 0){
-                if (program[charIndex] == ' ' || program[charIndex] == '\n') {
+                // When a new Token is being created, spaces and newlines can be skipped
+                // since Tokens do not depend on them.
+                if (program[charIndex] == ' ') {
+                    charIndex++;
+                } else if (program[charIndex] == '\n') {
                     charIndex++;
                 } else {
                     return program[charIndex++];
@@ -87,6 +95,16 @@ namespace lexer {
     void Lexer::clear(std::stack<STATE> &filledStack) {
         stack<STATE> emptyStack;
         swap(filledStack, emptyStack);
+    }
+
+    int Lexer::determineErrorLine(std::string &program, int &currentCharCount) {
+        int counter = 1;
+        for (int i = 0; i < currentCharCount; i++) {
+            if (program[i] == '\n') {
+                counter++;
+            }
+        }
+        return counter;
     }
 
 }

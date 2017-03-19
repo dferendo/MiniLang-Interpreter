@@ -28,6 +28,7 @@ bool lexer::checkFinalState(STATE &currentState) {
         case S_12:
         case S_17:
         case S_ERR:
+        case S_TOTAL:
             return false;
     }
     return S_ERR;

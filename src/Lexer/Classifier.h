@@ -8,11 +8,26 @@
 namespace lexer {
 
     /**
-     * These will be the classifications. Columns in the 2-d array.
-     * Punctuation: '{' | '}' | '(' |')'
-     * END_OF_FILE: EOF
-     * INTEGER_LITERAL: Integers from 0-9
-     *
+     * Classification for MiniLang.
+     * Punctuation: '{' | '}' | '(' |')' | ',' | ':' | ';'.
+     * END_OF_FILE: EOF.
+     * NUMBER_LITERAL: Integers from 0-9.
+     * LETTER: A-Za-z.
+     * UNDERSCORE: '_'.
+     * DOUBLE_QUOTATION_MARKS: '"'.
+     * PRINTABLE: [\x20 - \x7E]. Since this is a range that contains other classifications,
+     * the specific type of the classification will be returned, not printable.
+     * MULTIPLIER: '*'.
+     * DIVISION: '/'.
+     * OPERATORS: '+' | '-'.
+     * NEW_LINE: '\n'. Classification for new line is needed because of comments.
+     * RELATIONAL_OPERATORS: '<' | '>'.
+     * EXCLAMATION_MARK: '!'.
+     * EQUALS: '='.
+     * FULL_STOP: '.'.
+     * OTHER: Any remaining character.
+     * CLASSIFIER_TOTAL: Holds the amount of classifications used to determine the size of the transition
+     * table found in {@link lexer::Lexer}.
      */
     enum CLASSIFIER {
         PUNCTUATION = 0,
@@ -34,6 +49,11 @@ namespace lexer {
         CLASSIFIER_TOTAL = OTHER + 1
     };
 
+    /**
+     * Returns the classifier according to the given character.
+     * @param currentCharacter: The character that needs to be classified.
+     * @return Number indication the column location of the given character in the transition table.
+     */
     int getClassifier(char &currentCharacter);
 }
 
