@@ -3,7 +3,6 @@
 //
 
 #include "Parser.h"
-#include "../Lexer/Token.h"
 #include "../Exceptions/UnexpectedTokenWhileParsing.h"
 
 using namespace lexer;
@@ -243,7 +242,25 @@ void parser::Parser::parseBlock() {
 }
 
 void parser::Parser::parseExpression() {
+    parseSimpleExpression();
 
+    Token nextToken = lexer.previewNextToken();
+
+    if (nextToken.tokenType == TOK_RelationalOperator) {
+        currentToken = lexer.getNextToken();
+        parseExpression();
+        return;
+    } else if (nextToken.tokenType == TOK_Equals) {
+        currentToken = lexer.getNextToken();
+
+        currentToken = lexer.getNextToken();
+
+        if (currentToken.tokenType != TOK_Equals) {
+            throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing");
+        }
+        parseExpression();
+        return;
+    }
 }
 
 void parser::Parser::parseFormalParam() {
@@ -283,37 +300,17 @@ void parser::Parser::parseType() {
     return;
 }
 
-bool parser::Parser::parseLiteral() {
-
-    // TODO:
-    switch (lexer.previewNextToken().tokenType) {
-        case TOK_BooleanLiteral:
-            currentToken = lexer.getNextToken();
-            return true;
-        case TOK_IntegerLiteral:
-            currentToken = lexer.getNextToken();
-            return true;
-        case TOK_RealLiteral:
-            currentToken = lexer.getNextToken();
-            return true;
-        case TOK_Printable:
-            currentToken = lexer.getNextToken();
-            return true;
-        default:
-            return false;
-    }
-}
-
 void parser::Parser::parseFactor() {
+
+    currentToken = lexer.getNextToken();
 
     if (parseLiteral()) {
         return;
-    } else if (lexer.previewNextToken().tokenType == TOK_Identifier) {
-        currentToken = lexer.getNextToken();
+    } else if (currentToken.tokenType == TOK_Identifier) {
         // This factor can either be Identifier or Function call if the next token is TOK_LeftParenthesis.
         parseFunctionCall();
         return;
-    } else if (lexer.previewNextToken().tokenType == TOK_LeftParenthesis) {
+    } else if (currentToken.tokenType == TOK_LeftParenthesis) {
         currentToken = lexer.getNextToken();
         parseExpression();
         currentToken = lexer.getNextToken();
@@ -323,7 +320,26 @@ void parser::Parser::parseFactor() {
         }
 
         return;
-    } 
+    }  else if ((currentToken.tokenType == TOK_AdditiveOperator && currentToken.tokenName == "+") ||
+                (currentToken.tokenType == TOK_Logic && currentToken.tokenName == "not")) {
+        parseExpression();
+        return;
+    } else {
+        throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing");
+    }
+}
+
+bool parser::Parser::parseLiteral() {
+
+    switch (currentToken.tokenType) {
+        case TOK_BooleanLiteral:
+        case TOK_IntegerLiteral:
+        case TOK_RealLiteral:
+        case TOK_Printable:
+            return true;
+        default:
+            return false;
+    }
 }
 
 void parser::Parser::parseFunctionCall() {
@@ -345,12 +361,13 @@ void parser::Parser::parseFunctionCall() {
 
 void parser::Parser::parseActualParams() {
     // Function call can have no actualParams
-    if (lexer.previewNextToken().tokenType != TOK_RightParenthesis) {
-        parseExpression();
+    if (lexer.previewNextToken().tokenType == TOK_RightParenthesis) {
+        return;
     }
 
+    parseExpression();
+
     if (lexer.previewNextToken().tokenType == TOK_Comma) {
-        // TODO:
         currentToken = lexer.getNextToken();
 
         if (lexer.previewNextToken().tokenType == TOK_RightParenthesis) {
@@ -359,4 +376,35 @@ void parser::Parser::parseActualParams() {
         parseActualParams();
     }
     return;
+}
+
+void parser::Parser::parseTerm() {
+
+    parseFactor();
+
+    Token nextToken = lexer.previewNextToken();
+
+    if (nextToken.tokenType == TOK_MultiplicativeOperator ||
+            (nextToken.tokenType == TOK_Logic && nextToken.tokenName == "and")) {
+        currentToken = lexer.getNextToken();
+        parseTerm();
+        return;
+    }
+    return;
+}
+
+void parser::Parser::parseSimpleExpression() {
+
+    parseTerm();
+
+    Token nextToken = lexer.previewNextToken();
+
+    if (nextToken.tokenType == TOK_AdditiveOperator ||
+            (nextToken.tokenType == TOK_Logic && nextToken.tokenName == "or")) {
+        currentToken = lexer.getNextToken();
+        parseSimpleExpression();
+        return;
+    }
+    return;
+
 }

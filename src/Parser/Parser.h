@@ -43,6 +43,10 @@ namespace parser {
 
         void parseFactor();
 
+        void parseTerm();
+
+        void parseSimpleExpression();
+
         void parseFunctionCall();
 
         void parseActualParams();
