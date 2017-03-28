@@ -7,9 +7,11 @@
 
 
 namespace parser {
-    class ASTExprNode {
+    namespace ast {
+        class ASTExprNode {
 
-    };
+        };
+    }
 }
 
 

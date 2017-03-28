@@ -6,6 +6,8 @@
 #define COMPILERTHEORY_PARSER_H
 
 #include "../Lexer/Lexer.h"
+#include "AST/ASTNode.h"
+#include "AST/ASTStatementNode.h"
 
 namespace parser {
     class Parser {
@@ -15,7 +17,7 @@ namespace parser {
 
         void parse();
 
-        void parseStatement();
+        ast::ASTStatementNode parseStatement();
 
         void parseVariableDeclarationStatement();
 
