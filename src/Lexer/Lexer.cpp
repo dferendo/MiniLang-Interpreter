@@ -24,7 +24,7 @@ namespace lexer {
                 allTokens.push_back(currentToken);
             }
         }
-        printTokens();
+//        printTokens();
     }
 
     Token Lexer::nextWord(std::string &program, int &charIndex) {
@@ -105,6 +105,21 @@ namespace lexer {
             }
         }
         return counter;
+    }
+
+    Token Lexer::getNextToken() {
+
+        if (currentIndex >= allTokens.size()) {
+            return Token(TOK_Error, "All tokens have already been passed.");
+        }
+        return allTokens[currentIndex++];
+    }
+
+    Token Lexer::previewNextToken() {
+        if (currentIndex >= allTokens.size()) {
+            return Token(TOK_Error, "All tokens have already been passed.");
+        }
+        return allTokens[currentIndex];
     }
 
 }

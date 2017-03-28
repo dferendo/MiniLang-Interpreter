@@ -23,6 +23,25 @@ namespace lexer {
          * Parser.
          */
         std::vector<Token> allTokens;
+
+        /**
+         * Used as a counter to the next Token for the parser.
+         */
+        std::vector<Token>::size_type currentIndex = 0;
+
+        /**
+         * Returns the next Token.
+         * @return Returns the next Token. If called after all the Tokens have been passed, will return
+         * Token containing TOK_Error.
+         */
+        Token getNextToken();
+
+        /**
+         * Previews the next Token without incrementing to the next Token.
+         * @return Returns the next Token without incrementing to the next Token. If called after all the
+         * Tokens have been passed, will return Token containing TOK_Error.
+         */
+        Token previewNextToken();
     private:
         /**
          * Transition function. Excel formed found in documentation/Transition.ods.
