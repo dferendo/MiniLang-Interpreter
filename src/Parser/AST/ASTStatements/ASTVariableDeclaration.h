@@ -16,10 +16,10 @@ namespace parser {
         private:
             std::string identifier;
             lexer::TOKEN tokenType;
-            ASTExprNode expression;
+            ASTExprNode * expression;
         public:
-            ASTVariableDeclaration(const std::string &identifier, lexer::TOKEN tokenType,
-                                   const ASTExprNode &expression);
+            ASTVariableDeclaration(const std::string &identifier, lexer::TOKEN tokenType, ASTExprNode *expression);
+
             void accept(Visitor *v) override;
         };
     }

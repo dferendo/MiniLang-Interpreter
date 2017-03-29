@@ -10,6 +10,12 @@
 #include "AST/ASTStatements/ASTStatementNode.h"
 #include "AST/Visitors/XMLConverterVisitor.h"
 #include "AST/ASTStatements/ASTVariableDeclaration.h"
+#include "AST/ASTExpression/ASTBooleanLiteral.h"
+#include "AST/ASTExpression/ASTIntegerLiteral.h"
+#include "AST/ASTExpression/ASTRealLiteral.h"
+#include "AST/ASTExpression/ASTStringLiteral.h"
+#include "AST/ASTExpression/ASTFunctionCall.h"
+#include "AST/ASTExpression/ASTIdentifier.h"
 
 namespace parser {
     class Parser {
@@ -37,21 +43,21 @@ namespace parser {
 
         void parseBlock();
 
-        ast::ASTExprNode parseExpression();
+        ast::ASTExprNode * parseExpression();
 
         void parseFormalParam();
 
-        bool parseLiteral();
+        ast::ASTLiteralNode * parseLiteral();
 
-        void parseFactor();
+        ast::ASTExprNode * parseFactor();
 
         void parseTerm();
 
         void parseSimpleExpression();
 
-        void parseFunctionCall();
+        ast::ASTFunctionCall * parseFunctionCall();
 
-        void parseActualParams();
+        void parseActualParams(std::vector<ast::ASTExprNode *> &arguments);
 
         lexer::TOKEN parseType();
     public:
