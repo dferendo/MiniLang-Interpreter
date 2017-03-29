@@ -6,8 +6,8 @@
 #define COMPILERTHEORY_VARIABLEDECLARATION_H
 
 #include "ASTStatementNode.h"
-#include "ASTExprNode.h"
-#include "../../Lexer/Token.h"
+#include "../ASTExpression/ASTExprNode.h"
+#include "../../../Lexer/Token.h"
 
 namespace parser {
     namespace ast {

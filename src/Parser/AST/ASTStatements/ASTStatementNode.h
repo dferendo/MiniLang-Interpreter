@@ -5,7 +5,7 @@
 #ifndef COMPILERTHEORY_ASTSTATEMENTNODE_H
 #define COMPILERTHEORY_ASTSTATEMENTNODE_H
 
-#include "ASTNode.h"
+#include "../ASTNode.h"
 
 namespace parser {
     namespace ast {

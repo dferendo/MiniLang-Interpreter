@@ -7,9 +7,9 @@
 
 #include "../Lexer/Lexer.h"
 #include "AST/ASTNode.h"
-#include "AST/ASTStatementNode.h"
-#include "AST/XMLConverterVisitor.h"
-#include "AST/ASTVariableDeclaration.h"
+#include "AST/ASTStatements/ASTStatementNode.h"
+#include "AST/Visitors/XMLConverterVisitor.h"
+#include "AST/ASTStatements/ASTVariableDeclaration.h"
 
 namespace parser {
     class Parser {

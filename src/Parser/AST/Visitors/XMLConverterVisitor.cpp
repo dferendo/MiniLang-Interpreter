@@ -3,8 +3,8 @@
 //
 
 #include "XMLConverterVisitor.h"
-#include "ASTNode.h"
-#include "ASTStatementNode.h"
+#include "../ASTNode.h"
+#include "../ASTStatements/ASTStatementNode.h"
 
 using namespace std;
 

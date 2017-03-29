@@ -12,7 +12,7 @@ namespace parser {
     namespace ast {
         class ASTExprNode : public ASTNode {
         public:
-            void accept(Visitor *v) override;
+            virtual void accept(Visitor *v) override;
         };
     }
 }

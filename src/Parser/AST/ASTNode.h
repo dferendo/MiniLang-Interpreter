@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <vector>
-#include "Visitor.h"
+#include "Visitors/Visitor.h"
 
 namespace parser {
     namespace ast {
