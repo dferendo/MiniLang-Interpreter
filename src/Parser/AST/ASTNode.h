@@ -24,7 +24,7 @@ namespace parser {
              */
             std::vector<ASTStatementNode *> statements;
 
-            void addStatement(ASTStatementNode &statements);
+            void addStatement(ASTStatementNode * statements);
 
             virtual void accept(Visitor * v);
         };

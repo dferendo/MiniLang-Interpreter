@@ -1,0 +1,14 @@
+//
+// Created by dylan on 29/03/2017.
+//
+
+#ifndef COMPILERTHEORY_ASTIFSTATEMENT_H
+#define COMPILERTHEORY_ASTIFSTATEMENT_H
+
+
+class ASTIfStatement {
+
+};
+
+
+#endif //COMPILERTHEORY_ASTIFSTATEMENT_H

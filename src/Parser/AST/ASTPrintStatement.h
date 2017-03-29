@@ -1,0 +1,14 @@
+//
+// Created by dylan on 29/03/2017.
+//
+
+#ifndef COMPILERTHEORY_ASTPRINTSTATEMENT_H
+#define COMPILERTHEORY_ASTPRINTSTATEMENT_H
+
+
+class ASTPrintStatement {
+
+};
+
+
+#endif //COMPILERTHEORY_ASTPRINTSTATEMENT_H

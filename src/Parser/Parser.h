@@ -8,6 +8,8 @@
 #include "../Lexer/Lexer.h"
 #include "AST/ASTNode.h"
 #include "AST/ASTStatementNode.h"
+#include "AST/XMLConverterVisitor.h"
+#include "AST/ASTVariableDeclaration.h"
 
 namespace parser {
     class Parser {
@@ -17,9 +19,9 @@ namespace parser {
 
         void parse();
 
-        ast::ASTStatementNode parseStatement();
+        ast::ASTStatementNode * parseStatement();
 
-        void parseVariableDeclarationStatement();
+        ast::ASTVariableDeclaration * parseVariableDeclarationStatement();
 
         void parseAssignmentStatement();
 
@@ -35,11 +37,9 @@ namespace parser {
 
         void parseBlock();
 
-        void parseExpression();
+        ast::ASTExprNode parseExpression();
 
         void parseFormalParam();
-
-        void parseType();
 
         bool parseLiteral();
 
@@ -52,6 +52,8 @@ namespace parser {
         void parseFunctionCall();
 
         void parseActualParams();
+
+        lexer::TOKEN parseType();
     public:
 
         Parser(lexer::Lexer lexer);

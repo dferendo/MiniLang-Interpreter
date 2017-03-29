@@ -3,3 +3,7 @@
 //
 
 #include "ASTExprNode.h"
+
+void parser::ast::ASTExprNode::accept(parser::ast::Visitor *v) {
+    ASTNode::accept(v);
+}

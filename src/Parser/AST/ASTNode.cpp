@@ -7,8 +7,8 @@
 namespace parser {
     namespace ast {
 
-        void ASTNode::addStatement(ASTStatementNode &statement) {
-            statements.push_back(&statement);
+        void ASTNode::addStatement(ASTStatementNode * statement) {
+            statements.push_back(statement);
         }
 
         void ASTNode::accept(Visitor *v) {

@@ -4,7 +4,6 @@
 
 #include "Parser.h"
 #include "../Exceptions/UnexpectedTokenWhileParsing.h"
-#include "AST/XMLConverterVisitor.h"
 
 using namespace lexer;
 using namespace std;
@@ -17,28 +16,27 @@ namespace parser {
 
     void Parser::parse() {
         ast::ASTNode * programNode = new ast::ASTNode();
-        ast::Visitor * visitor = new ast::XMLConverterVisitor();
-        programNode->accept(visitor);
         // Program can contain 0 or more Statements. If the first token is
         // TOK_EOF, it indicates that the program is empty.
         try {
             while (currentToken.tokenType != TOK_EOF) {
-                parseStatement();
+                programNode->addStatement(parseStatement());
                 currentToken = lexer.getNextToken();
             }
+            ast::Visitor * visitor = new ast::XMLConverterVisitor();
+            programNode->accept(visitor);
         } catch (UnexpectedTokenWhileParsing &error) {
             cout << error.reasonForError << endl;
         }
     }
 
-    ast::ASTStatementNode Parser::parseStatement() {
+    ast::ASTStatementNode * Parser::parseStatement() {
 
         currentToken = lexer.getNextToken();
 
         switch (currentToken.tokenType) {
             case TOK_Var:
-                parseVariableDeclarationStatement();
-                break;
+                return parseVariableDeclarationStatement();
             case TOK_Set:
                 parseAssignmentStatement();
                 break;
@@ -63,16 +61,20 @@ namespace parser {
             default:
                 throw UnexpectedTokenWhileParsing("Unexpected token found while parsing. Expecting Statement Token.");
         }
-        return;
+        return nullptr;
     }
 
-    void Parser::parseVariableDeclarationStatement() {
+    ast::ASTVariableDeclaration * Parser::parseVariableDeclarationStatement() {
+        std::string identifier;
+        TOKEN tokenType;
+
         currentToken = lexer.getNextToken();
 
         if (currentToken.tokenType != TOK_Identifier) {
             throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. "
-                                                      "Expected Identifier after var keyword.");
+                                                      "Expected name after var keyword.");
         }
+        identifier = currentToken.tokenName;
 
         currentToken = lexer.getNextToken();
 
@@ -81,23 +83,23 @@ namespace parser {
                                                       "Expected ':' after Identifier when variable declaration");
         }
 
-        parseType();
+        tokenType = parseType();
 
         currentToken = lexer.getNextToken();
 
         if (currentToken.tokenType != TOK_Equals) {
-            throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing");
+            throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected '=' after Variable Type.");
         }
 
-        parseExpression();
+        ast::ASTExprNode exprNode = parseExpression();
 
         currentToken = lexer.getNextToken();
 
         if (currentToken.tokenType != TOK_SemiColon) {
-            throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing");
+            throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected ';' after declaration.");
         }
 
-        return;
+        return new ast::ASTVariableDeclaration(identifier, tokenType, exprNode);
     }
 
     void Parser::parseAssignmentStatement() {
@@ -250,7 +252,7 @@ namespace parser {
         return;
     }
 
-    void Parser::parseExpression() {
+    ast::ASTExprNode Parser::parseExpression() {
         parseSimpleExpression();
 
         Token nextToken = lexer.previewNextToken();
@@ -258,7 +260,7 @@ namespace parser {
         if (nextToken.tokenType == TOK_RelationalOperator) {
             currentToken = lexer.getNextToken();
             parseExpression();
-            return;
+            return nullptr;
         } else if (nextToken.tokenType == TOK_Equals) {
             currentToken = lexer.getNextToken();
 
@@ -268,8 +270,9 @@ namespace parser {
                 throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing");
             }
             parseExpression();
-            return;
+            return nullptr;
         }
+        return nullptr;
     }
 
     void Parser::parseFormalParam() {
@@ -291,21 +294,6 @@ namespace parser {
             }
         }
 
-        return;
-    }
-
-    void Parser::parseType() {
-        currentToken = lexer.getNextToken();
-
-        switch (currentToken.tokenType) {
-            case TOK_RealType:
-            case TOK_IntType:
-            case TOK_BoolType:
-            case TOK_StringType:
-                break;
-            default:
-                throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing");
-        }
         return;
     }
 
@@ -416,5 +404,20 @@ namespace parser {
         }
         return;
 
+    }
+
+    TOKEN Parser::parseType() {
+        currentToken = lexer.getNextToken();
+
+        switch (currentToken.tokenType) {
+            case TOK_RealType:
+            case TOK_IntType:
+            case TOK_BoolType:
+            case TOK_StringType:
+                return currentToken.tokenType;
+            default:
+                throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. "
+                                                          "Expected Variable Type after ':'.");
+        }
     }
 }

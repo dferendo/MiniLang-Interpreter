@@ -6,10 +6,13 @@
 #define COMPILERTHEORY_ASTEXPRNODE_H
 
 
+#include "ASTNode.h"
+
 namespace parser {
     namespace ast {
-        class ASTExprNode {
-
+        class ASTExprNode : public ASTNode {
+        public:
+            void accept(Visitor *v) override;
         };
     }
 }

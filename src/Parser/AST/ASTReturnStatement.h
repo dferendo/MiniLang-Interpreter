@@ -1,0 +1,14 @@
+//
+// Created by dylan on 29/03/2017.
+//
+
+#ifndef COMPILERTHEORY_ASTRETURNSTATEMENT_H
+#define COMPILERTHEORY_ASTRETURNSTATEMENT_H
+
+
+class ASTReturnStatement {
+
+};
+
+
+#endif //COMPILERTHEORY_ASTRETURNSTATEMENT_H
