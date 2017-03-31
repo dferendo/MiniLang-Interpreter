@@ -9,6 +9,7 @@
 #include "../ASTStatements/ASTAssignment.h"
 #include "../ASTStatements/ASTBlock.h"
 #include "../ASTStatements/ASTIfStatement.h"
+#include "../ASTStatements/ASTWhileStatement.h"
 
 using namespace std;
 
@@ -93,6 +94,27 @@ namespace parser {
             }
             currentIndent--;
             outputXML << word << "</IfStatement>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTWhileStatement *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<WhileStatement>" << endl;
+            // TODO:
+//            node->expression->accept(this);
+            currentIndent++;
+            node->astBlock->accept(this);
+            currentIndent--;
+            outputXML << word << "</WhileStatement>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTReturnStatement *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<ReturnStatement>" << endl;
+            currentIndent++;
+            // TODO:
+//            node->expression->accept(this);
+            currentIndent--;
+            outputXML << word << "</ReturnStatement>" << endl;
         }
 
         string XMLConverterVisitor::getStartingPositionAfterIndent() {

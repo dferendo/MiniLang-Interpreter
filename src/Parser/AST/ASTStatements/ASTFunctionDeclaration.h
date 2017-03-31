@@ -5,10 +5,30 @@
 #ifndef COMPILERTHEORY_ASTFUNCTIONDECLARATION_H
 #define COMPILERTHEORY_ASTFUNCTIONDECLARATION_H
 
+#include "ASTStatementNode.h"
+#include "ASTFormalParam.h"
 
-class ASTFunctionDeclaration {
+namespace parser {
+    namespace ast {
 
-};
+        class ASTFunctionDeclaration : public ASTStatementNode {
 
+        public:
+            std::string identifier;
+
+            std::vector<ASTFormalParam *> formalParams;
+
+            lexer::TOKEN tokenType;
+
+            ASTBlock * astBlock;
+
+            ASTFunctionDeclaration(const std::string &identifier, const std::vector<ASTFormalParam *> &formalParams,
+                                   lexer::TOKEN tokenType, ASTBlock *astBlock);
+
+            void accept(Visitor *v) override;
+        };
+
+    }
+}
 
 #endif //COMPILERTHEORY_ASTFUNCTIONDECLARATION_H

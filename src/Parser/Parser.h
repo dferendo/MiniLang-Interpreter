@@ -21,6 +21,9 @@
 #include "AST/ASTStatements/ASTPrintStatement.h"
 #include "AST/ASTStatements/ASTBlock.h"
 #include "AST/ASTStatements/ASTIfStatement.h"
+#include "AST/ASTStatements/ASTWhileStatement.h"
+#include "AST/ASTStatements/ASTReturnStatement.h"
+#include "AST/ASTStatements/ASTFunctionDeclaration.h"
 
 namespace parser {
     class Parser {
@@ -40,17 +43,17 @@ namespace parser {
 
         ast::ASTIfStatement * parseIfStatement();
 
-        void parseWhileStatement();
+        ast::ASTWhileStatement * parseWhileStatement();
 
-        void parseReturnStatement();
+        ast::ASTReturnStatement * parseReturnStatement();
 
-        void parseFunctionDeclarationStatement();
+        ast::ASTFunctionDeclaration * parseFunctionDeclarationStatement();
 
         ast::ASTBlock * parseBlock();
 
         ast::ASTExprNode * parseExpression();
 
-        void parseFormalParam();
+        std::vector<ast::ASTFormalParam *> parseFormalParam();
 
         ast::ASTLiteralNode * parseLiteral();
 

@@ -13,6 +13,8 @@ namespace parser {
         class ASTPrintStatement;
         class ASTBlock;
         class ASTIfStatement;
+        class ASTWhileStatement;
+        class ASTReturnStatement;
 
         class Visitor {
         public:
@@ -22,6 +24,8 @@ namespace parser {
             virtual void visit(ASTPrintStatement * node) = 0;
             virtual void visit(ASTBlock * node) = 0;
             virtual void visit(ASTIfStatement * node) = 0;
+            virtual void visit(ASTWhileStatement * node) = 0;
+            virtual void visit(ASTReturnStatement * node) = 0;
         };
     }
 }
