@@ -10,6 +10,8 @@
 #include "../ASTStatements/ASTBlock.h"
 #include "../ASTStatements/ASTIfStatement.h"
 #include "../ASTStatements/ASTWhileStatement.h"
+#include "../ASTStatements/ASTFormalParam.h"
+#include "../ASTStatements/ASTFunctionDeclaration.h"
 
 using namespace std;
 
@@ -115,6 +117,36 @@ namespace parser {
 //            node->expression->accept(this);
             currentIndent--;
             outputXML << word << "</ReturnStatement>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTFormalParam *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<FormalParam type=\"" << lexer::TOKEN_STRING[node->tokenType] << "\">" << endl;
+            currentIndent++;
+            word = getStartingPositionAfterIndent();
+            outputXML << word << "<Identifier>" << node->identifier << "</Identifier>" << endl;
+            currentIndent--;
+            word = getStartingPositionAfterIndent();
+            outputXML << word << "</FormalParam>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTFunctionDeclaration *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<FunctionDeclaration type=\"" << lexer::TOKEN_STRING[node->tokenType] << "\">" <<  endl;
+            currentIndent++;
+            word = getStartingPositionAfterIndent();
+            outputXML << word << "<Identifier>" << node->identifier << "</Identifier>" << endl;
+            outputXML << word << "<FormalParams>" << endl;
+            currentIndent++;
+            for (auto const &formalParam : node->formalParams) {
+                formalParam->accept(this);
+            }
+            currentIndent--;
+            outputXML << word << "</FormalParams>" << endl;
+            node->astBlock->accept(this);
+            currentIndent--;
+            word = getStartingPositionAfterIndent();
+            outputXML << word << "</FunctionDeclaration>" << endl;
         }
 
         string XMLConverterVisitor::getStartingPositionAfterIndent() {

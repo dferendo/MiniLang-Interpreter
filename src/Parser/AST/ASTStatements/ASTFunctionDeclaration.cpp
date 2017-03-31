@@ -4,11 +4,6 @@
 
 #include "ASTFunctionDeclaration.h"
 
-void
-parser::ast::ASTFunctionDeclaration::setFormalParams(ASTFormalParam * &formalParam) {
-    this->formalParams.push_back(formalParam);
-}
-
 parser::ast::ASTFunctionDeclaration::ASTFunctionDeclaration(const std::string &identifier,
                                                             const std::vector<parser::ast::ASTFormalParam *> &formalParams,
                                                             lexer::TOKEN tokenType, parser::ast::ASTBlock *astBlock)

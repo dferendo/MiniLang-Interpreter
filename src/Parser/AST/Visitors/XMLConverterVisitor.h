@@ -39,6 +39,10 @@ namespace parser {
             virtual void visit(ASTWhileStatement *node) override;
 
             virtual void visit(ASTReturnStatement *node) override;
+
+            virtual void visit(ASTFormalParam *node) override;
+
+            virtual void visit(ASTFunctionDeclaration *node) override;
         };
     }
 }

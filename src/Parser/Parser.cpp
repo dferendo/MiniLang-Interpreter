@@ -237,6 +237,12 @@ namespace parser {
 
         tokenType = parseType();
 
+        currentToken = lexer.getNextToken();
+
+        if (currentToken.tokenType != TOK_LeftCurlyBracket) {
+            throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected '{' after Type.");
+        }
+
         return new ast::ASTFunctionDeclaration(identifier, formalParams, tokenType, parseBlock());
     }
 
@@ -312,6 +318,7 @@ namespace parser {
             if (lexer.previewNextToken().tokenType != TOK_Comma) {
                 break;
             }
+            currentToken = lexer.getNextToken();
         }
         return formalParams;
     }
