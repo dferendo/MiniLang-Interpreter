@@ -13,11 +13,11 @@ namespace parser {
     namespace ast {
 
         class ASTVariableDeclaration : public ast::ASTStatementNode {
-        private:
+        public:
             std::string identifier;
             lexer::TOKEN tokenType;
             ASTExprNode * expression;
-        public:
+
             ASTVariableDeclaration(const std::string &identifier, lexer::TOKEN tokenType, ASTExprNode *expression);
 
             void accept(Visitor *v) override;

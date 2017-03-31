@@ -16,9 +16,9 @@ namespace parser {
         public:
             std::string unary;
 
-            ASTExprNode unaryExpression;
+            ASTExprNode * unaryExpression;
 
-            ASTUnary(const std::string &unary, const ASTExprNode &unaryExpression);
+            ASTUnary(const std::string &unary, ASTExprNode *unaryExpression);
 
             void accept(Visitor *v) override;
         };

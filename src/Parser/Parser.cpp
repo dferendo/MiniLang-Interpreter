@@ -4,6 +4,7 @@
 
 #include "Parser.h"
 #include "../Exceptions/UnexpectedTokenWhileParsing.h"
+#include "AST/ASTExpression/ASTUnary.h"
 
 using namespace lexer;
 using namespace std;
@@ -253,26 +254,33 @@ namespace parser {
     }
 
     ast::ASTExprNode * Parser::parseExpression() {
-        parseSimpleExpression();
+        ast::ASTExprNode * factor = parseFactor();
 
         Token nextToken = lexer.previewNextToken();
 
-        if (nextToken.tokenType == TOK_RelationalOperator) {
+        if (nextToken.tokenType == TOK_MultiplicativeOperator ||
+            (nextToken.tokenType == TOK_Logic && nextToken.tokenName == "and")) {
+            currentToken = lexer.getNextToken();
+        } else if (nextToken.tokenType == TOK_AdditiveOperator ||
+            (nextToken.tokenType == TOK_Logic && nextToken.tokenName == "or")) {
+            currentToken = lexer.getNextToken();
+        } else if (nextToken.tokenType == TOK_RelationalOperator) {
             currentToken = lexer.getNextToken();
             parseExpression();
             return nullptr;
         } else if (nextToken.tokenType == TOK_Equals) {
+            // For an expression, there need to be '=='.
             currentToken = lexer.getNextToken();
-
             currentToken = lexer.getNextToken();
 
             if (currentToken.tokenType != TOK_Equals) {
-                throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing");
+                throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected '=' after "
+                                                          "'=' in an expression.");
             }
             parseExpression();
-            return nullptr;
+        } else {
+            return factor;
         }
-        return nullptr;
     }
 
     void Parser::parseFormalParam() {
@@ -324,7 +332,7 @@ namespace parser {
             return exprNode;
         } else if ((currentToken.tokenType == TOK_AdditiveOperator && currentToken.tokenName == "-") ||
                    (currentToken.tokenType == TOK_Logic && currentToken.tokenName == "not")) {
-            return parseExpression();
+            return new ast::ASTUnary(currentToken.tokenName, parseExpression());
         } else {
             throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected Expression.");
         }
@@ -383,37 +391,6 @@ namespace parser {
         }
     }
 
-    void Parser::parseTerm() {
-
-        ast::ASTExprNode * factor = parseFactor();
-
-        Token nextToken = lexer.previewNextToken();
-
-        if (nextToken.tokenType == TOK_MultiplicativeOperator ||
-            (nextToken.tokenType == TOK_Logic && nextToken.tokenName == "and")) {
-            currentToken = lexer.getNextToken();
-            parseTerm();
-            return;
-        }
-        return;
-    }
-
-    void Parser::parseSimpleExpression() {
-
-        parseTerm();
-
-        Token nextToken = lexer.previewNextToken();
-
-        if (nextToken.tokenType == TOK_AdditiveOperator ||
-            (nextToken.tokenType == TOK_Logic && nextToken.tokenName == "or")) {
-            currentToken = lexer.getNextToken();
-            parseSimpleExpression();
-            return;
-        }
-        return;
-
-    }
-
     TOKEN Parser::parseType() {
         currentToken = lexer.getNextToken();
 
@@ -427,5 +404,10 @@ namespace parser {
                 throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. "
                                                           "Expected Variable Type after ':'.");
         }
+    }
+
+    ast::ASTBinaryExprNode *
+    Parser::combineExpressions(ast::ASTBinaryExprNode *parent, ast::ASTBinaryExprNode *newNode) {
+        return nullptr;
     }
 }

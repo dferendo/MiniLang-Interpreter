@@ -8,12 +8,12 @@
 namespace parser {
     namespace ast {
         class ASTNode;
-        class ASTStatementNode;
+        class ASTVariableDeclaration;
 
         class Visitor {
         public:
             virtual void visit(ASTNode * node) = 0;
-            virtual void visit(ASTStatementNode * node) = 0;
+            virtual void visit(ASTVariableDeclaration * node) = 0;
         };
     }
 }

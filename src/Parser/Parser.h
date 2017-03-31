@@ -16,6 +16,7 @@
 #include "AST/ASTExpression/ASTStringLiteral.h"
 #include "AST/ASTExpression/ASTFunctionCall.h"
 #include "AST/ASTExpression/ASTIdentifier.h"
+#include "AST/ASTExpression/ASTBinaryExprNode.h"
 
 namespace parser {
     class Parser {
@@ -51,15 +52,13 @@ namespace parser {
 
         ast::ASTExprNode * parseFactor();
 
-        void parseTerm();
-
-        void parseSimpleExpression();
-
         ast::ASTFunctionCall * parseFunctionCall();
 
         void parseActualParams(std::vector<ast::ASTExprNode *> &arguments);
 
         lexer::TOKEN parseType();
+
+        ast::ASTBinaryExprNode * combineExpressions(ast::ASTBinaryExprNode *parent, ast::ASTBinaryExprNode * newNode);
     public:
 
         Parser(lexer::Lexer lexer);

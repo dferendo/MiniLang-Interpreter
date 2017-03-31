@@ -26,7 +26,7 @@ namespace parser {
 
             virtual void visit(ASTNode *node) override;
 
-            virtual void visit(ASTStatementNode *node) override;
+            virtual void visit(ASTVariableDeclaration *node) override;
         };
     }
 }

@@ -9,10 +9,12 @@
 
 namespace parser {
     namespace ast {
+
         class ASTBlock : public ASTStatementNode {
         public:
             void accept(Visitor *v) override;
         };
+
     }
 }
 

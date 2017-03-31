@@ -5,6 +5,8 @@
 #include "XMLConverterVisitor.h"
 #include "../ASTNode.h"
 #include "../ASTStatements/ASTStatementNode.h"
+#include "../ASTStatements/ASTVariableDeclaration.h"
+#include "../../../Lexer/Token.h"
 
 using namespace std;
 
@@ -17,18 +19,27 @@ namespace parser {
 
         void XMLConverterVisitor::visit(ASTNode *node) {
             string word = getStartingPositionAfterIndent();
-            outputXML << "<Program>" << endl;
+            outputXML << word << "<Program>" << endl;
 
             currentIndent++;
             for (auto const &childNode : node->statements) {
                 childNode->accept(this);
             }
             currentIndent--;
-            outputXML << "</Program>" << endl;
+            outputXML << word << "</Program>" << endl;
         }
 
-        void XMLConverterVisitor::visit(ASTStatementNode *node) {
-
+        void XMLConverterVisitor::visit(ASTVariableDeclaration *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<VariableDeclaration type=\"" << lexer::TOKEN_STRING[node->tokenType] << "\">" << endl;
+            currentIndent++;
+            word = getStartingPositionAfterIndent();
+            outputXML << word << "<Identifier>" << node->identifier << "</Identifier>" << endl;
+            // TODO:
+//            node->expression->accept(this);
+            currentIndent--;
+            word = getStartingPositionAfterIndent();
+            outputXML << word << "</VariableDeclaration>" << endl;
         }
 
         string XMLConverterVisitor::getStartingPositionAfterIndent() {

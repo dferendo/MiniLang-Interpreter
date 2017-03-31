@@ -5,8 +5,9 @@
 #include "ASTUnary.h"
 #include "../Visitors/Visitor.h"
 
-parser::ast::ASTUnary::ASTUnary(const std::string &unary, const parser::ast::ASTExprNode &unaryExpression) : unary(
-        unary), unaryExpression(unaryExpression) {}
+parser::ast::ASTUnary::ASTUnary(const std::string &unary, parser::ast::ASTExprNode *unaryExpression) : unary(unary),
+                                                                                                       unaryExpression(
+                                                                                                               unaryExpression) {}
 
 void parser::ast::ASTUnary::accept(Visitor *v) {
     v->visit(this);
