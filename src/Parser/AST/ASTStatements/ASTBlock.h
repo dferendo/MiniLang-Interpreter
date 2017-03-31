@@ -12,6 +12,10 @@ namespace parser {
 
         class ASTBlock : public ASTStatementNode {
         public:
+            std::vector<ASTStatementNode *> statements;
+
+            void addStatement(ASTStatementNode * statements);
+
             void accept(Visitor *v) override;
         };
 

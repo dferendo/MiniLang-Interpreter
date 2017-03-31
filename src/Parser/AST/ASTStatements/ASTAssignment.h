@@ -6,11 +6,18 @@
 #define COMPILERTHEORY_ASTASSIGNMENT_H
 
 #include "ASTStatementNode.h"
+#include "../ASTExpression/ASTExprNode.h"
 
 namespace parser {
     namespace ast {
-        class ASTAssignment : public ast::ASTStatementNode{
+        class ASTAssignment : public ASTStatementNode{
         public:
+            std::string identifier;
+
+            ASTExprNode * exprNode;
+
+            ASTAssignment(const std::string &identifier, ASTExprNode *exprNode);
+
             void accept(Visitor *v) override;
         };
     }

@@ -6,7 +6,9 @@
 #include "../ASTNode.h"
 #include "../ASTStatements/ASTStatementNode.h"
 #include "../ASTStatements/ASTVariableDeclaration.h"
-#include "../../../Lexer/Token.h"
+#include "../ASTStatements/ASTAssignment.h"
+#include "../ASTStatements/ASTBlock.h"
+#include "../ASTStatements/ASTIfStatement.h"
 
 using namespace std;
 
@@ -40,6 +42,57 @@ namespace parser {
             currentIndent--;
             word = getStartingPositionAfterIndent();
             outputXML << word << "</VariableDeclaration>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTAssignment *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<Assignment>" << endl;
+            currentIndent++;
+            word = getStartingPositionAfterIndent();
+            outputXML << word << "<Identifier>" << node->identifier << "</Identifier>" << endl;
+            // TODO:
+//            node->expression->accept(this);
+            currentIndent--;
+            word = getStartingPositionAfterIndent();
+            outputXML << word << "</Assignment>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTPrintStatement *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<PrintStatement>" << endl;
+            currentIndent++;
+            // TODO:
+//            node->expression->accept(this);
+            currentIndent--;
+            outputXML << word << "</PrintStatement>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTBlock *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<Block>" << endl;
+
+            currentIndent++;
+            for (auto const &childNode : node->statements) {
+                childNode->accept(this);
+            }
+            currentIndent--;
+            outputXML << word << "</Block>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTIfStatement *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<IfStatement>" << endl;
+            // TODO:
+//            node->expression->accept(this);
+            currentIndent++;
+            node->astBlockForIF->accept(this);
+
+            // Else is optional.
+            if (node->astBlockForElse != nullptr) {
+                node->astBlockForElse->accept(this);
+            }
+            currentIndent--;
+            outputXML << word << "</IfStatement>" << endl;
         }
 
         string XMLConverterVisitor::getStartingPositionAfterIndent() {

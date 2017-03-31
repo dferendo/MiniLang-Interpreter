@@ -17,6 +17,10 @@
 #include "AST/ASTExpression/ASTFunctionCall.h"
 #include "AST/ASTExpression/ASTIdentifier.h"
 #include "AST/ASTExpression/ASTBinaryExprNode.h"
+#include "AST/ASTStatements/ASTAssignment.h"
+#include "AST/ASTStatements/ASTPrintStatement.h"
+#include "AST/ASTStatements/ASTBlock.h"
+#include "AST/ASTStatements/ASTIfStatement.h"
 
 namespace parser {
     class Parser {
@@ -30,11 +34,11 @@ namespace parser {
 
         ast::ASTVariableDeclaration * parseVariableDeclarationStatement();
 
-        void parseAssignmentStatement();
+        ast::ASTAssignment * parseAssignmentStatement();
 
-        void parsePrintStatement();
+        ast::ASTPrintStatement * parsePrintStatement();
 
-        void parseIfStatement();
+        ast::ASTIfStatement * parseIfStatement();
 
         void parseWhileStatement();
 
@@ -42,7 +46,7 @@ namespace parser {
 
         void parseFunctionDeclarationStatement();
 
-        void parseBlock();
+        ast::ASTBlock * parseBlock();
 
         ast::ASTExprNode * parseExpression();
 

@@ -12,7 +12,7 @@
 namespace parser {
     namespace ast {
 
-        class ASTVariableDeclaration : public ast::ASTStatementNode {
+        class ASTVariableDeclaration : public ASTStatementNode {
         public:
             std::string identifier;
             lexer::TOKEN tokenType;

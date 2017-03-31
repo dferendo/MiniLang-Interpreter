@@ -5,10 +5,23 @@
 #ifndef COMPILERTHEORY_ASTPRINTSTATEMENT_H
 #define COMPILERTHEORY_ASTPRINTSTATEMENT_H
 
+#include "ASTStatementNode.h"
+#include "../ASTExpression/ASTExprNode.h"
 
-class ASTPrintStatement {
+namespace parser {
+    namespace ast {
 
-};
+        class ASTPrintStatement : public ASTStatementNode {
+        public:
+            ASTExprNode * exprNode;
+
+            ASTPrintStatement(ASTExprNode *exprNode);
+
+            void accept(Visitor *v) override;
+        };
+
+    }
+}
 
 
 #endif //COMPILERTHEORY_ASTPRINTSTATEMENT_H

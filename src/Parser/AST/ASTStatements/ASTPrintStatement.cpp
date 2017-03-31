@@ -3,3 +3,9 @@
 //
 
 #include "ASTPrintStatement.h"
+
+parser::ast::ASTPrintStatement::ASTPrintStatement(parser::ast::ASTExprNode *exprNode) : exprNode(exprNode) {}
+
+void parser::ast::ASTPrintStatement::accept(parser::ast::Visitor *v) {
+    v->visit(this);
+}
