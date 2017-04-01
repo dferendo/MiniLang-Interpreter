@@ -4,7 +4,6 @@
 
 #include "XMLConverterVisitor.h"
 #include "../ASTNode.h"
-#include "../ASTStatements/ASTStatementNode.h"
 #include "../ASTStatements/ASTVariableDeclaration.h"
 #include "../ASTStatements/ASTAssignment.h"
 #include "../ASTStatements/ASTBlock.h"
@@ -12,6 +11,17 @@
 #include "../ASTStatements/ASTWhileStatement.h"
 #include "../ASTStatements/ASTFormalParam.h"
 #include "../ASTStatements/ASTFunctionDeclaration.h"
+#include "../ASTExpression/ASTBooleanLiteral.h"
+#include "../ASTExpression/ASTIntegerLiteral.h"
+#include "../ASTExpression/ASTRealLiteral.h"
+#include "../ASTExpression/ASTStringLiteral.h"
+#include "../ASTStatements/ASTPrintStatement.h"
+#include "../ASTStatements/ASTReturnStatement.h"
+#include "../ASTExpression/ASTIdentifier.h"
+#include "../ASTExpression/ASTFunctionCall.h"
+#include "../ASTExpression/ASTUnary.h"
+#include "../ASTExpression/ASTSubExpression.h"
+#include "../ASTExpression/ASTBinaryExprNode.h"
 
 using namespace std;
 
@@ -40,8 +50,7 @@ namespace parser {
             currentIndent++;
             word = getStartingPositionAfterIndent();
             outputXML << word << "<Identifier>" << node->identifier << "</Identifier>" << endl;
-            // TODO:
-//            node->expression->accept(this);
+            node->expression->accept(this);
             currentIndent--;
             word = getStartingPositionAfterIndent();
             outputXML << word << "</VariableDeclaration>" << endl;
@@ -53,8 +62,7 @@ namespace parser {
             currentIndent++;
             word = getStartingPositionAfterIndent();
             outputXML << word << "<Identifier>" << node->identifier << "</Identifier>" << endl;
-            // TODO:
-//            node->expression->accept(this);
+            node->exprNode->accept(this);
             currentIndent--;
             word = getStartingPositionAfterIndent();
             outputXML << word << "</Assignment>" << endl;
@@ -64,8 +72,7 @@ namespace parser {
             string word = getStartingPositionAfterIndent();
             outputXML << word << "<PrintStatement>" << endl;
             currentIndent++;
-            // TODO:
-//            node->expression->accept(this);
+            node->exprNode->accept(this);
             currentIndent--;
             outputXML << word << "</PrintStatement>" << endl;
         }
@@ -85,8 +92,7 @@ namespace parser {
         void XMLConverterVisitor::visit(ASTIfStatement *node) {
             string word = getStartingPositionAfterIndent();
             outputXML << word << "<IfStatement>" << endl;
-            // TODO:
-//            node->expression->accept(this);
+            node->exprNode->accept(this);
             currentIndent++;
             node->astBlockForIF->accept(this);
 
@@ -101,8 +107,7 @@ namespace parser {
         void XMLConverterVisitor::visit(ASTWhileStatement *node) {
             string word = getStartingPositionAfterIndent();
             outputXML << word << "<WhileStatement>" << endl;
-            // TODO:
-//            node->expression->accept(this);
+            node->exprNode->accept(this);
             currentIndent++;
             node->astBlock->accept(this);
             currentIndent--;
@@ -113,8 +118,7 @@ namespace parser {
             string word = getStartingPositionAfterIndent();
             outputXML << word << "<ReturnStatement>" << endl;
             currentIndent++;
-            // TODO:
-//            node->expression->accept(this);
+            node->exprNode->accept(this);
             currentIndent--;
             outputXML << word << "</ReturnStatement>" << endl;
         }
@@ -147,6 +151,77 @@ namespace parser {
             currentIndent--;
             word = getStartingPositionAfterIndent();
             outputXML << word << "</FunctionDeclaration>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTBooleanLiteral *node) {
+            string word = getStartingPositionAfterIndent();
+            if (node->literalValue) {
+                outputXML << word << "<Boolean>true</Boolean>" << endl;
+            } else {
+                outputXML << word << "<Boolean>false</Boolean>" << endl;
+            }
+        }
+
+        void XMLConverterVisitor::visit(ASTIntegerLiteral *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<Integer>" << node->literalValue << "</Integer>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTRealLiteral *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<Real>" << node->realValue << "</Real>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTStringLiteral *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<String>" << node->literalString << "</String>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTIdentifier *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<Identifier>" << node->identifier << "</Identifier>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTFunctionCall *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<FunctionCall>" << endl;
+            currentIndent++;
+            word = getStartingPositionAfterIndent();
+            outputXML << word << "<Identifier>" << node->identifier << "</Identifier>" << endl;
+            outputXML << word << "<ActualParams>" << endl;
+            currentIndent++;
+            for (auto const &param : node->actualParams) {
+                param->accept(this);
+            }
+            currentIndent--;
+            outputXML << word << "</ActualParams>" << endl;
+            currentIndent--;
+            word = getStartingPositionAfterIndent();
+            outputXML << word << "</FunctionCall>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTSubExpression *node) {
+            node->subExpression->accept(this);
+        }
+
+        void XMLConverterVisitor::visit(ASTUnary *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<Unary op=\"" << node->unary <<"\">" << endl;
+            currentIndent++;
+            node->unaryExpression->accept(this);
+            currentIndent--;
+            word = getStartingPositionAfterIndent();
+            outputXML << word << "</Unary>" << endl;
+        }
+
+        void XMLConverterVisitor::visit(ASTBinaryExprNode *node) {
+            string word = getStartingPositionAfterIndent();
+            outputXML << word << "<BinaryExprNode op=\"" << node->operation <<"\">" << endl;
+            currentIndent++;
+            node->LHS->accept(this);
+            node->RHS->accept(this);
+            currentIndent--;
+            outputXML << word << "</BinaryExprNode>" << endl;
         }
 
         string XMLConverterVisitor::getStartingPositionAfterIndent() {

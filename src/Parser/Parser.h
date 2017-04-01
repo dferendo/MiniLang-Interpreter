@@ -26,9 +26,11 @@
 #include "AST/ASTStatements/ASTFunctionDeclaration.h"
 
 namespace parser {
+
     class Parser {
     private:
         lexer::Lexer lexer;
+
         lexer::Token currentToken = lexer::Token(lexer::TOK_Error);
 
         void parse();
@@ -65,9 +67,13 @@ namespace parser {
 
         lexer::TOKEN parseType();
 
-        ast::ASTBinaryExprNode * combineExpressions(ast::ASTBinaryExprNode *parent, ast::ASTBinaryExprNode * newNode);
-    public:
+        std::string checkOperator();
 
+        ast::ASTBinaryExprNode * combineExpressions(ast::ASTBinaryExprNode * parent, std::string currentOperator,
+                                                    ast::ASTExprNode * newFactor);
+
+        int getOperatorPrecedence(std::string currentOperator);
+    public:
         Parser(lexer::Lexer lexer);
     };
 }

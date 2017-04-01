@@ -5,7 +5,7 @@
 #include "ASTSubExpression.h"
 #include "../Visitors/Visitor.h"
 
-parser::ast::ASTSubExpression::ASTSubExpression(const parser::ast::ASTExprNode &subExpression) : subExpression(
+parser::ast::ASTSubExpression::ASTSubExpression(parser::ast::ASTExprNode *subExpression) : subExpression(
         subExpression) {}
 
 void parser::ast::ASTSubExpression::accept(Visitor *v) {

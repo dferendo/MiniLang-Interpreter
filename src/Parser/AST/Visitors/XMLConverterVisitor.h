@@ -43,6 +43,24 @@ namespace parser {
             virtual void visit(ASTFormalParam *node) override;
 
             virtual void visit(ASTFunctionDeclaration *node) override;
+
+            virtual void visit(ASTBooleanLiteral *node) override;
+
+            virtual void visit(ASTIntegerLiteral *node) override;
+
+            virtual void visit(ASTRealLiteral *node) override;
+
+            virtual void visit(ASTStringLiteral *node) override;
+
+            virtual void visit(ASTIdentifier *node) override;
+
+            virtual void visit(ASTSubExpression *node) override;
+
+            virtual void visit(ASTFunctionCall *node) override;
+
+            virtual void visit(ASTUnary *node) override;
+
+            virtual void visit(ASTBinaryExprNode *node) override;
         };
     }
 }

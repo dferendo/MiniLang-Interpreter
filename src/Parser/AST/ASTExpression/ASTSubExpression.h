@@ -13,9 +13,9 @@ namespace parser {
 
         class ASTSubExpression : public ASTExprNode {
         public:
-            ASTExprNode subExpression;
+            ASTExprNode * subExpression;
 
-            ASTSubExpression(const ASTExprNode &subExpression);
+            ASTSubExpression(ASTExprNode *subExpression);
 
             void accept(Visitor *v) override;
         };

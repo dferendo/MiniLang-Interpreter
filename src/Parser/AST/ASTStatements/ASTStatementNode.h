@@ -5,14 +5,16 @@
 #ifndef COMPILERTHEORY_ASTSTATEMENTNODE_H
 #define COMPILERTHEORY_ASTSTATEMENTNODE_H
 
-#include "../ASTNode.h"
+#include "../Visitors/Visitor.h"
+#include <iostream>
+#include "vector"
 
 namespace parser {
     namespace ast {
         /**
          *
          */
-        class ASTStatementNode : public ASTNode {
+        class ASTStatementNode {
         public:
             virtual void accept(Visitor *v) = 0;
         };

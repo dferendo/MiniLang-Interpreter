@@ -10,7 +10,8 @@
 
 namespace parser {
     namespace ast {
-        class ASTAssignment : public ASTStatementNode{
+
+        class ASTAssignment : public ASTStatementNode {
         public:
             std::string identifier;
 
