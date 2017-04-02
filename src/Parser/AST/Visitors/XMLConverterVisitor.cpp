@@ -50,7 +50,7 @@ namespace parser {
             currentIndent++;
             word = getStartingPositionAfterIndent();
             outputXML << word << "<Identifier>" << node->identifier << "</Identifier>" << endl;
-            node->expression->accept(this);
+            printExpression(node->expression);
             currentIndent--;
             word = getStartingPositionAfterIndent();
             outputXML << word << "</VariableDeclaration>" << endl;
@@ -62,7 +62,7 @@ namespace parser {
             currentIndent++;
             word = getStartingPositionAfterIndent();
             outputXML << word << "<Identifier>" << node->identifier << "</Identifier>" << endl;
-            node->exprNode->accept(this);
+            printExpression(node->exprNode);
             currentIndent--;
             word = getStartingPositionAfterIndent();
             outputXML << word << "</Assignment>" << endl;
@@ -72,7 +72,7 @@ namespace parser {
             string word = getStartingPositionAfterIndent();
             outputXML << word << "<PrintStatement>" << endl;
             currentIndent++;
-            node->exprNode->accept(this);
+            printExpression(node->exprNode);
             currentIndent--;
             outputXML << word << "</PrintStatement>" << endl;
         }
@@ -92,7 +92,7 @@ namespace parser {
         void XMLConverterVisitor::visit(ASTIfStatement *node) {
             string word = getStartingPositionAfterIndent();
             outputXML << word << "<IfStatement>" << endl;
-            node->exprNode->accept(this);
+            printExpression(node->exprNode);
             currentIndent++;
             node->astBlockForIF->accept(this);
 
@@ -107,7 +107,7 @@ namespace parser {
         void XMLConverterVisitor::visit(ASTWhileStatement *node) {
             string word = getStartingPositionAfterIndent();
             outputXML << word << "<WhileStatement>" << endl;
-            node->exprNode->accept(this);
+            printExpression(node->exprNode);
             currentIndent++;
             node->astBlock->accept(this);
             currentIndent--;
@@ -118,7 +118,7 @@ namespace parser {
             string word = getStartingPositionAfterIndent();
             outputXML << word << "<ReturnStatement>" << endl;
             currentIndent++;
-            node->exprNode->accept(this);
+            printExpression(node->exprNode);
             currentIndent--;
             outputXML << word << "</ReturnStatement>" << endl;
         }
@@ -233,5 +233,19 @@ namespace parser {
             return tempTab;
         }
 
+        void XMLConverterVisitor::printExpression(ASTExprNode *node) {
+            string word = getStartingPositionAfterIndent();
+            ASTBinaryExprNode * temp = dynamic_cast<ASTBinaryExprNode *> (node);
+
+            if (temp) {
+                node->accept(this);
+            } else {
+                outputXML << word << "<Expression>" << endl;
+                currentIndent++;
+                node->accept(this);
+                currentIndent--;
+                outputXML << word << "</Expression>" << endl;
+            }
+        }
     }
 }

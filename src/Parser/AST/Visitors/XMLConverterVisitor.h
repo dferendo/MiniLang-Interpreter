@@ -6,6 +6,7 @@
 #define COMPILERTHEORY_XMLCONVERTORVISITOR_H
 
 #include "Visitor.h"
+#include "../ASTExpression/ASTExprNode.h"
 #include <iostream>
 #include <fstream>
 
@@ -21,6 +22,8 @@ namespace parser {
             std::ofstream outputXML;
 
             std::string getStartingPositionAfterIndent();
+
+            void printExpression(ASTExprNode * node);
         public:
             XMLConverterVisitor();
 
