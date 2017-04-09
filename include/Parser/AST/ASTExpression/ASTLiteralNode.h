@@ -10,6 +10,10 @@
 
 namespace parser {
     namespace ast {
+
+        /**
+         * Used for cleaner class divided. It is the parent of Integer, Boolean, Real and String literals.
+         */
         class ASTLiteralNode : public ASTExprNode {
         public:
             virtual void accept(Visitor *v) = 0;

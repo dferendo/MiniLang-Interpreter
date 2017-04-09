@@ -10,6 +10,10 @@
 
 namespace parser {
     namespace ast {
+
+        /**
+         * Holds integers literals.
+         */
         class ASTIntegerLiteral : public ASTLiteralNode {
         public:
             int literalValue;

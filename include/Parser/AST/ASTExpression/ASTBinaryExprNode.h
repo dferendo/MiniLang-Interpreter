@@ -10,6 +10,9 @@
 namespace parser {
     namespace ast {
 
+        /**
+         * ASTBinaryExprNode holds 2 expressions which are connected with an operator.
+         */
         class ASTBinaryExprNode : public ASTExprNode {
         public:
             std::string operation;

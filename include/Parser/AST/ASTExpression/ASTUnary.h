@@ -12,6 +12,9 @@
 namespace parser {
     namespace ast {
 
+        /**
+         * Holds the unary and another Expression.
+         */
         class ASTUnary : public ASTExprNode {
         public:
             std::string unary;

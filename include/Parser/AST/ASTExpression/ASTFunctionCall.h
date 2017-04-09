@@ -13,6 +13,10 @@
 namespace parser {
     namespace ast {
 
+        /**
+         * ASTFunctionCall holds the identifier of the function that wants to be called followed by
+         * an optional number of parameters.
+         */
         class ASTFunctionCall : public ASTExprNode {
         public:
             std::string identifier;

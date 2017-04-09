@@ -18,6 +18,9 @@ namespace parser {
 
             ASTBlock * astBlockForIF;
 
+            /**
+             * Optional else block.
+             */
             ASTBlock * astBlockForElse = nullptr;
 
             ASTIfStatement(ASTExprNode *exprNode, ASTBlock *astBlockForIF);

@@ -11,6 +11,10 @@
 namespace parser {
     namespace ast {
 
+        /**
+         * Holds the identifier of the new function, the return type, the number of optional parameters and
+         * its block.
+         */
         class ASTFunctionDeclaration : public ASTStatementNode {
 
         public:

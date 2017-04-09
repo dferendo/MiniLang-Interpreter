@@ -10,6 +10,10 @@
 
 namespace parser {
     namespace ast {
+
+        /**
+         * Holds true or false literal.
+         */
         class ASTBooleanLiteral : public ASTLiteralNode {
         public:
             bool literalValue;
