@@ -2,7 +2,7 @@
 // Created by dylan on 15/03/2017.
 //
 
-#include "Classifier.h"
+#include "../../include/Lexer/Classifier.h"
 #include <iostream>
 using namespace std;
 

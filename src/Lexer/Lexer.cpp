@@ -2,7 +2,7 @@
 // Created by dylan on 27/02/2017.
 //
 
-#include "Lexer.h"
+#include "../../include/Lexer/Lexer.h"
 #include <regex>
 
 using namespace std;

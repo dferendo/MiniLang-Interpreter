@@ -2,8 +2,8 @@
 // Created by dylan on 29/03/2017.
 //
 
-#include "ASTUnary.h"
-#include "../Visitors/Visitor.h"
+#include "../../../../include/Parser/AST/ASTExpression/ASTUnary.h"
+#include "../../../../include/Parser/AST/Visitors/Visitor.h"
 
 parser::ast::ASTUnary::ASTUnary(const std::string &unary, parser::ast::ASTExprNode *unaryExpression) : unary(unary),
                                                                                                        unaryExpression(

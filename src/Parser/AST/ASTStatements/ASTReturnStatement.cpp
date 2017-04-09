@@ -2,7 +2,7 @@
 // Created by dylan on 29/03/2017.
 //
 
-#include "ASTReturnStatement.h"
+#include "../../../../include/Parser/AST/ASTStatements/ASTReturnStatement.h"
 
 parser::ast::ASTReturnStatement::ASTReturnStatement(parser::ast::ASTExprNode *exprNode) : exprNode(exprNode) {}
 

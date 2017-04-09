@@ -2,7 +2,7 @@
 // Created by dylan on 29/03/2017.
 //
 
-#include "ASTPrintStatement.h"
+#include "../../../../include/Parser/AST/ASTStatements/ASTPrintStatement.h"
 
 parser::ast::ASTPrintStatement::ASTPrintStatement(parser::ast::ASTExprNode *exprNode) : exprNode(exprNode) {}
 

@@ -2,8 +2,8 @@
 // Created by dylan on 20/03/2017.
 //
 
-#include "ASTNode.h"
-#include "ASTStatements/ASTStatementNode.h"
+#include "../../../include/Parser/AST/ASTNode.h"
+#include "../../../include/Parser/AST/ASTStatements/ASTStatementNode.h"
 
 namespace parser {
     namespace ast {

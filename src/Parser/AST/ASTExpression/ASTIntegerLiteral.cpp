@@ -2,7 +2,7 @@
 // Created by dylan on 29/03/2017.
 //
 
-#include "ASTIntegerLiteral.h"
+#include "../../../../include/Parser/AST/ASTExpression/ASTIntegerLiteral.h"
 
 void parser::ast::ASTIntegerLiteral::accept(parser::ast::Visitor *v) {
     v->visit(this);

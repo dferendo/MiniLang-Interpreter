@@ -2,8 +2,8 @@
 // Created by dylan on 29/03/2017.
 //
 
-#include "ASTStringLiteral.h"
-#include "../Visitors/Visitor.h"
+#include "../../../../include/Parser/AST/ASTExpression/ASTStringLiteral.h"
+#include "../../../../include/Parser/AST/Visitors/Visitor.h"
 
 parser::ast::ASTStringLiteral::ASTStringLiteral(const std::string &literalString) : literalString(literalString) {}
 

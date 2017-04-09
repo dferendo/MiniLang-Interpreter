@@ -2,7 +2,7 @@
 // Created by dylan on 29/03/2017.
 //
 
-#include "ASTBooleanLiteral.h"
+#include "../../../../include/Parser/AST/ASTExpression/ASTBooleanLiteral.h"
 
 parser::ast::ASTBooleanLiteral::ASTBooleanLiteral(bool literalValue) : literalValue(literalValue) {}
 

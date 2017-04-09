@@ -2,10 +2,10 @@
 // Created by dylan on 20/03/2017.
 //
 
-#include "Parser.h"
-#include "../Exceptions/UnexpectedTokenWhileParsing.h"
-#include "AST/ASTExpression/ASTUnary.h"
-#include "../Exceptions/OperatorNotFound.h"
+#include "../../include/Parser/Parser.h"
+#include "../../include/Exceptions/UnexpectedTokenWhileParsing.h"
+#include "../../include/Parser/AST/ASTExpression/ASTUnary.h"
+#include "../../include/Exceptions/OperatorNotFound.h"
 
 using namespace lexer;
 using namespace std;

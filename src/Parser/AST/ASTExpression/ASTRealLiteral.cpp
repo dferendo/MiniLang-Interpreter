@@ -2,8 +2,8 @@
 // Created by dylan on 29/03/2017.
 //
 
-#include "ASTRealLiteral.h"
-#include "../Visitors/Visitor.h"
+#include "../../../../include/Parser/AST/ASTExpression/ASTRealLiteral.h"
+#include "../../../../include/Parser/AST/Visitors/Visitor.h"
 
 parser::ast::ASTRealLiteral::ASTRealLiteral(double realValue) : realValue(realValue) {}
 

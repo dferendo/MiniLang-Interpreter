@@ -2,7 +2,7 @@
 // Created by dylan on 29/03/2017.
 //
 
-#include "ASTBlock.h"
+#include "../../../../include/Parser/AST/ASTStatements/ASTBlock.h"
 
 void parser::ast::ASTBlock::accept(parser::ast::Visitor *v) {
     v->visit(this);

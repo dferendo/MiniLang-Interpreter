@@ -2,8 +2,8 @@
 // Created by dylan on 29/03/2017.
 //
 
-#include "ASTSubExpression.h"
-#include "../Visitors/Visitor.h"
+#include "../../../../include/Parser/AST/ASTExpression/ASTSubExpression.h"
+#include "../../../../include/Parser/AST/Visitors/Visitor.h"
 
 parser::ast::ASTSubExpression::ASTSubExpression(parser::ast::ASTExprNode *subExpression) : subExpression(
         subExpression) {}

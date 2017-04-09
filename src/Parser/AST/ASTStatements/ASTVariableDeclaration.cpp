@@ -2,7 +2,7 @@
 // Created by dylan on 29/03/2017.
 //
 
-#include "ASTVariableDeclaration.h"
+#include "../../../../include/Parser/AST/ASTStatements/ASTVariableDeclaration.h"
 
 parser::ast::ASTVariableDeclaration::ASTVariableDeclaration(const std::string &identifier, lexer::TOKEN tokenType,
                                                             parser::ast::ASTExprNode *expression) : identifier(

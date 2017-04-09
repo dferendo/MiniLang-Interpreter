@@ -2,7 +2,7 @@
 // Created by dylan on 14/03/2017.
 //
 
-#include "State.h"
+#include "../../include/Lexer/State.h"
 
 bool lexer::checkFinalState(STATE &currentState) {
     switch (currentState) {

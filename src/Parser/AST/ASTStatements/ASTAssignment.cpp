@@ -2,7 +2,7 @@
 // Created by dylan on 29/03/2017.
 //
 
-#include "ASTAssignment.h"
+#include "../../../../include/Parser/AST/ASTStatements/ASTAssignment.h"
 
 parser::ast::ASTAssignment::ASTAssignment(const std::string &identifier, parser::ast::ASTExprNode *exprNode)
         : identifier(identifier), exprNode(exprNode) {}

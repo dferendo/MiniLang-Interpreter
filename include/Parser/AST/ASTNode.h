@@ -31,6 +31,10 @@ namespace parser {
              */
             ~ASTNode();
 
+            /**
+             * Visitor Class.
+             * @param v Visitor.
+             */
             virtual void accept(Visitor * v);
         };
     }

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include "Lexer/Lexer.h"
-#include "Parser/Parser.h"
+#include "../include/Lexer/Lexer.h"
+#include "../include/Parser/Parser.h"
 
 bool checkExtension(char *programPassed);
 std::string covertFileToString(std::ifstream & program);
