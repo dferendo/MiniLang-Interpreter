@@ -21,6 +21,8 @@ namespace parser {
             ASTWhileStatement(ASTExprNode *exprNode, ASTBlock *astBlock);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTWhileStatement();
         };
 
     }

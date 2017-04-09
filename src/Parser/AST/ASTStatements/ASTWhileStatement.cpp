@@ -12,3 +12,8 @@ void parser::ast::ASTWhileStatement::accept(Visitor *v) {
 
 parser::ast::ASTWhileStatement::ASTWhileStatement(parser::ast::ASTExprNode *exprNode, parser::ast::ASTBlock *astBlock)
         : exprNode(exprNode), astBlock(astBlock) {}
+
+parser::ast::ASTWhileStatement::~ASTWhileStatement() {
+    delete exprNode;
+    delete astBlock;
+}

@@ -11,7 +11,7 @@
 namespace parser {
     namespace ast {
 
-        class ASTFormalParam : public ASTNode {
+        class ASTFormalParam {
         public:
             std::string identifier;
 
@@ -19,7 +19,9 @@ namespace parser {
 
             ASTFormalParam(const std::string &identifier, lexer::TOKEN tokenType);
 
-            void accept(Visitor *v) override;
+            void accept(Visitor *v);
+
+            virtual ~ASTFormalParam();
         };
 
     }

@@ -16,7 +16,7 @@ namespace parser {
         public:
             ASTExprNode * exprNode;
 
-            ASTBlock * astBlockForIF = nullptr;
+            ASTBlock * astBlockForIF;
 
             ASTBlock * astBlockForElse = nullptr;
 
@@ -25,6 +25,8 @@ namespace parser {
             ASTIfStatement(ASTExprNode *exprNode, ASTBlock *astBlockForIF, ASTBlock *astBlockForElse);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTIfStatement();
         };
 
     }

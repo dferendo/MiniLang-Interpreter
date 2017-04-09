@@ -18,14 +18,15 @@ namespace parser {
     }
 
     void Parser::parse() {
-        ast::ASTNode * programNode = new ast::ASTNode();
+        vector<ast::ASTStatementNode *> statements;
         // Program can contain 0 or more Statements. If the first token is
         // TOK_EOF, it indicates that the program is empty.
         try {
             while (lexer.previewNextToken().tokenType != TOK_EOF) {
-                programNode->addStatement(parseStatement());
+                statements.push_back(parseStatement());
             }
             ast::Visitor * visitor = new ast::XMLConverterVisitor();
+            ast::ASTNode * programNode = new ast::ASTNode(statements);
             programNode->accept(visitor);
         } catch (UnexpectedTokenWhileParsing &error) {
             cout << error.reasonForError << endl;
@@ -269,6 +270,7 @@ namespace parser {
         ast::ASTExprNode *factorLeft = parseFactor(), *factorRight;
         string validateOperator;
 
+        // TODO: ask if it is allowed.
         while (true) {
             validateOperator = checkOperator();
             // The expression can only be not binaryExpr if there are no operators.
@@ -389,6 +391,21 @@ namespace parser {
         return functionCall;
     }
 
+    TOKEN Parser::parseType() {
+        currentToken = lexer.getNextToken();
+
+        switch (currentToken.tokenType) {
+            case TOK_RealType:
+            case TOK_IntType:
+            case TOK_BoolType:
+            case TOK_StringType:
+                return currentToken.tokenType;
+            default:
+                throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. "
+                                                          "Expected Variable Type after ':'.");
+        }
+    }
+
     void Parser::parseActualParams(vector<ast::ASTExprNode *> &arguments) {
         // Function call can have no actualParams
         if (lexer.previewNextToken().tokenType != TOK_RightParenthesis) {
@@ -404,21 +421,6 @@ namespace parser {
                 }
                 parseActualParams(arguments);
             }
-        }
-    }
-
-    TOKEN Parser::parseType() {
-        currentToken = lexer.getNextToken();
-
-        switch (currentToken.tokenType) {
-            case TOK_RealType:
-            case TOK_IntType:
-            case TOK_BoolType:
-            case TOK_StringType:
-                return currentToken.tokenType;
-            default:
-                throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. "
-                                                          "Expected Variable Type after ':'.");
         }
     }
 

@@ -11,3 +11,7 @@ parser::ast::ASTVariableDeclaration::ASTVariableDeclaration(const std::string &i
 void parser::ast::ASTVariableDeclaration::accept(parser::ast::Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTVariableDeclaration::~ASTVariableDeclaration() {
+    delete expression;
+}

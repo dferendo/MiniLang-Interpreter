@@ -68,7 +68,7 @@ namespace lexer {
 
     char Lexer::nextChar(string &program, int &charIndex, string &lexeme) {
         while (true) {
-            if (charIndex == program.length()) {
+            if ((size_t) charIndex == program.length()) {
                 return EOF;
             } else if (lexeme.length() == 0){
                 // When a new Token is being created, spaces and newlines can be skipped

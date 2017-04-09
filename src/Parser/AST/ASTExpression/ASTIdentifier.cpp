@@ -10,3 +10,5 @@ parser::ast::ASTIdentifier::ASTIdentifier(const std::string &identifier) : ident
 void parser::ast::ASTIdentifier::accept(Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTIdentifier::~ASTIdentifier() {}

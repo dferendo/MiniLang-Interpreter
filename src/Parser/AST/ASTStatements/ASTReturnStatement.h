@@ -19,6 +19,8 @@ namespace parser{
             ASTReturnStatement(ASTExprNode *exprNode);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTReturnStatement();
         };
 
     }

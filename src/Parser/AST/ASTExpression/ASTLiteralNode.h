@@ -13,6 +13,8 @@ namespace parser {
         class ASTLiteralNode : public ASTExprNode {
         public:
             virtual void accept(Visitor *v) = 0;
+
+            virtual ~ASTLiteralNode() {};
         };
     }
 }

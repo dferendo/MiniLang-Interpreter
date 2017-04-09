@@ -17,6 +17,8 @@ namespace parser {
             ASTIntegerLiteral(int literalValue);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTIntegerLiteral();
         };
     }
 }

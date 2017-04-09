@@ -9,3 +9,7 @@ parser::ast::ASTReturnStatement::ASTReturnStatement(parser::ast::ASTExprNode *ex
 void parser::ast::ASTReturnStatement::accept(parser::ast::Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTReturnStatement::~ASTReturnStatement() {
+    delete exprNode;
+}

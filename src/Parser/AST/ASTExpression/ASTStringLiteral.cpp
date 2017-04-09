@@ -10,3 +10,5 @@ parser::ast::ASTStringLiteral::ASTStringLiteral(const std::string &literalString
 void parser::ast::ASTStringLiteral::accept(Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTStringLiteral::~ASTStringLiteral() {}

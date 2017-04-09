@@ -15,3 +15,8 @@ void parser::ast::ASTBinaryExprNode::accept(parser::ast::Visitor *v) {
 void parser::ast::ASTBinaryExprNode::setRHS(parser::ast::ASTExprNode *RHS) {
     ASTBinaryExprNode::RHS = RHS;
 }
+
+parser::ast::ASTBinaryExprNode::~ASTBinaryExprNode() {
+    delete LHS;
+    delete RHS;
+}

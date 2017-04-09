@@ -15,6 +15,8 @@ namespace parser {
         class ASTExprNode {
         public:
             virtual void accept(Visitor *v) = 0;
+
+            virtual ~ASTExprNode() {};
         };
 
     }

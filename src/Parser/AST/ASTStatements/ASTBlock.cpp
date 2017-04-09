@@ -11,3 +11,9 @@ void parser::ast::ASTBlock::accept(parser::ast::Visitor *v) {
 void parser::ast::ASTBlock::addStatement(parser::ast::ASTStatementNode *statements) {
     this->statements.push_back(statements);
 }
+
+parser::ast::ASTBlock::~ASTBlock() {
+    for (auto const &statement : statements) {
+        delete statement;
+    }
+}

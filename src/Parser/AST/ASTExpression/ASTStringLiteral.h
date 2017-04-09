@@ -19,6 +19,8 @@ namespace parser {
             ASTStringLiteral(const std::string &literalString);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTStringLiteral();
         };
     }
 }

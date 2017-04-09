@@ -26,6 +26,8 @@ namespace parser {
                                    lexer::TOKEN tokenType, ASTBlock *astBlock);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTFunctionDeclaration();
         };
 
     }

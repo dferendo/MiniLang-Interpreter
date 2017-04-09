@@ -10,3 +10,5 @@ parser::ast::ASTRealLiteral::ASTRealLiteral(double realValue) : realValue(realVa
 void parser::ast::ASTRealLiteral::accept(Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTRealLiteral::~ASTRealLiteral() {}

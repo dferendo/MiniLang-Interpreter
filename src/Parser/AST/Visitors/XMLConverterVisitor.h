@@ -23,9 +23,9 @@ namespace parser {
 
             std::string getStartingPositionAfterIndent();
 
+            std::string printOperator(std::string currentOperator);
+
             void printExpression(ASTExprNode * node);
-        public:
-            XMLConverterVisitor();
 
             virtual void visit(ASTNode *node) override;
 
@@ -64,6 +64,9 @@ namespace parser {
             virtual void visit(ASTUnary *node) override;
 
             virtual void visit(ASTBinaryExprNode *node) override;
+
+        public:
+            XMLConverterVisitor();
         };
     }
 }

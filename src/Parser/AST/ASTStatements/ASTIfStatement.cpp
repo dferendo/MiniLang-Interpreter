@@ -16,3 +16,11 @@ parser::ast::ASTIfStatement::ASTIfStatement(parser::ast::ASTExprNode *exprNode, 
 void parser::ast::ASTIfStatement::accept(parser::ast::Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTIfStatement::~ASTIfStatement() {
+    delete exprNode;
+    delete astBlockForIF;
+    if (astBlockForElse != nullptr) {
+        delete astBlockForElse;
+    }
+}

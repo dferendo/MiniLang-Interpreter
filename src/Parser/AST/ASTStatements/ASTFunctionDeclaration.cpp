@@ -3,6 +3,7 @@
 //
 
 #include "ASTFunctionDeclaration.h"
+#include "ASTBlock.h"
 
 parser::ast::ASTFunctionDeclaration::ASTFunctionDeclaration(const std::string &identifier,
                                                             const std::vector<parser::ast::ASTFormalParam *> &formalParams,
@@ -11,4 +12,11 @@ parser::ast::ASTFunctionDeclaration::ASTFunctionDeclaration(const std::string &i
 
 void parser::ast::ASTFunctionDeclaration::accept(parser::ast::Visitor *v) {
     v->visit(this);
+}
+
+parser::ast::ASTFunctionDeclaration::~ASTFunctionDeclaration() {
+    delete astBlock;
+    for (auto const &param : formalParams) {
+        delete param;
+    }
 }

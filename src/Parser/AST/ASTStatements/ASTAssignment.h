@@ -20,6 +20,8 @@ namespace parser {
             ASTAssignment(const std::string &identifier, ASTExprNode *exprNode);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTAssignment();
         };
     }
 }

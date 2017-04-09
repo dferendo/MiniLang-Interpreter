@@ -18,6 +18,8 @@ namespace parser {
             ASTRealLiteral(double realValue);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTRealLiteral();
         };
 
     }

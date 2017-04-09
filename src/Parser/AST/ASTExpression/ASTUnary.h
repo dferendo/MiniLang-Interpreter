@@ -21,6 +21,8 @@ namespace parser {
             ASTUnary(const std::string &unary, ASTExprNode *unaryExpression);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTUnary();
         };
 
     }

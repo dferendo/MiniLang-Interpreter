@@ -18,6 +18,8 @@ namespace parser {
             ASTPrintStatement(ASTExprNode *exprNode);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTPrintStatement();
         };
 
     }

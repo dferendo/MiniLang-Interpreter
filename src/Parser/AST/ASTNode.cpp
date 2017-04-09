@@ -3,16 +3,21 @@
 //
 
 #include "ASTNode.h"
+#include "ASTStatements/ASTStatementNode.h"
 
 namespace parser {
     namespace ast {
 
-        void ASTNode::addStatement(ASTStatementNode * statement) {
-            statements.push_back(statement);
-        }
+        ASTNode::ASTNode(const std::vector<ASTStatementNode *> &statements) : statements(statements) {}
 
         void ASTNode::accept(Visitor *v) {
             v->visit(this);
+        }
+
+        ASTNode::~ASTNode() {
+            for (auto const &statement : statements) {
+                delete statement;
+            }
         }
     }
 }

@@ -17,6 +17,8 @@ namespace parser {
             void addStatement(ASTStatementNode * statements);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTBlock();
         };
 
     }

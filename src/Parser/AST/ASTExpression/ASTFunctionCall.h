@@ -17,11 +17,13 @@ namespace parser {
         public:
             std::string identifier;
 
-            std::vector<ASTExprNode * > actualParams;
+            std::vector<ASTExprNode *> actualParams;
 
             ASTFunctionCall(const std::string &identifier, const std::vector<ASTExprNode *> &actualParams);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTFunctionCall();
         };
 
     }

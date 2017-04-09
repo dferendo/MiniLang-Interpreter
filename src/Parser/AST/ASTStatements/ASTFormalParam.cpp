@@ -10,3 +10,5 @@ parser::ast::ASTFormalParam::ASTFormalParam(const std::string &identifier, lexer
 void parser::ast::ASTFormalParam::accept(parser::ast::Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTFormalParam::~ASTFormalParam() {}

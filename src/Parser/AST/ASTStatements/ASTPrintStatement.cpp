@@ -9,3 +9,7 @@ parser::ast::ASTPrintStatement::ASTPrintStatement(parser::ast::ASTExprNode *expr
 void parser::ast::ASTPrintStatement::accept(parser::ast::Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTPrintStatement::~ASTPrintStatement() {
+    delete exprNode;
+}

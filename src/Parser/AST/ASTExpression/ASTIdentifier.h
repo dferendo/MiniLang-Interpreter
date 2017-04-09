@@ -19,6 +19,8 @@ namespace parser {
             ASTIdentifier(const std::string &identifier);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTIdentifier();
         };
     }
 }

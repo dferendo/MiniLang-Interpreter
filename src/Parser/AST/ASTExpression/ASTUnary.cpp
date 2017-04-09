@@ -12,3 +12,7 @@ parser::ast::ASTUnary::ASTUnary(const std::string &unary, parser::ast::ASTExprNo
 void parser::ast::ASTUnary::accept(Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTUnary::~ASTUnary() {
+    delete unaryExpression;
+}

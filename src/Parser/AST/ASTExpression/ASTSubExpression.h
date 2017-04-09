@@ -18,6 +18,8 @@ namespace parser {
             ASTSubExpression(ASTExprNode *subExpression);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTSubExpression();
         };
 
     }

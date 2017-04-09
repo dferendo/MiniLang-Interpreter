@@ -10,3 +10,7 @@ parser::ast::ASTAssignment::ASTAssignment(const std::string &identifier, parser:
 void parser::ast::ASTAssignment::accept(parser::ast::Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTAssignment::~ASTAssignment() {
+    delete exprNode;
+}

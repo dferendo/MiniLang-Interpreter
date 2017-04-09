@@ -216,7 +216,7 @@ namespace parser {
 
         void XMLConverterVisitor::visit(ASTBinaryExprNode *node) {
             string word = getStartingPositionAfterIndent();
-            outputXML << word << "<BinaryExprNode op=\"" << node->operation <<"\">" << endl;
+            outputXML << word << "<BinaryExprNode op=\"" << printOperator(node->operation) <<"\">" << endl;
             currentIndent++;
             node->LHS->accept(this);
             node->RHS->accept(this);
@@ -245,6 +245,16 @@ namespace parser {
                 node->accept(this);
                 currentIndent--;
                 outputXML << word << "</Expression>" << endl;
+            }
+        }
+
+        std::string XMLConverterVisitor::printOperator(std::string currentOperator) {
+            if (currentOperator.find(">") != string::npos) {
+                return "&gt;";
+            } else if (currentOperator.find("<") != string::npos) {
+                return "&lt;";
+            } else {
+                return currentOperator;
             }
         }
     }

@@ -21,6 +21,8 @@ namespace parser {
             ASTVariableDeclaration(const std::string &identifier, lexer::TOKEN tokenType, ASTExprNode *expression);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTVariableDeclaration();
         };
     }
 }

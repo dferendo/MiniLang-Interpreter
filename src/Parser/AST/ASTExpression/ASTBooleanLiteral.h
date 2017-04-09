@@ -17,6 +17,8 @@ namespace parser {
             ASTBooleanLiteral(bool literalValue);
 
             void accept(Visitor *v) override;
+
+            virtual ~ASTBooleanLiteral();
         };
     }
 }

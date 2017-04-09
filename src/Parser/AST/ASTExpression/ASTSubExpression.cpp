@@ -11,3 +11,7 @@ parser::ast::ASTSubExpression::ASTSubExpression(parser::ast::ASTExprNode *subExp
 void parser::ast::ASTSubExpression::accept(Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTSubExpression::~ASTSubExpression() {
+    delete subExpression;
+}

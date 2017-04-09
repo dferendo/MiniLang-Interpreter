@@ -9,3 +9,5 @@ void parser::ast::ASTIntegerLiteral::accept(parser::ast::Visitor *v) {
 }
 
 parser::ast::ASTIntegerLiteral::ASTIntegerLiteral(int literalValue) : literalValue(literalValue) {}
+
+parser::ast::ASTIntegerLiteral::~ASTIntegerLiteral() {}

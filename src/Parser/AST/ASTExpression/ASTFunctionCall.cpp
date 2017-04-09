@@ -12,3 +12,9 @@ parser::ast::ASTFunctionCall::ASTFunctionCall(const std::string &identifier,
 void parser::ast::ASTFunctionCall::accept(Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTFunctionCall::~ASTFunctionCall() {
+    for (auto const & param : actualParams) {
+        delete param;
+    }
+}

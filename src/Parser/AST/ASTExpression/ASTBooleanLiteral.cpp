@@ -9,3 +9,5 @@ parser::ast::ASTBooleanLiteral::ASTBooleanLiteral(bool literalValue) : literalVa
 void parser::ast::ASTBooleanLiteral::accept(parser::ast::Visitor *v) {
     v->visit(this);
 }
+
+parser::ast::ASTBooleanLiteral::~ASTBooleanLiteral() {}

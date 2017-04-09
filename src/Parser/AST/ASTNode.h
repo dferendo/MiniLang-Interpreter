@@ -24,7 +24,12 @@ namespace parser {
              */
             std::vector<ASTStatementNode *> statements;
 
-            virtual void addStatement(ASTStatementNode * statements);
+            ASTNode(const std::vector<ASTStatementNode *> &statements);
+
+            /**
+             * Deallocate the statements found in the vector.
+             */
+            ~ASTNode();
 
             virtual void accept(Visitor * v);
         };
