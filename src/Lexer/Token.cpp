@@ -3,7 +3,7 @@
 //
 
 #include <sstream>
-#include "Token.h"
+#include "../../include/Lexer/Token.h"
 using namespace std;
 
 namespace lexer {

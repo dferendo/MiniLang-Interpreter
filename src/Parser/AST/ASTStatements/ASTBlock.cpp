@@ -1,0 +1,19 @@
+//
+// Created by dylan on 29/03/2017.
+//
+
+#include "../../../../include/Parser/AST/ASTStatements/ASTBlock.h"
+
+void parser::ast::ASTBlock::accept(parser::ast::Visitor *v) {
+    v->visit(this);
+}
+
+void parser::ast::ASTBlock::addStatement(parser::ast::ASTStatementNode *statements) {
+    this->statements.push_back(statements);
+}
+
+parser::ast::ASTBlock::~ASTBlock() {
+    for (auto const &statement : statements) {
+        delete statement;
+    }
+}
