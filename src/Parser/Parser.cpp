@@ -4,12 +4,13 @@
 
 #include "../../include/Parser/Parser.h"
 #include "../../include/Exceptions/UnexpectedTokenWhileParsing.h"
-#include "../../include/Parser/AST/ASTExpression/ASTUnary.h"
 #include "../../include/Exceptions/OperatorNotFound.h"
+#include "../../include/AST/ASTExpression/ASTUnary.h"
 
 using namespace lexer;
 using namespace std;
 using namespace exceptions;
+using namespace visitor;
 
 namespace parser {
 
@@ -25,7 +26,7 @@ namespace parser {
             while (lexer.previewNextToken().tokenType != TOK_EOF) {
                 statements.push_back(parseStatement());
             }
-            ast::Visitor * visitor = new ast::XMLConverterVisitor();
+            Visitor * visitor = new XMLConverterVisitor();
             ast::ASTNode * programNode = new ast::ASTNode(statements);
             programNode->accept(visitor);
         } catch (UnexpectedTokenWhileParsing &error) {
