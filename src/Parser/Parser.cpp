@@ -6,6 +6,7 @@
 #include "../../include/Exceptions/UnexpectedTokenWhileParsing.h"
 #include "../../include/Exceptions/OperatorNotFound.h"
 #include "../../include/AST/ASTExpression/ASTUnary.h"
+#include "../../include/Visitors/SemanticAnalysis.h"
 
 using namespace lexer;
 using namespace std;
@@ -26,9 +27,11 @@ namespace parser {
             while (lexer.previewNextToken().tokenType != TOK_EOF) {
                 statements.push_back(parseStatement());
             }
-            Visitor * visitor = new XMLConverterVisitor();
+            Visitor * xmlConverter = new XMLConverterVisitor();
+            Visitor * semanticAnalysis = new SemanticAnalysis();
             ast::ASTNode * programNode = new ast::ASTNode(statements);
-            programNode->accept(visitor);
+            programNode->accept(xmlConverter);
+            programNode->accept(semanticAnalysis);
         } catch (UnexpectedTokenWhileParsing &error) {
             cout << error.reasonForError << endl;
         }

@@ -5,12 +5,25 @@
 #ifndef COMPILERTHEORY_SEMANTICANALYSIS_H
 #define COMPILERTHEORY_SEMANTICANALYSIS_H
 
+#include <stack>
 #include "Visitor.h"
+#include "Scope.h"
 
 namespace visitor {
 
     class SemanticAnalysis : public Visitor {
+    private:
+        std::stack<Scope *> allScopes;
 
+        void pushScope(Scope *scope);
+
+        Scope * popScope();
+
+        Scope * getTopScope();
+
+        bool checkIfIdentifierExists(std::stack<Scope *> scopes, std::string &identifier);
+
+    public:
         virtual void visit(ast::ASTNode *node) override;
 
         virtual void visit(ast::ASTVariableDeclaration *node) override;
