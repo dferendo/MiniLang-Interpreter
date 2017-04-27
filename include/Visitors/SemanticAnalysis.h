@@ -26,6 +26,8 @@ namespace visitor {
         bool checkIfIdentifierExistsInAllScopes(std::stack<Scope *> scopes, std::string &identifier);
 
         lexer::TOKEN returnTokenOfIdentifier(std::stack<Scope *> scopes, std::string &identifier);
+
+        int handleOperatorType(lexer::TOKEN lhs, lexer::TOKEN rhs, std::string binaryOperator);
     public:
         virtual void visit(ast::ASTNode *node) override;
 

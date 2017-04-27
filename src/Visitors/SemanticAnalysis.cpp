@@ -7,6 +7,7 @@
 #include "../../include/AST/ASTStatements/ASTVariableDeclaration.h"
 #include "../../include/AST/ASTStatements/ASTBlock.h"
 #include "../../include/AST/ASTStatements/ASTAssignment.h"
+#include "../../include/AST/ASTExpression/ASTBinaryExprNode.h"
 
 using namespace ast;
 
@@ -41,6 +42,7 @@ namespace visitor {
         if (lastToken != node->tokenType) {
             std::cout << "Incompatible types, expected '" << lexer::TOKEN_STRING[node->tokenType]
                       << "'" << std::endl;
+            exit(1);
         }
         // Add the identifier
         currentScope->addIdentifier(node);
@@ -117,6 +119,7 @@ namespace visitor {
             std::cout << "Can't resolve variable '" << node->identifier << "'" << std::endl;
             exit(1);
         }
+        lastToken = identifierToken;
     }
 
     void SemanticAnalysis::visit(ASTSubExpression *node) {
@@ -132,7 +135,26 @@ namespace visitor {
     }
 
     void SemanticAnalysis::visit(ASTBinaryExprNode *node) {
+        int operatorReturn;
+        lexer::TOKEN tokenLHS, tokenRHS;
 
+        node->LHS->accept(this);
+        tokenLHS = lastToken;
+        node->RHS->accept(this);
+        tokenRHS = lastToken;
+
+        operatorReturn = handleOperatorType(tokenLHS, tokenRHS, node->operation);
+        // Handle operator compatible type
+        if (operatorReturn == -1) {
+            std::cout << "Operator not supported for one of the types "
+                      << lexer::TOKEN_STRING[tokenLHS] << " or "
+                      << lexer::TOKEN_STRING[tokenRHS] << std::endl;
+            exit(1);
+        } else if (operatorReturn == -2) {
+            std::cout << "Incompatible types of " << lexer::TOKEN_STRING[tokenLHS]
+                      << " and " << lexer::TOKEN_STRING[tokenRHS] << std::endl;
+            exit(1);
+        }
     }
 
     Scope * SemanticAnalysis::popScope() {
@@ -171,6 +193,72 @@ namespace visitor {
             scopes.pop();
         }
         return lexer::TOK_Error;
+    }
+
+    int SemanticAnalysis::handleOperatorType(lexer::TOKEN lhs, lexer::TOKEN rhs, std::string binaryOperator) {
+
+        // Operators *, / and - all accept int or real only.
+        if (!binaryOperator.compare("*") || !binaryOperator.compare("/") || !binaryOperator.compare("-")) {
+            // Types not supported
+            if ((lhs == lexer::TOK_StringType || lhs == lexer::TOK_BoolType) ||
+                (rhs == lexer::TOK_StringType || rhs == lexer::TOK_BoolType)) {
+                return -1;
+            } else {
+                // real can support int, while vice versa not true.
+                return 0;
+            }
+        } else if (!binaryOperator.compare("and") || !binaryOperator.compare("or")) {
+            // 'and' and 'or' is only accepted by boolean
+            if (lhs == lexer::TOK_BoolType && rhs == lexer::TOK_BoolType) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else if (!binaryOperator.compare("+")) {
+            // Boolean does not support +
+            if (lhs == lexer::TOK_BoolType && rhs == lexer::TOK_BoolType) {
+                return -1;
+            } else if (lhs == lexer::TOK_StringType && rhs == lexer::TOK_StringType) {
+                // + can be on int, real and string. String concatenate the strings.
+                return 0;
+            } else if (lhs == lexer::TOK_StringType || rhs == lexer::TOK_StringType) {
+                // Only 1 expression is a string, incompatible type
+                return -2;
+            } else {
+                // Means int and real remains
+                return 0;
+            }
+        }
+        // All relational returns bool
+        lastToken = lexer::TOK_BoolType;
+        // Handle relational types
+        if (!binaryOperator.compare("<") || !binaryOperator.compare(">") ||
+            !binaryOperator.compare("<=") || !binaryOperator.compare(">=")) {
+            // Types not supported
+            if ((lhs == lexer::TOK_StringType || lhs == lexer::TOK_BoolType) ||
+                (rhs == lexer::TOK_StringType || rhs == lexer::TOK_BoolType)) {
+                return -1;
+            } else {
+                // real can support int, while vice versa not true.
+                return 0;
+            }
+        } else if (!binaryOperator.compare("==") || !binaryOperator.compare("!=")) {
+            // Compare needs to have both types the same
+            if (lhs == lexer::TOK_StringType && rhs == lexer::TOK_StringType) {
+                return 0;
+            } else if (lhs == lexer::TOK_BoolType && rhs == lexer::TOK_BoolType) {
+                return 0;
+            } else if (lhs == lexer::TOK_StringType || rhs == lexer::TOK_StringType) {
+                return -2;
+            } else if (lhs == lexer::TOK_BoolType || rhs == lexer::TOK_BoolType) {
+                return -2;
+            } else {
+                // Int and real can be compared
+                return 0;
+            }
+        }
+        // No operator found
+        return -3;
     }
 
 }
