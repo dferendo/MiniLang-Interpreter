@@ -9,13 +9,18 @@ bool visitor::Scope::checkIfAnIdentifierExists(std::string &identifier) {
     return scopeIdentifiers.find(identifier) != scopeIdentifiers.end();
 }
 
-bool visitor::Scope::addIdentifierWithCheck(ast::ASTVariableDeclaration *identifier) {
-    if (scopeIdentifiers.find(identifier->identifier) == scopeIdentifiers.end()) {
-        scopeIdentifiers.insert(std::pair<std::string, lexer::TOKEN>(identifier->identifier, identifier->tokenType));
-        return true;
-    } else {
-        return false;
+void visitor::Scope::addIdentifier(ast::ASTVariableDeclaration *identifier) {
+    scopeIdentifiers.insert(std::pair<std::string, lexer::TOKEN>(identifier->identifier, identifier->tokenType));
+}
+
+lexer::TOKEN visitor::Scope::returnTheTokenOfAnIdentifier(std::string &identifier) {
+    std::map<std::string, lexer::TOKEN>::iterator it = scopeIdentifiers.find(identifier);
+
+    if (it == scopeIdentifiers.end()) {
+        return lexer::TOK_Error;
     }
+    // Return TOKEN
+    return it->second;
 }
 
 

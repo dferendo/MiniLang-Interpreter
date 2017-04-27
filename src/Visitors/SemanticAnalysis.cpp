@@ -30,16 +30,28 @@ namespace visitor {
     void SemanticAnalysis::visit(ASTVariableDeclaration *node) {
         // Get the scope the node is currently in
         Scope * currentScope = getTopScope();
-        // Add identifier, if it already exists exits.
-        if (!currentScope->addIdentifierWithCheck(node)) {
+        // Check if identifier exists. Do not add it yet to avoid
+        // var test4 : int = test4;
+        if (currentScope->checkIfAnIdentifierExists(node->identifier)) {
             std::cout << "Duplicate declaration of local variable '" << node->identifier << "'" << std::endl;
             exit(1);
         }
+        // Get the expression type
+        node->expression->accept(this);
+        if (lastToken != node->tokenType) {
+            std::cout << "Incompatible types, expected '" << lexer::TOKEN_STRING[node->tokenType]
+                      << "'" << std::endl;
+        }
+        // Add the identifier
+        currentScope->addIdentifier(node);
+
     }
 
     void SemanticAnalysis::visit(ASTAssignment *node) {
-        if (!checkIfIdentifierExists(allScopes, node->identifier)) {
+        // Check if the identifier exists, if not exits.
+        if (!checkIfIdentifierExistsInAllScopes(allScopes, node->identifier)) {
             std::cout << "Can't resolve variable '" << node->identifier << "'" << std::endl;
+            exit(1);
         }
     }
 
@@ -59,7 +71,6 @@ namespace visitor {
     }
 
     void SemanticAnalysis::visit(ASTIfStatement *node) {
-
     }
 
     void SemanticAnalysis::visit(ASTWhileStatement *node) {
@@ -79,23 +90,33 @@ namespace visitor {
     }
 
     void SemanticAnalysis::visit(ASTBooleanLiteral *node) {
-
+        // Set the last tok to boolean literal.
+        lastToken = lexer::TOK_BoolType;
     }
 
-    void SemanticAnalysis::visit(ASTIntegerLiteral *node) {
-
+    void SemanticAnalysis::visit(ASTIntegerLiteral * node) {
+        // Set the last tok to integer literal.
+        lastToken = lexer::TOK_IntType;
     }
 
-    void SemanticAnalysis::visit(ASTRealLiteral *node) {
-
+    void SemanticAnalysis::visit(ASTRealLiteral * node) {
+        // Set the last tok to real literal.
+        lastToken = lexer::TOK_RealType;
     }
 
-    void SemanticAnalysis::visit(ASTStringLiteral *node) {
-
+    void SemanticAnalysis::visit(ASTStringLiteral * node) {
+        // Set the last tok to string literal.
+        lastToken = lexer::TOK_StringType;
     }
 
     void SemanticAnalysis::visit(ASTIdentifier *node) {
+        // Check the token of the identifier IF it exists
+        lexer::TOKEN identifierToken = returnTokenOfIdentifier(allScopes, node->identifier);
 
+        if (identifierToken == lexer::TOK_Error) {
+            std::cout << "Can't resolve variable '" << node->identifier << "'" << std::endl;
+            exit(1);
+        }
     }
 
     void SemanticAnalysis::visit(ASTSubExpression *node) {
@@ -124,7 +145,7 @@ namespace visitor {
         return allScopes.top();
     }
 
-    bool SemanticAnalysis::checkIfIdentifierExists(std::stack<Scope *> scopes, std::string &identifier) {
+    bool SemanticAnalysis::checkIfIdentifierExistsInAllScopes(std::stack<Scope *> scopes, std::string &identifier) {
         Scope * currentScope;
 
         while (!scopes.empty()) {
@@ -135,6 +156,21 @@ namespace visitor {
             scopes.pop();
         }
         return false;
+    }
+
+    lexer::TOKEN SemanticAnalysis::returnTokenOfIdentifier(std::stack<Scope *> scopes, std::string &identifier) {
+        Scope * currentScope;
+        lexer::TOKEN tempToken;
+
+        while (!scopes.empty()) {
+            currentScope = scopes.top();
+            tempToken = currentScope->returnTheTokenOfAnIdentifier(identifier);
+            if (tempToken != lexer::TOK_Error) {
+                return tempToken;
+            }
+            scopes.pop();
+        }
+        return lexer::TOK_Error;
     }
 
 }

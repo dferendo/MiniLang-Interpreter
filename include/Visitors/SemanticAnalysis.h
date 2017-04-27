@@ -15,14 +15,17 @@ namespace visitor {
     private:
         std::stack<Scope *> allScopes;
 
+        lexer::TOKEN lastToken;
+
         void pushScope(Scope *scope);
 
         Scope * popScope();
 
         Scope * getTopScope();
 
-        bool checkIfIdentifierExists(std::stack<Scope *> scopes, std::string &identifier);
+        bool checkIfIdentifierExistsInAllScopes(std::stack<Scope *> scopes, std::string &identifier);
 
+        lexer::TOKEN returnTokenOfIdentifier(std::stack<Scope *> scopes, std::string &identifier);
     public:
         virtual void visit(ast::ASTNode *node) override;
 
