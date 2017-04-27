@@ -2,7 +2,6 @@
 // Created by dylan on 25/04/2017.
 //
 #include "../../include/Visitors/SemanticAnalysis.h"
-#include "../../include/AST/ASTNode.h"
 #include "../../include/AST/ASTStatements/ASTStatementNode.h"
 #include "../../include/AST/ASTStatements/ASTVariableDeclaration.h"
 #include "../../include/AST/ASTStatements/ASTBlock.h"
@@ -10,6 +9,12 @@
 #include "../../include/AST/ASTExpression/ASTBinaryExprNode.h"
 #include "../../include/AST/ASTStatements/ASTFunctionDeclaration.h"
 #include "../../include/AST/ASTExpression/ASTFunctionCall.h"
+#include "../../include/AST/ASTExpression/ASTSubExpression.h"
+#include "../../include/AST/ASTExpression/ASTUnary.h"
+#include "../../include/AST/ASTStatements/ASTPrintStatement.h"
+#include "../../include/AST/ASTStatements/ASTIfStatement.h"
+#include "../../include/AST/ASTStatements/ASTWhileStatement.h"
+#include "../../include/AST/ASTStatements/ASTReturnStatement.h"
 
 using namespace ast;
 using namespace std;
@@ -55,19 +60,30 @@ namespace visitor {
         }
         // Add the identifier
         currentScope->addIdentifier(node);
-
     }
 
     void SemanticAnalysis::visit(ASTAssignment *node) {
+        TOKEN identifierToken = returnTokenOfIdentifierInAllScopes(allScopes, node->identifier);
         // Check if the identifier exists, if not exits.
-        if (!checkIfIdentifierExistsInAllScopes(allScopes, node->identifier)) {
+        if (identifierToken == TOK_Error) {
             cout << "Can't resolve variable '" << node->identifier << "'" << endl;
+            exit(1);
+        }
+        // Get the expression type
+        node->exprNode->accept(this);
+        // Check if token is real, if so int is accepted.
+        if ((identifierToken == TOK_RealType) && lastToken == TOK_IntType) {
+            return;
+        } else if (lastToken != identifierToken) {
+            cout << "Incompatible types, expected '" << TOKEN_STRING[identifierToken]
+                 << "'" << endl;
             exit(1);
         }
     }
 
     void SemanticAnalysis::visit(ASTPrintStatement *node) {
-
+        // Check if expression is correct.
+        node->exprNode->accept(this);
     }
 
     void SemanticAnalysis::visit(ASTBlock *node) {
@@ -82,14 +98,39 @@ namespace visitor {
     }
 
     void SemanticAnalysis::visit(ASTIfStatement *node) {
+        node->exprNode->accept(this);
+
+        if (lastToken != TOK_BoolType) {
+            cout << "If only supports boolean. " << endl;
+            exit(1);
+        }
+        node->astBlockForIF->accept(this);
+        // Go to else block as well
+        if (node->astBlockForElse != nullptr) {
+            node->astBlockForElse->accept(this);
+        }
     }
 
     void SemanticAnalysis::visit(ASTWhileStatement *node) {
+        node->exprNode->accept(this);
 
+        if (lastToken != TOK_BoolType) {
+            cout << "While only supports boolean. " << endl;
+            exit(1);
+        }
+        node->astBlock->accept(this);
     }
 
     void SemanticAnalysis::visit(ASTReturnStatement *node) {
+        node->exprNode->accept(this);
 
+        if (lastToken != returnCheckForFunctionDeclaration.functionReturnType) {
+            cout << "Returning '" << TOKEN_STRING[lastToken] << "' when expecting '"
+                 << TOKEN_STRING[returnCheckForFunctionDeclaration.functionReturnType]
+                 << "'" << endl;
+            exit(1);
+        }
+        returnCheckForFunctionDeclaration.isReturnFound = true;
     }
 
     void SemanticAnalysis::visit(ASTFormalParam *node) {
@@ -107,6 +148,16 @@ namespace visitor {
         }
         // Add function
         currentScope->addIdentifier(node);
+        // Variable used to check if there was a return
+        returnCheckForFunctionDeclaration.isReturnFound = false;
+        returnCheckForFunctionDeclaration.functionReturnType = node->tokenType;
+        // Go to block
+        node->astBlock->accept(this);
+
+        if (!returnCheckForFunctionDeclaration.isReturnFound) {
+            cout << "Control reaches end of non-void function, return required. " << endl;
+            exit(1);
+        }
     }
 
     void SemanticAnalysis::visit(ASTBooleanLiteral *node) {
@@ -141,7 +192,7 @@ namespace visitor {
     }
 
     void SemanticAnalysis::visit(ASTSubExpression *node) {
-
+        node->subExpression->accept(this);
     }
 
     void SemanticAnalysis::visit(ASTFunctionCall *node) {
@@ -171,7 +222,32 @@ namespace visitor {
     }
 
     void SemanticAnalysis::visit(ASTUnary *node) {
+        // Check type of expression
+        node->unaryExpression->accept(this);
 
+        if (lastToken == TOK_StringType) {
+            cout << "Operator not supported for "
+                 << TOKEN_STRING[TOK_StringType] << endl;
+            exit(1);
+        } else if (lastToken == TOK_BoolType) {
+            // Not can only be applied to boolean, compare returns 0
+            // if equal
+            if (node->unary.compare("not")) {
+                cout << "Operator not supported for "
+                     << TOKEN_STRING[TOK_BoolType] << endl;
+                exit(1);
+            }
+        } else if (lastToken == TOK_IntType || lastToken == TOK_RealType) {
+            // - can only be applied to int and real
+            if (node->unary.compare("-")) {
+                cout << "Operator not supported for "
+                     << TOKEN_STRING[lastToken] << endl;
+                exit(1);
+            }
+        } else {
+            cout << "Type not supported." << endl;
+            exit(1);
+        }
     }
 
     void SemanticAnalysis::visit(ASTBinaryExprNode *node) {
@@ -208,19 +284,6 @@ namespace visitor {
 
     Scope *SemanticAnalysis::getTopScope() {
         return allScopes.top();
-    }
-
-    bool SemanticAnalysis::checkIfIdentifierExistsInAllScopes(stack<Scope *> scopes, string &identifier) {
-        Scope * currentScope;
-
-        while (!scopes.empty()) {
-            currentScope = scopes.top();
-            if (currentScope->checkIfAnIdentifierExists(identifier)) {
-                return true;
-            }
-            scopes.pop();
-        }
-        return false;
     }
 
     TOKEN SemanticAnalysis::returnTokenOfIdentifierInAllScopes(stack<Scope *> scopes,

@@ -13,17 +13,22 @@ namespace visitor {
 
     class SemanticAnalysis : public Visitor {
     private:
+        typedef struct ReturnCheckForFunctionDeclaration {
+            bool isReturnFound;
+            lexer::TOKEN functionReturnType;
+        } ReturnCheckForFunctionDeclaration;
+
         std::stack<Scope *> allScopes;
 
         lexer::TOKEN lastToken;
+
+        ReturnCheckForFunctionDeclaration returnCheckForFunctionDeclaration;
 
         void pushScope(Scope *scope);
 
         Scope * popScope();
 
         Scope * getTopScope();
-
-        bool checkIfIdentifierExistsInAllScopes(std::stack<Scope *> scopes, std::string &identifier);
 
         lexer::TOKEN returnTokenOfIdentifierInAllScopes(std::stack<Scope *> scopes, std::string &identifier);
 
