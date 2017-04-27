@@ -3,6 +3,7 @@
 //
 #include "../../include/Visitors/Scope.h"
 #include "../../include/AST/ASTStatements/ASTVariableDeclaration.h"
+#include "../../include/AST/ASTStatements/ASTFunctionDeclaration.h"
 #include <algorithm>
 
 bool visitor::Scope::checkIfAnIdentifierExists(std::string &identifier) {
@@ -10,17 +11,34 @@ bool visitor::Scope::checkIfAnIdentifierExists(std::string &identifier) {
 }
 
 void visitor::Scope::addIdentifier(ast::ASTVariableDeclaration *identifier) {
-    scopeIdentifiers.insert(std::pair<std::string, lexer::TOKEN>(identifier->identifier, identifier->tokenType));
+    SymbolTable * temp = new SymbolTable(identifier->tokenType);
+
+    scopeIdentifiers.insert(std::pair<std::string, SymbolTable *>(identifier->identifier, temp));
+}
+
+void visitor::Scope::addIdentifier(ast::ASTFunctionDeclaration *function) {
+    SymbolTable * temp = new SymbolTable(function->tokenType, function->formalParams);
+
+    scopeIdentifiers.insert(std::pair<std::string, SymbolTable *>(function->identifier, temp));
 }
 
 lexer::TOKEN visitor::Scope::returnTheTokenOfAnIdentifier(std::string &identifier) {
-    std::map<std::string, lexer::TOKEN>::iterator it = scopeIdentifiers.find(identifier);
+    std::map<std::string, SymbolTable* >::iterator it = scopeIdentifiers.find(identifier);
 
     if (it == scopeIdentifiers.end()) {
         return lexer::TOK_Error;
     }
     // Return TOKEN
-    return it->second;
+    return it->second->returnType;
 }
 
+std::vector<ast::ASTFormalParam *> *visitor::Scope::returnFormalsOfFunction(std::string &identifier) {
+    std::map<std::string, SymbolTable* >::iterator it = scopeIdentifiers.find(identifier);
 
+    if (it == scopeIdentifiers.end()) {
+        // Not found
+        return nullptr;
+    }
+    // Return vector, nullptr if it does not exists
+    return it->second->functionsParams;
+}

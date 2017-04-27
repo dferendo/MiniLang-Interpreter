@@ -25,7 +25,10 @@ namespace visitor {
 
         bool checkIfIdentifierExistsInAllScopes(std::stack<Scope *> scopes, std::string &identifier);
 
-        lexer::TOKEN returnTokenOfIdentifier(std::stack<Scope *> scopes, std::string &identifier);
+        lexer::TOKEN returnTokenOfIdentifierInAllScopes(std::stack<Scope *> scopes, std::string &identifier);
+
+        std::vector<ast::ASTFormalParam *> * returnFunctionParamsInAllScopes(std::stack<Scope *> scopes,
+                                                                             std::string &identifier);
 
         int handleOperatorType(lexer::TOKEN lhs, lexer::TOKEN rhs, std::string binaryOperator);
     public:

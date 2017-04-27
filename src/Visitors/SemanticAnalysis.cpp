@@ -8,8 +8,12 @@
 #include "../../include/AST/ASTStatements/ASTBlock.h"
 #include "../../include/AST/ASTStatements/ASTAssignment.h"
 #include "../../include/AST/ASTExpression/ASTBinaryExprNode.h"
+#include "../../include/AST/ASTStatements/ASTFunctionDeclaration.h"
+#include "../../include/AST/ASTExpression/ASTFunctionCall.h"
 
 using namespace ast;
+using namespace std;
+using namespace lexer;
 
 namespace visitor {
 
@@ -34,14 +38,19 @@ namespace visitor {
         // Check if identifier exists. Do not add it yet to avoid
         // var test4 : int = test4;
         if (currentScope->checkIfAnIdentifierExists(node->identifier)) {
-            std::cout << "Duplicate declaration of local variable '" << node->identifier << "'" << std::endl;
+            cout << "Duplicate declaration of local variable '" << node->identifier << "'" << endl;
             exit(1);
         }
         // Get the expression type
         node->expression->accept(this);
-        if (lastToken != node->tokenType) {
-            std::cout << "Incompatible types, expected '" << lexer::TOKEN_STRING[node->tokenType]
-                      << "'" << std::endl;
+        // Check if token is real, if so int is accepted.
+        if ((node->tokenType == TOK_RealType) && lastToken == TOK_IntType) {
+            // Accept identifier
+            currentScope->addIdentifier(node);
+            return;
+        } else if (lastToken != node->tokenType) {
+            cout << "Incompatible types, expected '" << TOKEN_STRING[node->tokenType]
+                 << "'" << endl;
             exit(1);
         }
         // Add the identifier
@@ -52,7 +61,7 @@ namespace visitor {
     void SemanticAnalysis::visit(ASTAssignment *node) {
         // Check if the identifier exists, if not exits.
         if (!checkIfIdentifierExistsInAllScopes(allScopes, node->identifier)) {
-            std::cout << "Can't resolve variable '" << node->identifier << "'" << std::endl;
+            cout << "Can't resolve variable '" << node->identifier << "'" << endl;
             exit(1);
         }
     }
@@ -88,35 +97,44 @@ namespace visitor {
     }
 
     void SemanticAnalysis::visit(ASTFunctionDeclaration *node) {
-
+        // Get the scope the node is currently in
+        Scope * currentScope = getTopScope();
+        // Check if function exists
+        if (currentScope->checkIfAnIdentifierExists(node->identifier)) {
+            cout << "Duplicate declaration of variable for function '" << node->identifier << "'"
+                 << endl;
+            exit(1);
+        }
+        // Add function
+        currentScope->addIdentifier(node);
     }
 
     void SemanticAnalysis::visit(ASTBooleanLiteral *node) {
         // Set the last tok to boolean literal.
-        lastToken = lexer::TOK_BoolType;
+        lastToken = TOK_BoolType;
     }
 
     void SemanticAnalysis::visit(ASTIntegerLiteral * node) {
         // Set the last tok to integer literal.
-        lastToken = lexer::TOK_IntType;
+        lastToken = TOK_IntType;
     }
 
     void SemanticAnalysis::visit(ASTRealLiteral * node) {
         // Set the last tok to real literal.
-        lastToken = lexer::TOK_RealType;
+        lastToken = TOK_RealType;
     }
 
     void SemanticAnalysis::visit(ASTStringLiteral * node) {
         // Set the last tok to string literal.
-        lastToken = lexer::TOK_StringType;
+        lastToken = TOK_StringType;
     }
 
     void SemanticAnalysis::visit(ASTIdentifier *node) {
-        // Check the token of the identifier IF it exists
-        lexer::TOKEN identifierToken = returnTokenOfIdentifier(allScopes, node->identifier);
+        // Check the token of the identifier If it exists
+        TOKEN identifierToken = returnTokenOfIdentifierInAllScopes(allScopes, node->identifier);
 
-        if (identifierToken == lexer::TOK_Error) {
-            std::cout << "Can't resolve variable '" << node->identifier << "'" << std::endl;
+        if (identifierToken == TOK_Error) {
+            cout << "Can't resolve variable '" << node->identifier << "'" << endl;
             exit(1);
         }
         lastToken = identifierToken;
@@ -127,7 +145,29 @@ namespace visitor {
     }
 
     void SemanticAnalysis::visit(ASTFunctionCall *node) {
+        vector<ast::ASTFormalParam *> * params =
+                returnFunctionParamsInAllScopes(allScopes, node->identifier);
 
+        if (params == nullptr) {
+            cout << "Can't resolve function '" << node->identifier << "'" << endl;
+            exit(1);
+        }
+        // Check if params match
+        if (params->size() != node->actualParams.size()) {
+            cout << "Incorrect arguments passed, expected " << params->size() << endl;
+            exit(1);
+        }
+
+        for (size_t i = 0; i < node->actualParams.size(); i++) {
+            node->actualParams[i]->accept(this);
+            if (lastToken != (*params)[i]->tokenType) {
+                cout << "Parameter type mismatch, expecting '" << TOKEN_STRING[(*params)[i]->tokenType]
+                     << "'" << endl;
+                exit(1);
+            }
+        }
+        // Set the return type
+        lastToken = returnTokenOfIdentifierInAllScopes(allScopes, node->identifier);
     }
 
     void SemanticAnalysis::visit(ASTUnary *node) {
@@ -136,7 +176,7 @@ namespace visitor {
 
     void SemanticAnalysis::visit(ASTBinaryExprNode *node) {
         int operatorReturn;
-        lexer::TOKEN tokenLHS, tokenRHS;
+        TOKEN tokenLHS, tokenRHS;
 
         node->LHS->accept(this);
         tokenLHS = lastToken;
@@ -146,13 +186,16 @@ namespace visitor {
         operatorReturn = handleOperatorType(tokenLHS, tokenRHS, node->operation);
         // Handle operator compatible type
         if (operatorReturn == -1) {
-            std::cout << "Operator not supported for one of the types "
-                      << lexer::TOKEN_STRING[tokenLHS] << " or "
-                      << lexer::TOKEN_STRING[tokenRHS] << std::endl;
+            cout << "Operator not supported for one of the types "
+                 << TOKEN_STRING[tokenLHS] << " or "
+                 << TOKEN_STRING[tokenRHS] << endl;
             exit(1);
         } else if (operatorReturn == -2) {
-            std::cout << "Incompatible types of " << lexer::TOKEN_STRING[tokenLHS]
-                      << " and " << lexer::TOKEN_STRING[tokenRHS] << std::endl;
+            cout << "Incompatible types of " << TOKEN_STRING[tokenLHS]
+                 << " and " << TOKEN_STRING[tokenRHS] << endl;
+            exit(1);
+        } else if (operatorReturn == -3) {
+            cout << "Operator not found, problem with lexer." << endl;
             exit(1);
         }
     }
@@ -167,7 +210,7 @@ namespace visitor {
         return allScopes.top();
     }
 
-    bool SemanticAnalysis::checkIfIdentifierExistsInAllScopes(std::stack<Scope *> scopes, std::string &identifier) {
+    bool SemanticAnalysis::checkIfIdentifierExistsInAllScopes(stack<Scope *> scopes, string &identifier) {
         Scope * currentScope;
 
         while (!scopes.empty()) {
@@ -180,63 +223,70 @@ namespace visitor {
         return false;
     }
 
-    lexer::TOKEN SemanticAnalysis::returnTokenOfIdentifier(std::stack<Scope *> scopes, std::string &identifier) {
+    TOKEN SemanticAnalysis::returnTokenOfIdentifierInAllScopes(stack<Scope *> scopes,
+                                                               string &identifier) {
         Scope * currentScope;
-        lexer::TOKEN tempToken;
+        TOKEN tempToken;
 
         while (!scopes.empty()) {
             currentScope = scopes.top();
             tempToken = currentScope->returnTheTokenOfAnIdentifier(identifier);
-            if (tempToken != lexer::TOK_Error) {
+            if (tempToken != TOK_Error) {
                 return tempToken;
             }
             scopes.pop();
         }
-        return lexer::TOK_Error;
+        return TOK_Error;
     }
 
-    int SemanticAnalysis::handleOperatorType(lexer::TOKEN lhs, lexer::TOKEN rhs, std::string binaryOperator) {
+    int SemanticAnalysis::handleOperatorType(TOKEN lhs, TOKEN rhs, string binaryOperator) {
 
         // Operators *, / and - all accept int or real only.
         if (!binaryOperator.compare("*") || !binaryOperator.compare("/") || !binaryOperator.compare("-")) {
             // Types not supported
-            if ((lhs == lexer::TOK_StringType || lhs == lexer::TOK_BoolType) ||
-                (rhs == lexer::TOK_StringType || rhs == lexer::TOK_BoolType)) {
+            if ((lhs == TOK_StringType || lhs == TOK_BoolType) ||
+                (rhs == TOK_StringType || rhs == TOK_BoolType)) {
                 return -1;
             } else {
                 // real can support int, while vice versa not true.
+                lastToken = (lhs == TOK_IntType && rhs == TOK_IntType)
+                            ? TOK_IntType : TOK_RealType;
                 return 0;
             }
         } else if (!binaryOperator.compare("and") || !binaryOperator.compare("or")) {
             // 'and' and 'or' is only accepted by boolean
-            if (lhs == lexer::TOK_BoolType && rhs == lexer::TOK_BoolType) {
+            if (lhs == TOK_BoolType && rhs == TOK_BoolType) {
+                lastToken = TOK_BoolType;
                 return 0;
             } else {
                 return -1;
             }
         } else if (!binaryOperator.compare("+")) {
             // Boolean does not support +
-            if (lhs == lexer::TOK_BoolType && rhs == lexer::TOK_BoolType) {
+            if (lhs == TOK_BoolType && rhs == TOK_BoolType) {
                 return -1;
-            } else if (lhs == lexer::TOK_StringType && rhs == lexer::TOK_StringType) {
+            } else if (lhs == TOK_StringType && rhs == TOK_StringType) {
+                lastToken = TOK_StringType;
                 // + can be on int, real and string. String concatenate the strings.
                 return 0;
-            } else if (lhs == lexer::TOK_StringType || rhs == lexer::TOK_StringType) {
+            } else if (lhs == TOK_StringType || rhs == TOK_StringType) {
                 // Only 1 expression is a string, incompatible type
                 return -2;
             } else {
+                lastToken = (lhs == TOK_IntType && rhs == TOK_IntType)
+                            ? TOK_IntType : TOK_RealType;
                 // Means int and real remains
                 return 0;
             }
         }
         // All relational returns bool
-        lastToken = lexer::TOK_BoolType;
+        lastToken = TOK_BoolType;
         // Handle relational types
         if (!binaryOperator.compare("<") || !binaryOperator.compare(">") ||
             !binaryOperator.compare("<=") || !binaryOperator.compare(">=")) {
             // Types not supported
-            if ((lhs == lexer::TOK_StringType || lhs == lexer::TOK_BoolType) ||
-                (rhs == lexer::TOK_StringType || rhs == lexer::TOK_BoolType)) {
+            if ((lhs == TOK_StringType || lhs == TOK_BoolType) ||
+                (rhs == TOK_StringType || rhs == TOK_BoolType)) {
                 return -1;
             } else {
                 // real can support int, while vice versa not true.
@@ -244,13 +294,13 @@ namespace visitor {
             }
         } else if (!binaryOperator.compare("==") || !binaryOperator.compare("!=")) {
             // Compare needs to have both types the same
-            if (lhs == lexer::TOK_StringType && rhs == lexer::TOK_StringType) {
+            if (lhs == TOK_StringType && rhs == TOK_StringType) {
                 return 0;
-            } else if (lhs == lexer::TOK_BoolType && rhs == lexer::TOK_BoolType) {
+            } else if (lhs == TOK_BoolType && rhs == TOK_BoolType) {
                 return 0;
-            } else if (lhs == lexer::TOK_StringType || rhs == lexer::TOK_StringType) {
+            } else if (lhs == TOK_StringType || rhs == TOK_StringType) {
                 return -2;
-            } else if (lhs == lexer::TOK_BoolType || rhs == lexer::TOK_BoolType) {
+            } else if (lhs == TOK_BoolType || rhs == TOK_BoolType) {
                 return -2;
             } else {
                 // Int and real can be compared
@@ -259,6 +309,22 @@ namespace visitor {
         }
         // No operator found
         return -3;
+    }
+
+    vector<ast::ASTFormalParam *> *
+    SemanticAnalysis::returnFunctionParamsInAllScopes(stack<Scope *> scopes, string &identifier) {
+        Scope * currentScope;
+        vector<ast::ASTFormalParam *> * params;
+
+        while (!scopes.empty()) {
+            currentScope = scopes.top();
+            params = currentScope->returnFormalsOfFunction(identifier);
+            if (params != nullptr) {
+                return params;
+            }
+            scopes.pop();
+        }
+        return nullptr;
     }
 
 }
