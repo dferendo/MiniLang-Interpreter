@@ -6,7 +6,7 @@
 #include "../../include/AST/ASTStatements/ASTFunctionDeclaration.h"
 #include <algorithm>
 
-bool visitor::Scope::checkIfAnIdentifierExists(std::string &identifier) {
+bool visitor::Scope::identifierExists(std::string &identifier) {
     return scopeIdentifiers.find(identifier) != scopeIdentifiers.end();
 }
 

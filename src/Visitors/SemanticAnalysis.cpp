@@ -42,7 +42,7 @@ namespace visitor {
         Scope * currentScope = getTopScope();
         // Check if identifier exists. Do not add it yet to avoid
         // var test4 : int = test4;
-        if (currentScope->checkIfAnIdentifierExists(node->identifier)) {
+        if (currentScope->identifierExists(node->identifier)) {
             cout << "Duplicate declaration of local variable '" << node->identifier << "'" << endl;
             exit(1);
         }
@@ -153,7 +153,7 @@ namespace visitor {
     void SemanticAnalysis::visit(ASTFormalParam *node) {
         Scope * currentScope = getTopScope();
         // Check if identifier exists
-        if (currentScope->checkIfAnIdentifierExists(node->identifier)) {
+        if (currentScope->identifierExists(node->identifier)) {
             cout << "Duplicate declaration of local variable '" << node->identifier << "'" << endl;
             exit(1);
         }
@@ -166,7 +166,7 @@ namespace visitor {
         // Get the scope the node is currently in
         Scope * currentScope = getTopScope();
         // Check if function exists
-        if (currentScope->checkIfAnIdentifierExists(node->identifier)) {
+        if (currentScope->identifierExists(node->identifier)) {
             cout << "Duplicate declaration of variable for function '" << node->identifier << "'"
                  << endl;
             exit(1);
@@ -416,6 +416,7 @@ namespace visitor {
         while (!scopes.empty()) {
             currentScope = scopes.top();
             params = currentScope->returnFormalsOfFunction(identifier);
+
             if (params != nullptr) {
                 return params;
             }
@@ -423,5 +424,7 @@ namespace visitor {
         }
         return nullptr;
     }
+
+    SemanticAnalysis::SemanticAnalysis() {}
 
 }
