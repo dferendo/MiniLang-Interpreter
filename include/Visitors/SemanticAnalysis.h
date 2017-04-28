@@ -15,14 +15,15 @@ namespace visitor {
     private:
         typedef struct ReturnCheckForFunctionDeclaration {
             bool isReturnFound;
-            lexer::TOKEN functionReturnType;
+            bool isFunctionDeclarationBlock;
+            ast::ASTFunctionDeclaration * functionDeclaration;
         } ReturnCheckForFunctionDeclaration;
 
         std::stack<Scope *> allScopes;
 
         lexer::TOKEN lastToken;
 
-        ReturnCheckForFunctionDeclaration returnCheckForFunctionDeclaration;
+        std::vector<ReturnCheckForFunctionDeclaration *> functionsReturn;
 
         void pushScope(Scope *scope);
 
@@ -30,7 +31,8 @@ namespace visitor {
 
         Scope * getTopScope();
 
-        lexer::TOKEN returnTokenOfIdentifierInAllScopes(std::stack<Scope *> scopes, std::string &identifier);
+        lexer::TOKEN returnTokenOfIdentifierInAllScopes(std::stack<Scope *> scopes,
+                                                        std::string &identifier);
 
         std::vector<ast::ASTFormalParam *> * returnFunctionParamsInAllScopes(std::stack<Scope *> scopes,
                                                                              std::string &identifier);

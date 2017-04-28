@@ -87,9 +87,22 @@ namespace visitor {
     }
 
     void SemanticAnalysis::visit(ASTBlock *node) {
-        Scope * blockScope = new Scope();
+        Scope *blockScope = new Scope();
         // Push new Scope
         allScopes.push(blockScope);
+
+        for (auto &function : functionsReturn) {
+            if (!function->isFunctionDeclarationBlock) {
+                function->isFunctionDeclarationBlock = true;
+                // Add params to the new block
+                for (auto const &param : function->functionDeclaration->formalParams) {
+                    param->accept(this);
+                }
+                // Can only happen one at a time
+                break;
+            }
+        }
+
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
@@ -122,22 +135,34 @@ namespace visitor {
     }
 
     void SemanticAnalysis::visit(ASTReturnStatement *node) {
+        ReturnCheckForFunctionDeclaration * returnCheckForFunctionDeclaration;
+
         node->exprNode->accept(this);
 
-        if (lastToken != returnCheckForFunctionDeclaration.functionReturnType) {
+        returnCheckForFunctionDeclaration = functionsReturn.back();
+
+        if (lastToken != returnCheckForFunctionDeclaration->functionDeclaration->tokenType) {
             cout << "Returning '" << TOKEN_STRING[lastToken] << "' when expecting '"
-                 << TOKEN_STRING[returnCheckForFunctionDeclaration.functionReturnType]
+                 << TOKEN_STRING[returnCheckForFunctionDeclaration->functionDeclaration->tokenType]
                  << "'" << endl;
             exit(1);
         }
-        returnCheckForFunctionDeclaration.isReturnFound = true;
+        returnCheckForFunctionDeclaration->isReturnFound = true;
     }
 
     void SemanticAnalysis::visit(ASTFormalParam *node) {
-
+        Scope * currentScope = getTopScope();
+        // Check if identifier exists
+        if (currentScope->checkIfAnIdentifierExists(node->identifier)) {
+            cout << "Duplicate declaration of local variable '" << node->identifier << "'" << endl;
+            exit(1);
+        }
+        // Add the identifier
+        currentScope->addIdentifier(node);
     }
 
     void SemanticAnalysis::visit(ASTFunctionDeclaration *node) {
+        ReturnCheckForFunctionDeclaration * returnCheckForFunctionDeclaration;
         // Get the scope the node is currently in
         Scope * currentScope = getTopScope();
         // Check if function exists
@@ -148,16 +173,25 @@ namespace visitor {
         }
         // Add function
         currentScope->addIdentifier(node);
+
+        returnCheckForFunctionDeclaration = new ReturnCheckForFunctionDeclaration();
         // Variable used to check if there was a return
-        returnCheckForFunctionDeclaration.isReturnFound = false;
-        returnCheckForFunctionDeclaration.functionReturnType = node->tokenType;
+        returnCheckForFunctionDeclaration->isReturnFound = false;
+        returnCheckForFunctionDeclaration->isFunctionDeclarationBlock = false;
+        returnCheckForFunctionDeclaration->functionDeclaration = node;
+        functionsReturn.push_back(returnCheckForFunctionDeclaration);
+
         // Go to block
         node->astBlock->accept(this);
 
-        if (!returnCheckForFunctionDeclaration.isReturnFound) {
+        // Check if there was a return.
+        returnCheckForFunctionDeclaration = functionsReturn.back();
+        functionsReturn.pop_back();
+        if (!returnCheckForFunctionDeclaration->isReturnFound) {
             cout << "Control reaches end of non-void function, return required. " << endl;
             exit(1);
         }
+        free(returnCheckForFunctionDeclaration);
     }
 
     void SemanticAnalysis::visit(ASTBooleanLiteral *node) {

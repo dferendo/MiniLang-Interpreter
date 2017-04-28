@@ -22,6 +22,12 @@ void visitor::Scope::addIdentifier(ast::ASTFunctionDeclaration *function) {
     scopeIdentifiers.insert(std::pair<std::string, SymbolTable *>(function->identifier, temp));
 }
 
+void visitor::Scope::addIdentifier(ast::ASTFormalParam *param) {
+    SymbolTable * temp = new SymbolTable(param->tokenType);
+
+    scopeIdentifiers.insert(std::pair<std::string, SymbolTable *>(param->identifier, temp));
+}
+
 lexer::TOKEN visitor::Scope::returnTheTokenOfAnIdentifier(std::string &identifier) {
     std::map<std::string, SymbolTable* >::iterator it = scopeIdentifiers.find(identifier);
 

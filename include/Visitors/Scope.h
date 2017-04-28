@@ -23,6 +23,8 @@ namespace visitor {
 
         void addIdentifier(ast::ASTFunctionDeclaration *function);
 
+        void addIdentifier(ast::ASTFormalParam * param);
+
         lexer::TOKEN returnTheTokenOfAnIdentifier(std::string &identifier);
 
         std::vector<ast::ASTFormalParam *> * returnFormalsOfFunction(std::string &identifier);
