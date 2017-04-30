@@ -248,10 +248,14 @@ namespace visitor {
     }
 
     std::string XMLConverterVisitor::printOperator(std::string currentOperator) {
-        if (currentOperator.find(">") != string::npos) {
+        if (currentOperator.compare(">") == 0) {
             return "&gt;";
-        } else if (currentOperator.find("<") != string::npos) {
+        } else if (currentOperator.compare("<") == 0) {
             return "&lt;";
+        } else if (currentOperator.compare(">=") == 0) {
+            return "&gt;=";
+        } else if (currentOperator.compare("<=") == 0) {
+            return "&lt;=";
         } else {
             return currentOperator;
         }

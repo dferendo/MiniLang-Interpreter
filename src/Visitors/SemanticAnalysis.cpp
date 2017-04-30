@@ -106,6 +106,7 @@ namespace visitor {
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
+        free(blockScope);
         // Pop scope
         allScopes.pop();
     }
