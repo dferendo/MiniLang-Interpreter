@@ -9,7 +9,7 @@ namespace lexer {
 
     /**
      * Classification for MiniLang.
-     * Punctuation: '{' | '}' | '(' |')' | ',' | ':' | ';'.
+     * PUNCTUATION: '{' | '}' | '(' |')' | ',' | ':' | ';'.
      * END_OF_FILE: EOF.
      * NUMBER_LITERAL: Integers from 0-9.
      * LETTER: A-Za-z.
@@ -51,6 +51,7 @@ namespace lexer {
 
     /**
      * Returns the classifier according to the given character.
+     *
      * @param currentCharacter: The character that needs to be classified.
      * @return Number indication the column location of the given character in the transition table.
      */

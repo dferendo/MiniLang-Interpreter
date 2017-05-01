@@ -47,7 +47,7 @@ namespace lexer {
          * Transition function. Excel formed found in documentation/Transition.ods.
          */
         STATE miniLangTransitions[S_TOTAL][CLASSIFIER_TOTAL] = {
-                {S_01,	S_02,	S_03,	S_05,	S_05,	S_06,	S_ERR,	S_14,	S_08,	S_15,	S_00,	S_15,	S_17,	S_19,  S_ERR,   S_ERR},
+                {S_01,	S_02,	S_03,	S_05,	S_05,	S_06,	S_ERR,	S_14,	S_08,	S_15,	S_00,	S_16,	S_17,	S_19,  S_ERR,   S_ERR},
                 {S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR, S_ERR,   S_ERR},
                 {S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR, S_ERR,   S_ERR},
                 {S_ERR,	S_ERR,	S_03,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR, S_04,    S_ERR},
