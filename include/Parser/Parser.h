@@ -152,11 +152,19 @@ namespace parser {
 
         /**
          * Parses formal parameters. To add more parameters ',' is added between parameters.
-         * A formal parameter expects an identifier, ':' and a type.
-         * @return A vector containing the formal Parameters.
+         *
+         * @param formalParams: Holds all the parameters of the function.
          * @throw UnexpectedTokenWhileParsing will be thrown if unexpected token.
          */
-        std::vector<ast::ASTFormalParam *> parseFormalParam();
+        void parseFormalParams(std::vector<ast::ASTFormalParam *> &formalParams);
+
+        /**
+         * A formal parameter expects an identifier, ':' and a type.
+         *
+         * @return: the formal parameter.
+         * @throw UnexpectedTokenWhileParsing will be thrown if unexpected token.
+         */
+        ast::ASTFormalParam * parseFormalParam();
 
         /**
          * Parses a literal Node. It can be Boolean, Integer, Real or String literal.

@@ -4,7 +4,6 @@
 
 #include "../../include/Parser/Parser.h"
 #include "../../include/Exceptions/UnexpectedTokenWhileParsing.h"
-#include "../../include/Exceptions/OperatorNotFound.h"
 #include "../../include/AST/ASTExpression/ASTUnary.h"
 #include "../../include/Visitors/SemanticAnalysis.h"
 
@@ -214,6 +213,7 @@ namespace parser {
     ast::ASTFunctionDeclaration * Parser::parseFunctionDeclarationStatement() {
         string identifier;
         TOKEN tokenType;
+        vector<ast::ASTFormalParam *> formalParams;
 
         currentToken = lexer.getNextToken();
 
@@ -228,7 +228,7 @@ namespace parser {
             throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected '(' after identifier.");
         }
 
-        vector<ast::ASTFormalParam *> formalParams = parseFormalParam();
+        parseFormalParams(formalParams);
         currentToken = lexer.getNextToken();
 
         if (currentToken.tokenType != TOK_RightParenthesis) {
@@ -311,34 +311,44 @@ namespace parser {
         }
     }
 
-    vector<ast::ASTFormalParam *> Parser::parseFormalParam() {
-        vector<ast::ASTFormalParam *> formalParams;
+    void Parser::parseFormalParams(vector<ast::ASTFormalParam *> &formalParams) {
+
+        if (lexer.previewNextToken().tokenType == TOK_RightParenthesis) {
+            return;
+        }
+
+        if (formalParams.size() == 0) {
+            formalParams.push_back(parseFormalParam());
+        } else {
+            currentToken = lexer.getNextToken();
+
+            if (currentToken.tokenType != TOK_Comma) {
+                throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected ',' after param.");
+            }
+            formalParams.push_back(parseFormalParam());
+        }
+        parseFormalParams(formalParams);
+    }
+
+    ast::ASTFormalParam * Parser::parseFormalParam() {
         string identifier;
         TOKEN tokenType;
 
-        while (lexer.previewNextToken().tokenType != TOK_RightParenthesis) {
-            currentToken = lexer.getNextToken();
+        currentToken = lexer.getNextToken();
 
-            if (currentToken.tokenType != TOK_Identifier) {
-                throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected Identifier.");
-            }
-
-            identifier = currentToken.tokenName;
-            currentToken = lexer.getNextToken();
-
-            if (currentToken.tokenType != TOK_Colon) {
-                throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected ':' after identifier.");
-            }
-
-            tokenType = parseType();
-            formalParams.push_back(new ast::ASTFormalParam(identifier, tokenType));
-
-            if (lexer.previewNextToken().tokenType != TOK_Comma) {
-                break;
-            }
-            currentToken = lexer.getNextToken();
+        if (currentToken.tokenType != TOK_Identifier) {
+            throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected Identifier.");
         }
-        return formalParams;
+
+        identifier = currentToken.tokenName;
+        currentToken = lexer.getNextToken();
+
+        if (currentToken.tokenType != TOK_Colon) {
+            throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected ':' after identifier.");
+        }
+
+        tokenType = parseType();
+        return new ast::ASTFormalParam(identifier, tokenType);
     }
 
     ast::ASTExprNode * Parser::parseFactor() {
