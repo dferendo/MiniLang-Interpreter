@@ -14,10 +14,6 @@ void ast::ASTBinaryExprNode::accept(visitor::Visitor *v) {
     v->visit(this);
 }
 
-void ast::ASTBinaryExprNode::setRHS(ast::ASTExprNode *RHS) {
-    ASTBinaryExprNode::RHS = RHS;
-}
-
 ast::ASTBinaryExprNode::~ASTBinaryExprNode() {
     delete LHS;
     delete RHS;

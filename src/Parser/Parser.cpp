@@ -270,30 +270,44 @@ namespace parser {
     }
 
     ast::ASTExprNode * Parser::parseExpression() {
-        ast::ASTBinaryExprNode * parent = nullptr;
-        ast::ASTExprNode *factorLeft = parseFactor(), *factorRight;
-        string validateOperator;
+        ast::ASTExprNode * simpleExpression = parseSimpleExpression();
+        string temp;
 
-        // TODO: ask if it is allowed.
-        while (true) {
-            validateOperator = checkOperator();
-            // The expression can only be not binaryExpr if there are no operators.
-            if (validateOperator == "") {
-                break;
-            }
-            factorRight = parseFactor();
-            // There was not a previous node.
-            if (parent == nullptr) {
-                parent = new ast::ASTBinaryExprNode(validateOperator, factorLeft, factorRight);
-            } else {
-                parent = combineExpressions(parent, validateOperator, factorRight);
-            }
-        }
-
-        if (parent == nullptr) {
-            return factorLeft;
+        if (lexer.previewNextToken().tokenType == TOK_RelationalOperator) {
+            currentToken = lexer.getNextToken();
+            temp = currentToken.tokenName;
+            ast::ASTExprNode * expression = parseExpression();
+            return new ast::ASTBinaryExprNode(temp, simpleExpression, expression);
         } else {
-            return parent;
+            return simpleExpression;
+        }
+    }
+
+    ast::ASTExprNode *Parser::parseTerm() {
+        ast::ASTExprNode * factor = parseFactor();
+        string temp;
+
+        if (lexer.previewNextToken().tokenType == TOK_MultiplicativeOperator) {
+            currentToken = lexer.getNextToken();
+            temp = currentToken.tokenName;
+            ast::ASTExprNode * term = parseTerm();
+            return new ast::ASTBinaryExprNode(temp, factor, term);
+        } else {
+            return factor;
+        }
+    }
+
+    ast::ASTExprNode *Parser::parseSimpleExpression() {
+        ast::ASTExprNode * term = parseTerm();
+        string temp;
+
+        if (lexer.previewNextToken().tokenType == TOK_AdditiveOperator) {
+            currentToken = lexer.getNextToken();
+            temp = currentToken.tokenName;
+            ast::ASTExprNode * simpleExpression = parseSimpleExpression();
+            return new ast::ASTBinaryExprNode(temp, term, simpleExpression);
+        } else {
+            return term;
         }
     }
 
@@ -426,85 +440,5 @@ namespace parser {
                 parseActualParams(arguments);
             }
         }
-    }
-
-    string Parser::checkOperator() {
-        Token nextToken = lexer.previewNextToken();
-
-        switch (nextToken.tokenType) {
-            case TOK_MultiplicativeOperator:
-                currentToken = lexer.getNextToken();
-                return currentToken.tokenName;
-            case TOK_Logic:
-                currentToken = lexer.getNextToken();
-
-                if (currentToken.tokenName == "and") {
-                    return currentToken.tokenName;
-                } else if (currentToken.tokenName == "or"){
-                    return currentToken.tokenName;
-                } else {
-                    throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected 'and' or 'or' "
-                                                              "as an operator.");
-                }
-            case TOK_AdditiveOperator:
-                currentToken = lexer.getNextToken();
-                return currentToken.tokenName;
-            case TOK_RelationalOperator:
-                currentToken = lexer.getNextToken();
-                return currentToken.tokenName;
-            case TOK_Equals:
-                // For an expression, there need to be '=='.
-                currentToken = lexer.getNextToken();
-                currentToken = lexer.getNextToken();
-
-                if (currentToken.tokenType != TOK_Equals) {
-                    throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected '==' for "
-                                                              "expressions");
-                }
-                return "==";
-            default:
-                return "";
-        }
-    }
-
-    ast::ASTBinaryExprNode *Parser::combineExpressions(ast::ASTBinaryExprNode *parent, std::string currentOperator,
-                                                       ast::ASTExprNode *newFactor) {
-        int currentOperatorPrecedence = getOperatorPrecedence(parent->operation),
-                newOperatorPrecedence = getOperatorPrecedence(currentOperator);
-
-        if (newOperatorPrecedence >= currentOperatorPrecedence) {
-            return new ast::ASTBinaryExprNode(currentOperator, parent, newFactor);
-        } else {
-            ast::ASTBinaryExprNode * parentOfNextNode = parent;
-            ast::ASTBinaryExprNode * childNode = nullptr;
-
-            while (currentOperatorPrecedence > newOperatorPrecedence) {
-                childNode = dynamic_cast<ast::ASTBinaryExprNode *>(parentOfNextNode->RHS);
-
-                if (childNode != nullptr) {
-                    currentOperatorPrecedence = getOperatorPrecedence(childNode->operation);
-                    parentOfNextNode = childNode;
-                } else {
-                    parentOfNextNode->setRHS(new ast::ASTBinaryExprNode(currentOperator, parentOfNextNode->RHS, newFactor));
-                    return parent;
-                }
-            }
-            return parent;
-        }
-    }
-
-    int Parser::getOperatorPrecedence(std::string currentOperator) {
-
-        if (currentOperator == "*" || currentOperator == "/" || currentOperator == "and") {
-            return 10;
-        } else if (currentOperator == "+" || currentOperator == "-" || currentOperator == "or") {
-            return 20;
-        } else if (currentOperator == "<" || currentOperator == ">" || currentOperator == "=="
-                   || currentOperator == "!=" || currentOperator == "<=" || currentOperator == ">=") {
-            return 30;
-        } else {
-            throw OperatorNotFound("Operator was not found, Problem with the Lexer.");
-        }
-
     }
 }

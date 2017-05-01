@@ -20,8 +20,6 @@ namespace ast {
 
         ASTExprNode * RHS = nullptr;
 
-        void setRHS(ASTExprNode *RHS);
-
         ASTBinaryExprNode(const std::string &operation, ASTExprNode *LHS, ASTExprNode *RHS);
 
         virtual void accept(visitor::Visitor *v) override;

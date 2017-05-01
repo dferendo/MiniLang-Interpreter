@@ -126,14 +126,29 @@ namespace parser {
         ast::ASTBlock * parseBlock();
 
         /**
-         * Returns an Expression. Expression can be alone (no operators) which include
-         * Literals, identifiers, functionCalls, subexpressions or unary. If expression contains
-         * operators (+, -, *, /, and, not, or, <, >, ==, !=, <=, >=) a ASTBinaryExprNode will be created
-         * that contains 2 expressions which are connected by a node. The precedence of the operator is
-         * Relation Operators < Additional Operators < Multiplicative Operators.
-         * @return An ASTExprNode if the expression contains no operators, otherwise ASTBinaryExprNode.
+         * Handles the relation operators (<, >, ==, <=, >=) of an expression.
+         *
+         * @return Returns simpleExpression if no relation operator is next, otherwise
+         * returns ast::BinaryExprNode with the operator, simpleExpression and another
+         * computed simpleExpression.
          */
         ast::ASTExprNode * parseExpression();
+
+        /**
+         * Handles the additive operators (+, -) of an expression.
+         *
+         * @return: Returns the term if no additive operator is next, otherwise returns
+         * ast::BinaryExprNode with the operator, the term and another computed term.
+         */
+        ast::ASTExprNode * parseSimpleExpression();
+
+        /**
+         * Handles the multiplier operators (*, /) of an expression.
+         *
+         * @return: Returns the factor if no multiplicative operator is next, otherwise returns
+         * ast::BinaryExprNode with the operator, the factor and another computed factor.
+         */
+        ast::ASTExprNode * parseTerm();
 
         /**
          * Parses formal parameters. To add more parameters ',' is added between parameters.
@@ -177,19 +192,6 @@ namespace parser {
          * @throw UnexpectedTokenWhileParsing will be thrown if unexpected token.
          */
         lexer::TOKEN parseType();
-
-        /**
-         * Checks the operator and puts it in a string. Can throw exception if operator is not satisfied,
-         * for example '=' instead of '=='.
-         * @return String containing the operator.
-         * @throw UnexpectedTokenWhileParsing will be thrown if unexpected token.
-         */
-        std::string checkOperator();
-
-        ast::ASTBinaryExprNode * combineExpressions(ast::ASTBinaryExprNode * parent, std::string currentOperator,
-                                                    ast::ASTExprNode * newFactor);
-
-        int getOperatorPrecedence(std::string currentOperator);
     public:
         Parser(lexer::Lexer lexer);
     };
