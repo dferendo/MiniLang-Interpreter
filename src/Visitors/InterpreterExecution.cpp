@@ -18,6 +18,7 @@
 #include "../../include/AST/ASTExpression/ASTBooleanLiteral.h"
 #include "../../include/AST/ASTExpression/ASTIntegerLiteral.h"
 #include "../../include/AST/ASTExpression/ASTRealLiteral.h"
+#include "../../include/Exceptions/InterpreterError.h"
 
 using namespace ast;
 using namespace std;
@@ -219,7 +220,7 @@ namespace visitor {
         switch (evaluation->lastTypeUsed) {
             case STRING:
                 lastEvaluation->setStringEvaluation(evaluation->getStringEvaluation());
-            break;
+                break;
             case REAL:
                 lastEvaluation->setRealEvaluation(evaluation->getRealEvaluation());
                 break;
@@ -381,6 +382,7 @@ namespace visitor {
             evaluation->setStringEvaluation(LHS + RHS);
         } else {
             cout << "Problem with Semantic analysis, operator not supported for string" << endl;
+            exit(1);
         }
         lastEvaluation = evaluation;
     }
@@ -396,8 +398,7 @@ namespace visitor {
             evaluation->setIntEvaluation(LHS * RHS);
         } else if (!currentOperator.compare("/")) {
             if (RHS == 0) {
-                cout << "Division by 0 is not allowed." << endl;
-                exit(1);
+                throw exceptions::InterpreterError("Division by 0 is not allowed.");
             }
             evaluation->setIntEvaluation(LHS / RHS);
         } else if (!currentOperator.compare("<")) {
@@ -414,6 +415,7 @@ namespace visitor {
             evaluation->setBoolEvaluation(LHS >= RHS);
         } else {
             cout << "Problem with Semantic analysis, operator not supported for int" << endl;
+            exit(1);
         }
         lastEvaluation = evaluation;
     }
@@ -429,8 +431,7 @@ namespace visitor {
             evaluation->setRealEvaluation(LHS * RHS);
         } else if (!currentOperator.compare("/")) {
             if (RHS == 0) {
-                cout << "Division by 0 is not allowed." << endl;
-                exit(1);
+                throw exceptions::InterpreterError("Division by 0 is not allowed.");
             }
             evaluation->setRealEvaluation(LHS / RHS);
         } else if (!currentOperator.compare("<")) {
@@ -447,6 +448,7 @@ namespace visitor {
             evaluation->setBoolEvaluation(LHS >= RHS);
         } else {
             cout << "Problem with Semantic analysis, operator not supported for real" << endl;
+            exit(1);
         }
         lastEvaluation = evaluation;
     }
@@ -460,6 +462,7 @@ namespace visitor {
             evaluation->setBoolEvaluation(LHS || RHS);
         } else {
             cout << "Problem with Semantic analysis, operator not supported for bool" << endl;
+            exit(1);
         }
         lastEvaluation = evaluation;
     }

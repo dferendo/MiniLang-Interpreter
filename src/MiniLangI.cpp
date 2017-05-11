@@ -9,6 +9,7 @@
 #include "../include/Exceptions/LexerFailed.h"
 #include "../include/Exceptions/UnexpectedTokenWhileParsing.h"
 #include "../include/Exceptions/SemanticAnalysisError.h"
+#include "../include/Exceptions/InterpreterError.h"
 #include <algorithm>
 
 using namespace std;
@@ -69,6 +70,8 @@ void MiniLangI::readCommand() {
         } catch (UnexpectedTokenWhileParsing &error) {
             cout << error.reasonForError << endl;
         } catch (SemanticAnalysisError &error) {
+            cout << error.reason << endl;
+        } catch (InterpreterError &error) {
             cout << error.reason << endl;
         }
     }
