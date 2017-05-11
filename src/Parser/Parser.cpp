@@ -20,12 +20,8 @@ namespace parser {
         vector<ast::ASTStatementNode *> statements;
         // Program can contain 0 or more Statements. If the first token is
         // TOK_EOF, it indicates that the program is empty.
-        try {
-            while (lexer->previewNextToken().tokenType != TOK_EOF) {
-                statements.push_back(parseStatement());
-            }
-        } catch (UnexpectedTokenWhileParsing &error) {
-            cout << error.reasonForError << endl;
+        while (lexer->previewNextToken().tokenType != TOK_EOF) {
+            statements.push_back(parseStatement());
         }
         return statements;
     }
@@ -283,7 +279,7 @@ namespace parser {
         TOKEN nextToken = lexer->previewNextToken().tokenType;
 
         if (nextToken == TOK_MultiplicativeOperator ||
-                (nextToken == TOK_Logic && lexer->previewNextToken().tokenName == "and")){
+            (nextToken == TOK_Logic && lexer->previewNextToken().tokenName == "and")){
             currentToken = lexer->getNextToken();
             temp = currentToken.tokenName;
             ast::ASTExprNode * term = parseTerm();
@@ -299,7 +295,7 @@ namespace parser {
         TOKEN nextToken = lexer->previewNextToken().tokenType;
 
         if (nextToken == TOK_AdditiveOperator ||
-           (nextToken == TOK_Logic && lexer->previewNextToken().tokenName == "or")) {
+            (nextToken == TOK_Logic && lexer->previewNextToken().tokenName == "or")) {
             currentToken = lexer->getNextToken();
             temp = currentToken.tokenName;
             ast::ASTExprNode * simpleExpression = parseSimpleExpression();

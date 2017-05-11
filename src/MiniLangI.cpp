@@ -7,6 +7,7 @@
 #include "../include/Visitors/InterpreterExecution.h"
 #include "../include/Visitors/XMLConverterVisitor.h"
 #include "../include/Exceptions/LexerFailed.h"
+#include "../include/Exceptions/UnexpectedTokenWhileParsing.h"
 #include <algorithm>
 
 using namespace std;
@@ -64,6 +65,8 @@ void MiniLangI::readCommand() {
             programNode->accept(interpreter);
         } catch (LexerFailed &error) {
             cout << error.reason << endl;
+        } catch (UnexpectedTokenWhileParsing &error) {
+            cout << error.reasonForError << endl;
         }
     }
 }
