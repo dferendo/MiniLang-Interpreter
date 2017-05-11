@@ -15,6 +15,8 @@ namespace visitor {
 
     class InterpreterExecution : public Visitor {
     private:
+        Evaluation * lastEvaluation = new Evaluation();
+
         /**
          * All the scopes of the program.
          */
@@ -41,7 +43,8 @@ namespace visitor {
          */
         ScopeForInterpreter * getTopScope();
 
-        Evaluation lastEvaluation;
+        Evaluation * returnEvaluationOfIdentifierInAllScopes(std::stack<ScopeForInterpreter *> scopes,
+                                                             std::string &identifier);
 
         virtual void visit(ast::ASTNode *node) override;
 

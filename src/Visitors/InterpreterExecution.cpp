@@ -42,7 +42,9 @@ namespace visitor {
 
         node->expression->accept(this);
 
-        currentScope->addIdentifier(node->identifier, &lastEvaluation);
+        currentScope->addIdentifier(node->identifier, lastEvaluation);
+        // So that lastEvaluation is not cleared.
+        lastEvaluation = nullptr;
     }
 
     void InterpreterExecution::visit(ast::ASTAssignment *node) {
@@ -52,18 +54,18 @@ namespace visitor {
         string temp;
         node->exprNode->accept(this);
 
-        switch (lastEvaluation.lastTypeUsed) {
+        switch (lastEvaluation->lastTypeUsed) {
             case STRING:
-                cout << lastEvaluation.getStringEvaluation() << endl;
+                cout << lastEvaluation->getStringEvaluation() << endl;
                 break;
             case REAL:
-                cout << lastEvaluation.getRealEvaluation() << endl;
+                cout << lastEvaluation->getRealEvaluation() << endl;
                 break;
             case INT:
-                cout << lastEvaluation.getIntEvaluation() << endl;
+                cout << lastEvaluation->getIntEvaluation() << endl;
                 break;
             case BOOL:
-                temp = lastEvaluation.getBoolEvaluation() ? "true" : "false";
+                temp = lastEvaluation->getBoolEvaluation() ? "true" : "false";
                 cout << temp << endl;
                 break;
         }
@@ -94,24 +96,44 @@ namespace visitor {
     }
 
     void InterpreterExecution::visit(ast::ASTBooleanLiteral *node) {
+        if (lastEvaluation != nullptr) {
+            free(lastEvaluation);
+        }
+        lastEvaluation = new Evaluation();
         // Boolean literal are still an expression
-        lastEvaluation.setBoolEvaluation(node->literalValue);
+        lastEvaluation->setBoolEvaluation(node->literalValue);
     }
 
     void InterpreterExecution::visit(ast::ASTIntegerLiteral *node) {
-        lastEvaluation.setIntEvaluation(node->literalValue);
+        if (lastEvaluation != nullptr) {
+            free(lastEvaluation);
+        }
+        lastEvaluation = new Evaluation();
+        lastEvaluation->setIntEvaluation(node->literalValue);
     }
 
     void InterpreterExecution::visit(ast::ASTRealLiteral *node) {
-        lastEvaluation.setRealEvaluation(node->realValue);
+        if (lastEvaluation != nullptr) {
+            free(lastEvaluation);
+        }
+        lastEvaluation = new Evaluation();
+        lastEvaluation->setRealEvaluation(node->realValue);
     }
 
     void InterpreterExecution::visit(ast::ASTStringLiteral *node) {
-        lastEvaluation.setStringEvaluation(node->literalString);
+        if (lastEvaluation != nullptr) {
+            free(lastEvaluation);
+        }
+        lastEvaluation = new Evaluation();
+        lastEvaluation->setStringEvaluation(node->literalString);
     }
 
     void InterpreterExecution::visit(ast::ASTIdentifier *node) {
-
+        if (lastEvaluation != nullptr) {
+            free(lastEvaluation);
+        }
+        lastEvaluation = new Evaluation();
+        lastEvaluation = returnEvaluationOfIdentifierInAllScopes(allScopes, node->identifier);
     }
 
     void InterpreterExecution::visit(ast::ASTSubExpression *node) {
@@ -142,5 +164,23 @@ namespace visitor {
 
     ScopeForInterpreter *InterpreterExecution::getTopScope() {
         return allScopes.top();
+    }
+
+    Evaluation * InterpreterExecution::returnEvaluationOfIdentifierInAllScopes(stack<ScopeForInterpreter *> scopes,
+                                                                              string &identifier) {
+        ScopeForInterpreter * currentScope;
+        Evaluation * temp;
+
+        while (!scopes.empty()) {
+            currentScope = scopes.top();
+            temp = currentScope->returnIdentifierValue(identifier);
+            if (temp != nullptr) {
+                return temp;
+            }
+            scopes.pop();
+        }
+        // If this occurs, semantic analysis failed.
+        cout << "Semantic analysis failed." << endl;
+        exit(2);
     }
 }
