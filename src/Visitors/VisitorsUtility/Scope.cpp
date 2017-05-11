@@ -1,9 +1,9 @@
 //
 // Created by dylan on 25/04/2017.
 //
-#include "../../include/Visitors/Scope.h"
-#include "../../include/AST/ASTStatements/ASTVariableDeclaration.h"
-#include "../../include/AST/ASTStatements/ASTFunctionDeclaration.h"
+#include "../../../include/Visitors/VisitorsUtility/Scope.h"
+#include "../../../include/AST/ASTStatements/ASTVariableDeclaration.h"
+#include "../../../include/AST/ASTStatements/ASTFunctionDeclaration.h"
 #include <algorithm>
 
 bool visitor::Scope::identifierExists(std::string &identifier) {

@@ -1,7 +1,7 @@
 //
 // Created by dylan on 10/05/2017.
 //
-#include "../../include/Visitors/Evaluation.h"
+#include "../../../include/Visitors/VisitorsUtility/Evaluation.h"
 
 void visitor::Evaluation::setStringEvaluation(const std::string &stringEvaluation) {
     lastTypeUsed = STRING;

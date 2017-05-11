@@ -34,6 +34,7 @@ namespace visitor {
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
+        free(globalScope);
         popScope();
     }
 

@@ -7,7 +7,7 @@
 
 #include <stack>
 #include "Visitor.h"
-#include "Scope.h"
+#include "VisitorsUtility/Scope.h"
 
 namespace visitor {
 

@@ -5,8 +5,8 @@
 #ifndef COMPILERTHEORY_SYMBOLTABLE_H
 #define COMPILERTHEORY_SYMBOLTABLE_H
 
-#include "../Lexer/Token.h"
-#include "../AST/ASTStatements/ASTFormalParam.h"
+#include "../../Lexer/Token.h"
+#include "../../AST/ASTStatements/ASTFormalParam.h"
 
 namespace visitor {
 

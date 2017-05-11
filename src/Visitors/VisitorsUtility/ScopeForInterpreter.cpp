@@ -1,7 +1,7 @@
 //
 // Created by dylan on 11/05/2017.
 //
-#include "../../include/Visitors/ScopeForInterpreter.h"
+#include "../../../include/Visitors/VisitorsUtility/ScopeForInterpreter.h"
 
 void visitor::ScopeForInterpreter::addIdentifier(std::string identifier, visitor::Evaluation *evaluation) {
     scopeIdentifiers.insert(std::pair<std::string, Evaluation *>(identifier, evaluation));

@@ -7,8 +7,8 @@
 
 #include <map>
 #include <vector>
-#include "../AST/ASTExpression/ASTIdentifier.h"
-#include "../Lexer/Token.h"
+#include "../../AST/ASTExpression/ASTIdentifier.h"
+#include "../../Lexer/Token.h"
 #include "SymbolTable.h"
 
 namespace visitor {

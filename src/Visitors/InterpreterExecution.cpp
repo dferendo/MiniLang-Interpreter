@@ -3,8 +3,6 @@
 //
 #include <functional>
 #include "../../include/Visitors/InterpreterExecution.h"
-#include "../../include/AST/ASTStatements/ASTStatementNode.h"
-#include "../../include/AST/ASTStatements/ASTVariableDeclaration.h"
 #include "../../include/AST/ASTStatements/ASTBlock.h"
 #include "../../include/AST/ASTStatements/ASTAssignment.h"
 #include "../../include/AST/ASTExpression/ASTBinaryExprNode.h"
@@ -35,6 +33,7 @@ namespace visitor {
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
+        free(globalScope);
         popScope();
     }
 
@@ -49,6 +48,25 @@ namespace visitor {
     }
 
     void InterpreterExecution::visit(ast::ASTAssignment *node) {
+        // Assignment cannot change type so use the identifier previous Evaluation
+        Evaluation * assignmentEvaluation = returnEvaluationOfIdentifierInAllScopes(allScopes, node->identifier);
+
+        node->exprNode->accept(this);
+
+        switch (lastEvaluation->lastTypeUsed) {
+            case STRING:
+                assignmentEvaluation->setStringEvaluation(lastEvaluation->getStringEvaluation());
+                break;
+            case REAL:
+                assignmentEvaluation->setRealEvaluation(lastEvaluation->getRealEvaluation());
+                break;
+            case INT:
+                assignmentEvaluation->setIntEvaluation(lastEvaluation->getIntEvaluation());
+                break;
+            case BOOL:
+                assignmentEvaluation->setBoolEvaluation(lastEvaluation->getBoolEvaluation());
+                break;
+        }
     }
 
     void InterpreterExecution::visit(ast::ASTPrintStatement *node) {
@@ -73,7 +91,16 @@ namespace visitor {
     }
 
     void InterpreterExecution::visit(ast::ASTBlock *node) {
+        ScopeForInterpreter *blockScope = new ScopeForInterpreter();
+        // Push new Scope
+        allScopes.push(blockScope);
 
+        for (auto const &childNode : node->statements) {
+            childNode->accept(this);
+        }
+        free(blockScope);
+        // Pop scope
+        allScopes.pop();
     }
 
     void InterpreterExecution::visit(ast::ASTIfStatement *node) {

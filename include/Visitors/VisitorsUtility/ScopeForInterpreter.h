@@ -8,7 +8,7 @@
 #include <string>
 #include <map>
 #include "Evaluation.h"
-#include "../AST/ASTStatements/ASTVariableDeclaration.h"
+#include "../../AST/ASTStatements/ASTVariableDeclaration.h"
 
 namespace visitor {
 
