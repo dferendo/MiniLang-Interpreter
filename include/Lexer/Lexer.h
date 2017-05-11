@@ -18,7 +18,7 @@ namespace lexer {
     public:
         Lexer();
 
-        void tokeninizeProgram(std::string &program);
+        void tokenizeProgram(std::string &program);
 
         /**
          * Returns the next Token.

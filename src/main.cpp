@@ -13,16 +13,6 @@ using namespace parser;
 int main(int argc, char **argv) {
     MiniLangI miniLangI;
     miniLangI.setup();
-//    if (argc != 2) {
-//        std::cout << "Program not passed through the arguments!" << std::endl;
-//    } else if (!checkExtension(argv[1])) {
-//        std::cout << "Extension of file not compatible" << std::endl;
-//    } else {
-//        std::ifstream program(argv[1]);
-//        Lexer lexer(covertFileToString(program));
-//        Parser parser(lexer);
-//    }
-//    return 0;
 }
 
 /**

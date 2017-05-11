@@ -27,11 +27,16 @@ using namespace ast;
 
 namespace visitor {
 
-    XMLConverterVisitor::XMLConverterVisitor() : currentIndent(0) {
+    XMLConverterVisitor::XMLConverterVisitor() {
+        currentIndent = 0;
         outputXML.open("program.xml");
     }
 
     void XMLConverterVisitor::visit(ASTNode *node) {
+        // Set default to the main node.
+        currentIndent = 0;
+        outputXML.open("program.xml");
+        // Start parsing main node.
         string word = getStartingPositionAfterIndent();
         outputXML << word << "<Program>" << endl;
 
@@ -260,5 +265,4 @@ namespace visitor {
             return currentOperator;
         }
     }
-
 }

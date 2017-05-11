@@ -119,7 +119,7 @@ namespace lexer {
 
     Lexer::Lexer() {}
 
-    void Lexer::tokeninizeProgram(std::string &program) {
+    void Lexer::tokenizeProgram(std::string &program) {
         allTokens.clear();
         currentIndex = 0;
         tokenization(program);

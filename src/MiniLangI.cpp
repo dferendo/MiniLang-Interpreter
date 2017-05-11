@@ -35,6 +35,11 @@ void MiniLangI::readCommand() {
     while (true) {
         cout << "MLi> ";
         getline(cin, lineRead);
-        break;
+        // Run Lexer;
+        lexer.tokenizeProgram(lineRead);
+        // Run parser and add the new statements to the main node.
+        programNode->addStatements(parser.parse());
+        // Run XML file
+        programNode->accept(xmlConverter);
     }
 }
