@@ -31,7 +31,7 @@ namespace parser {
         /**
          * Holds the lexer that will be used to pass the tokens.
          */
-        lexer::Lexer lexer;
+        lexer::Lexer * lexer;
 
         /**
          * Holds the current Token.
@@ -194,7 +194,7 @@ namespace parser {
          */
         lexer::TOKEN parseType();
     public:
-        Parser(lexer::Lexer lexer);
+        Parser(lexer::Lexer * lexer);
 
         /**
          * Starts the parser. The program can contains 0 or more statements. Parser will

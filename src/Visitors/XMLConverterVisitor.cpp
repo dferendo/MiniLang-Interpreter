@@ -27,10 +27,7 @@ using namespace ast;
 
 namespace visitor {
 
-    XMLConverterVisitor::XMLConverterVisitor() {
-        currentIndent = 0;
-        outputXML.open("program.xml");
-    }
+    XMLConverterVisitor::XMLConverterVisitor() {}
 
     void XMLConverterVisitor::visit(ASTNode *node) {
         // Set default to the main node.
@@ -46,6 +43,7 @@ namespace visitor {
         }
         currentIndent--;
         outputXML << word << "</Program>" << endl;
+        outputXML.close();
     }
 
     void XMLConverterVisitor::visit(ASTVariableDeclaration *node) {
