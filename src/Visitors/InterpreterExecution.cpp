@@ -117,7 +117,16 @@ namespace visitor {
     }
 
     void InterpreterExecution::visit(ast::ASTIfStatement *node) {
+        node->exprNode->accept(this);
 
+        if (lastEvaluation->getBoolEvaluation()) {
+            node->astBlockForIF->accept(this);
+            return;
+        }
+        // Optional else block.
+        if (node->astBlockForElse != nullptr) {
+            node->astBlockForElse->accept(this);
+        }
     }
 
     void InterpreterExecution::visit(ast::ASTWhileStatement *node) {
