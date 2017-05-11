@@ -288,9 +288,9 @@ namespace visitor {
         Evaluation * evaluation = new Evaluation();
 
         if (!currentOperator.compare("and")) {
-            evaluation->setRealEvaluation(LHS && RHS);
+            evaluation->setBoolEvaluation(LHS && RHS);
         } else if (!currentOperator.compare("or")) {
-            evaluation->setRealEvaluation(LHS || RHS);
+            evaluation->setBoolEvaluation(LHS || RHS);
         } else {
             cout << "Problem with Semantic analysis, operator not supported for bool" << endl;
         }
