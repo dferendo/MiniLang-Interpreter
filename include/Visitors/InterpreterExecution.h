@@ -20,7 +20,7 @@ namespace visitor {
             std::string identifier;
         } FunctionCalled;
 
-        Evaluation * lastEvaluation = new Evaluation();
+        Evaluation * lastEvaluation = nullptr;
 
         /**
          * All the scopes of the program.

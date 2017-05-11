@@ -247,6 +247,12 @@ namespace visitor {
 
         for (size_t i = 0; i < node->actualParams.size(); i++) {
             node->actualParams[i]->accept(this);
+
+            // Integers can be passed as real.
+            if (lastToken == TOK_IntType && (*params)[i]->tokenType == TOK_RealType) {
+                continue;
+            }
+
             if (lastToken != (*params)[i]->tokenType) {
                 cout << "Parameter type mismatch, expecting '" << TOKEN_STRING[(*params)[i]->tokenType]
                      << "'" << endl;
