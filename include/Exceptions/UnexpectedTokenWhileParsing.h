@@ -8,9 +8,11 @@
 #include <iostream>
 
 namespace exceptions {
+
     class UnexpectedTokenWhileParsing {
     public:
         std::string reasonForError;
+
         UnexpectedTokenWhileParsing(const std::string &reasonForError);
     };
 }

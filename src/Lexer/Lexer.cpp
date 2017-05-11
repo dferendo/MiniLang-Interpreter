@@ -3,6 +3,7 @@
 //
 
 #include "../../include/Lexer/Lexer.h"
+#include "../../include/Exceptions/LexerFailed.h"
 #include <regex>
 
 using namespace std;
@@ -15,6 +16,12 @@ namespace lexer {
 
         while (currentToken.tokenType != TOK_EOF) {
             currentToken = nextWord(program, charIndex);
+
+            // Error with the Lexer.
+            if (currentToken.tokenType == TOK_Error) {
+                cout << currentToken.tokenName << endl;
+                exit(1);
+            }
             // Comments TOKENS will be ignored.
             if (currentToken.tokenType != TOK_Comment) {
                 allTokens.push_back(currentToken);
@@ -25,7 +32,7 @@ namespace lexer {
     Token Lexer::nextWord(std::string &program, int &charIndex) {
         STATE currentState = S_00;
         char currentChar;
-        string lexeme = "";
+        string lexeme = "", error;
         stack<STATE> stack;
         stack.push(S_ERR);
 
@@ -55,9 +62,8 @@ namespace lexer {
         if (checkFinalState(currentState)) {
             return determineToken(lexeme, currentState);
         } else {
-            cout << "Lexer failed at Line: " << determineErrorLine(program, charIndex) << ". Please "
-                    "fix and try again. The Lexer will terminate." << endl;
-            exit(1);
+            error = "Lexer failed at Line: " + to_string(determineErrorLine(program, charIndex)) + ". Please fix and try again.";
+            throw exceptions::LexerFailed(error);
         }
     }
 

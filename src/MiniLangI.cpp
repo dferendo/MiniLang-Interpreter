@@ -6,6 +6,7 @@
 #include "../include/Visitors/SemanticAnalysis.h"
 #include "../include/Visitors/InterpreterExecution.h"
 #include "../include/Visitors/XMLConverterVisitor.h"
+#include "../include/Exceptions/LexerFailed.h"
 #include <algorithm>
 
 using namespace std;
@@ -13,6 +14,7 @@ using namespace lexer;
 using namespace parser;
 using namespace visitor;
 using namespace ast;
+using namespace exceptions;
 
 void MiniLangI::setup() {
     cout << "MiniLangI 1.0.0" << endl;
@@ -37,27 +39,32 @@ void MiniLangI::readCommand() {
         getline(cin, lineRead);
         commandReturn = checkCommand(lineRead);
 
-        if (commandReturn == 2) {
-            break;
-        } else if (commandReturn == -1) {
-            // Error command continue
-            continue;
-        } else if (commandReturn == 3) {
-            // Print variables.
-            // TODO:
-        }
-        // Run Lexer;
-        if (commandReturn != 1) {
-            lineRead += '\0';
-            lexer->tokenizeProgram(lineRead);
-        }
+        try {
 
-        // Run parser and add the new statements to the main node.
-        programNode->addStatements(parser.parse());
-        // Run Visitors
-        programNode->accept(xmlConverter);
-        programNode->accept(semanticAnalysis);
-        programNode->accept(interpreter);
+            if (commandReturn == 2) {
+                break;
+            } else if (commandReturn == -1) {
+                // Error command continue
+                continue;
+            } else if (commandReturn == 3) {
+                // Print variables.
+                // TODO:
+            }
+            // Run Lexer;
+            if (commandReturn != 1) {
+                lineRead += '\0';
+                lexer->tokenizeProgram(lineRead);
+            }
+
+            // Run parser and add the new statements to the main node.
+            programNode->addStatements(parser.parse());
+            // Run Visitors
+            programNode->accept(xmlConverter);
+            programNode->accept(semanticAnalysis);
+            programNode->accept(interpreter);
+        } catch (LexerFailed &error) {
+            cout << error.reason << endl;
+        }
     }
 }
 
