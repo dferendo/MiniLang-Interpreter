@@ -92,8 +92,21 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTBlock *node) {
         ScopeForInterpreter *blockScope = new ScopeForInterpreter();
+        ast::ASTFunctionDeclaration * functionDeclaration;
         // Push new Scope
         allScopes.push(blockScope);
+
+        // Check if it was a function
+        if (isNextBlockFunction) {
+            isNextBlockFunction = false;
+            functionDeclaration = returnBlockOfFunction(allScopes, functionCalled.identifier);
+            // Put the function arguments passed with the identifiers of the function
+            // and add them to the scope.
+            for (unsigned long i = 0; i < functionCalled.paramsOfAFunction.size(); i++) {
+                functionCalled.paramsOfAFunction.at(i)->accept(this);
+                functionDeclaration->formalParams.at(i)->accept(this);
+            }
+        }
 
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
@@ -112,15 +125,23 @@ namespace visitor {
     }
 
     void InterpreterExecution::visit(ast::ASTReturnStatement *node) {
-
+        node->exprNode->accept(this);
     }
 
     void InterpreterExecution::visit(ast::ASTFormalParam *node) {
-
+        ScopeForInterpreter * currentScope = getTopScope();
+        // The actual param is located at the last Evaluation
+        currentScope->addIdentifier(node->identifier, lastEvaluation);
+        // So that lastEvaluation is not cleared.
+        lastEvaluation = nullptr;
     }
 
     void InterpreterExecution::visit(ast::ASTFunctionDeclaration *node) {
-
+        ScopeForInterpreter * currentScope = getTopScope();
+        // Hold the block of the function so that the block can be executed when
+        // called and hold the parameters so the arguments of function call
+        // can be substituted with the parameters of the function.
+        currentScope->addFunctionBlock(node->identifier, node);
     }
 
     void InterpreterExecution::visit(ast::ASTBooleanLiteral *node) {
@@ -169,7 +190,16 @@ namespace visitor {
     }
 
     void InterpreterExecution::visit(ast::ASTFunctionCall *node) {
+        ast::ASTFunctionDeclaration * functionDeclaration;
+        // Set variables so that block knows the new function
+        isNextBlockFunction = true;
+        functionCalled.identifier = node->identifier;
+        functionCalled.paramsOfAFunction = node->actualParams;
 
+        functionDeclaration = returnBlockOfFunction(allScopes, node->identifier);
+        // Call block to be executed
+        functionDeclaration->astBlock->accept(this);
+        // The return will be updated by the return function.
     }
 
     void InterpreterExecution::visit(ast::ASTUnary *node) {
@@ -241,7 +271,25 @@ namespace visitor {
             scopes.pop();
         }
         // If this occurs, semantic analysis failed.
-        cout << "Semantic analysis failed." << endl;
+        cout << "Semantic analysis failed. Identifier is suppose to exists." << endl;
+        exit(2);
+    }
+
+    ast::ASTFunctionDeclaration *
+    InterpreterExecution::returnBlockOfFunction(std::stack<ScopeForInterpreter *> scopes, std::string &identifier) {
+        ScopeForInterpreter * currentScope;
+        ASTFunctionDeclaration * temp;
+
+        while (!scopes.empty()) {
+            currentScope = scopes.top();
+            temp = currentScope->returnIdentifierFunctionBlock(identifier);
+            if (temp != nullptr) {
+                return temp;
+            }
+            scopes.pop();
+        }
+        // If this occurs, semantic analysis failed.
+        cout << "Semantic analysis failed. Function declaration should exists." << endl;
         exit(2);
     }
 

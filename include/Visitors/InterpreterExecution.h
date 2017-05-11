@@ -15,6 +15,11 @@ namespace visitor {
 
     class InterpreterExecution : public Visitor {
     private:
+        typedef struct FunctionCalled {
+            std::vector<ast::ASTExprNode *> paramsOfAFunction;
+            std::string identifier;
+        } FunctionCalled;
+
         Evaluation * lastEvaluation = new Evaluation();
 
         /**
@@ -22,6 +27,9 @@ namespace visitor {
          */
         std::stack<ScopeForInterpreter *> allScopes;
 
+        bool isNextBlockFunction = false;
+
+        FunctionCalled functionCalled;
         /**
          * Push the new scope in the allScopes stack. Called whenever there is a block.
          *
@@ -45,6 +53,9 @@ namespace visitor {
 
         Evaluation * returnEvaluationOfIdentifierInAllScopes(std::stack<ScopeForInterpreter *> scopes,
                                                              std::string &identifier);
+
+        ast::ASTFunctionDeclaration * returnBlockOfFunction(std::stack<ScopeForInterpreter *> scopes,
+                                              std::string &identifier);
 
         void handleOperator(Evaluation * LHS, Evaluation * RHS, std::string currentOperator);
 
