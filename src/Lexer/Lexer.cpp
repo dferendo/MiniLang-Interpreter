@@ -38,7 +38,7 @@ namespace lexer {
             }
             stack.push(currentState);
             currentState = miniLangTransitions[currentState][getClassifier(currentChar)];
-            if (currentChar == EOF) {
+            if (currentChar == EOF || currentChar == '\0') {
                 break;
             }
         }

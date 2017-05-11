@@ -23,6 +23,7 @@ void MiniLangI::setup() {
 
 void MiniLangI::readCommand() {
     std::string lineRead;
+    int commandReturn;
     // Set up lexer and parser.
     Parser parser(lexer);
     ASTNode * programNode = new ASTNode();
@@ -34,13 +35,29 @@ void MiniLangI::readCommand() {
     while (true) {
         cout << "MLi> ";
         getline(cin, lineRead);
-        checkCommand(lineRead);
+        commandReturn = checkCommand(lineRead);
+
+        if (commandReturn == 2) {
+            break;
+        } else if (commandReturn == -1) {
+            // Error command continue
+            continue;
+        } else if (commandReturn == 3) {
+            // Print variables.
+            // TODO:
+        }
         // Run Lexer;
-//        lexer.tokenizeProgram(lineRead);
+        if (commandReturn != 1) {
+            lineRead += '\0';
+            lexer->tokenizeProgram(lineRead);
+        }
+
         // Run parser and add the new statements to the main node.
         programNode->addStatements(parser.parse());
-        // Run XML file
+        // Run Visitors
         programNode->accept(xmlConverter);
+        programNode->accept(semanticAnalysis);
+        programNode->accept(interpreter);
     }
 }
 
@@ -59,18 +76,22 @@ int MiniLangI::checkCommand(string &lineRead) {
 
         if (!checkExtension(lineRead)) {
             cout << "Wrong file extension, .gulp accepted only." << endl;
-            return -2;
+            return -1;
         }
         // Should remain the file name.
         std::ifstream program(lineRead);
         fileRead = covertFileToString(program);
 
         if (fileRead == "") {
-            return -3;
+            return -1;
         } else {
             lexer->tokenizeProgram(fileRead);
             return 1;
         }
+    } else if (lineRead.find("#quit") != string::npos) {
+        return 2;
+    } else if (lineRead.find("#st") != string::npos) {
+        return 3;
     } else {
         cout << "Command not found." << endl;
         return -1;
