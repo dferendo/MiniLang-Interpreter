@@ -131,6 +131,15 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTWhileStatement *node) {
 
+        while (true) {
+            // Evaluate the condition
+            node->exprNode->accept(this);
+            if (lastEvaluation->getBoolEvaluation()) {
+                node->astBlock->accept(this);
+            } else {
+                break;
+            }
+        }
     }
 
     void InterpreterExecution::visit(ast::ASTReturnStatement *node) {
@@ -155,7 +164,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTBooleanLiteral *node) {
         if (lastEvaluation != nullptr) {
-            free(lastEvaluation);
+           // free(lastEvaluation);
         }
         lastEvaluation = new Evaluation();
         // Boolean literal are still an expression
@@ -164,7 +173,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTIntegerLiteral *node) {
         if (lastEvaluation != nullptr) {
-            free(lastEvaluation);
+//            free(lastEvaluation);
         }
         lastEvaluation = new Evaluation();
         lastEvaluation->setIntEvaluation(node->literalValue);
@@ -172,7 +181,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTRealLiteral *node) {
         if (lastEvaluation != nullptr) {
-            free(lastEvaluation);
+//            free(lastEvaluation);
         }
         lastEvaluation = new Evaluation();
         lastEvaluation->setRealEvaluation(node->realValue);
@@ -180,7 +189,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTStringLiteral *node) {
         if (lastEvaluation != nullptr) {
-            free(lastEvaluation);
+//            free(lastEvaluation);
         }
         lastEvaluation = new Evaluation();
         lastEvaluation->setStringEvaluation(node->literalString);
@@ -188,9 +197,8 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTIdentifier *node) {
         if (lastEvaluation != nullptr) {
-            free(lastEvaluation);
+//            free(lastEvaluation);
         }
-        lastEvaluation = new Evaluation();
         lastEvaluation = returnEvaluationOfIdentifierInAllScopes(allScopes, node->identifier);
     }
 
@@ -231,7 +239,7 @@ namespace visitor {
             exit(1);
         }
 
-        free(lastEvaluation);
+//        free(lastEvaluation);
         lastEvaluation = evaluation;
     }
 
@@ -248,8 +256,8 @@ namespace visitor {
 
         handleOperator(LHS, RHS, node->operation);
 
-        free(LHS);
-        free(RHS);
+//        free(LHS);
+//        free(RHS);
     }
 
     void InterpreterExecution::pushScope(ScopeForInterpreter *scope) {
