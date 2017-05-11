@@ -33,8 +33,8 @@ namespace visitor {
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
-        free(globalScope);
         popScope();
+        free(globalScope);
     }
 
     void InterpreterExecution::visit(ast::ASTVariableDeclaration *node) {
@@ -55,7 +55,8 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTAssignment *node) {
         // Assignment cannot change type so use the identifier previous Evaluation
-        Evaluation * assignmentEvaluation = returnEvaluationOfIdentifierInAllScopes(allScopes, node->identifier);
+        Evaluation * assignmentEvaluation =
+                returnEvaluationOfIdentifierInAllScopes(allScopes, node->identifier);
 
         node->exprNode->accept(this);
 
@@ -123,9 +124,9 @@ namespace visitor {
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
-        free(blockScope);
         // Pop scope
         allScopes.pop();
+        free(blockScope);
     }
 
     void InterpreterExecution::visit(ast::ASTIfStatement *node) {
@@ -176,7 +177,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTBooleanLiteral *node) {
         if (lastEvaluation != nullptr) {
-            // free(lastEvaluation);
+            free(lastEvaluation);
         }
         lastEvaluation = new Evaluation();
         // Boolean literal are still an expression
@@ -185,7 +186,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTIntegerLiteral *node) {
         if (lastEvaluation != nullptr) {
-//            free(lastEvaluation);
+            free(lastEvaluation);
         }
         lastEvaluation = new Evaluation();
         lastEvaluation->setIntEvaluation(node->literalValue);
@@ -193,7 +194,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTRealLiteral *node) {
         if (lastEvaluation != nullptr) {
-//            free(lastEvaluation);
+            free(lastEvaluation);
         }
         lastEvaluation = new Evaluation();
         lastEvaluation->setRealEvaluation(node->realValue);
@@ -201,17 +202,34 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTStringLiteral *node) {
         if (lastEvaluation != nullptr) {
-//            free(lastEvaluation);
+            free(lastEvaluation);
         }
         lastEvaluation = new Evaluation();
         lastEvaluation->setStringEvaluation(node->literalString);
     }
 
     void InterpreterExecution::visit(ast::ASTIdentifier *node) {
+        Evaluation * evaluation;
         if (lastEvaluation != nullptr) {
-//            free(lastEvaluation);
+            free(lastEvaluation);
         }
-        lastEvaluation = returnEvaluationOfIdentifierInAllScopes(allScopes, node->identifier);
+        lastEvaluation = new Evaluation();
+        evaluation = returnEvaluationOfIdentifierInAllScopes(allScopes, node->identifier);
+        // Create a copy of the identifier so that the previous identifier remains untouched
+        switch (evaluation->lastTypeUsed) {
+            case STRING:
+                lastEvaluation->setStringEvaluation(evaluation->getStringEvaluation());
+            break;
+            case REAL:
+                lastEvaluation->setRealEvaluation(evaluation->getRealEvaluation());
+                break;
+            case INT:
+                lastEvaluation->setIntEvaluation(evaluation->getIntEvaluation());
+                break;
+            case BOOL:
+                lastEvaluation->setBoolEvaluation(evaluation->getBoolEvaluation());
+                break;
+        }
     }
 
     void InterpreterExecution::visit(ast::ASTSubExpression *node) {
@@ -251,7 +269,9 @@ namespace visitor {
             exit(1);
         }
 
-//        free(lastEvaluation);
+        if (lastEvaluation != nullptr) {
+            free(lastEvaluation);
+        }
         lastEvaluation = evaluation;
     }
 
@@ -268,8 +288,8 @@ namespace visitor {
 
         handleOperator(LHS, RHS, node->operation);
 
-//        free(LHS);
-//        free(RHS);
+        free(LHS);
+        free(RHS);
     }
 
     void InterpreterExecution::pushScope(ScopeForInterpreter *scope) {

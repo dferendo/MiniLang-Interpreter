@@ -34,8 +34,8 @@ namespace visitor {
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
-        free(globalScope);
         popScope();
+        free(globalScope);
     }
 
     void SemanticAnalysis::visit(ASTVariableDeclaration *node) {
@@ -107,9 +107,9 @@ namespace visitor {
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
-        free(blockScope);
         // Pop scope
         allScopes.pop();
+        free(blockScope);
     }
 
     void SemanticAnalysis::visit(ASTIfStatement *node) {
