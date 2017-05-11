@@ -9,11 +9,38 @@
 #include "Visitor.h"
 #include "Scope.h"
 #include "Evaluation.h"
+#include "ScopeForInterpreter.h"
 
 namespace visitor {
 
     class InterpreterExecution : public Visitor {
     private:
+        /**
+         * All the scopes of the program.
+         */
+        std::stack<ScopeForInterpreter *> allScopes;
+
+        /**
+         * Push the new scope in the allScopes stack. Called whenever there is a block.
+         *
+         * @param scope: The new scope.
+         */
+        void pushScope(ScopeForInterpreter *scope);
+
+        /**
+         * Pop a scope from the allScopes stack.
+         *
+         * @return: Returns the last added scope from allScopes.
+         */
+        ScopeForInterpreter * popScope();
+
+        /**
+         * Get the top scope from allScopes stack.
+         *
+         * @return: Returns the top scope from allScopes.
+         */
+        ScopeForInterpreter * getTopScope();
+
         Evaluation lastEvaluation;
 
         virtual void visit(ast::ASTNode *node) override;
