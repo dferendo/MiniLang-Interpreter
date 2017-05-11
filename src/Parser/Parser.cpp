@@ -289,8 +289,10 @@ namespace parser {
     ast::ASTExprNode *Parser::parseTerm() {
         ast::ASTExprNode * factor = parseFactor();
         string temp;
+        TOKEN nextToken = lexer.previewNextToken().tokenType;
 
-        if (lexer.previewNextToken().tokenType == TOK_MultiplicativeOperator) {
+        if (nextToken == TOK_MultiplicativeOperator ||
+                (nextToken == TOK_Logic && lexer.previewNextToken().tokenName == "and")){
             currentToken = lexer.getNextToken();
             temp = currentToken.tokenName;
             ast::ASTExprNode * term = parseTerm();
@@ -303,8 +305,10 @@ namespace parser {
     ast::ASTExprNode *Parser::parseSimpleExpression() {
         ast::ASTExprNode * term = parseTerm();
         string temp;
+        TOKEN nextToken = lexer.previewNextToken().tokenType;
 
-        if (lexer.previewNextToken().tokenType == TOK_AdditiveOperator) {
+        if (nextToken == TOK_AdditiveOperator ||
+           (nextToken == TOK_Logic && lexer.previewNextToken().tokenName == "or")) {
             currentToken = lexer.getNextToken();
             temp = currentToken.tokenName;
             ast::ASTExprNode * simpleExpression = parseSimpleExpression();
