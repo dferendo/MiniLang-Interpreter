@@ -1,6 +1,7 @@
 //
 // Created by dylan on 28/04/2017.
 //
+#include <functional>
 #include "../../include/Visitors/InterpreterExecution.h"
 #include "../../include/AST/ASTStatements/ASTStatementNode.h"
 #include "../../include/AST/ASTStatements/ASTVariableDeclaration.h"
@@ -137,7 +138,7 @@ namespace visitor {
     }
 
     void InterpreterExecution::visit(ast::ASTSubExpression *node) {
-
+        node->subExpression->accept(this);
     }
 
     void InterpreterExecution::visit(ast::ASTFunctionCall *node) {
@@ -145,7 +146,27 @@ namespace visitor {
     }
 
     void InterpreterExecution::visit(ast::ASTUnary *node) {
+        Evaluation * evaluation = new Evaluation();
+        node->unaryExpression->accept(this);
 
+        if (!node->unary.compare("not")) {
+            evaluation->setBoolEvaluation(!lastEvaluation->getBoolEvaluation());
+        } else if (!node->unary.compare("-")) {
+            if (lastEvaluation->lastTypeUsed == INT) {
+                evaluation->setIntEvaluation(lastEvaluation->getIntEvaluation() * -1);
+            } else if (lastEvaluation->lastTypeUsed == REAL) {
+                evaluation->setRealEvaluation(lastEvaluation->getRealEvaluation() * -1);
+            } else {
+                cout << "Semantic analysis incorrect for Unary." << endl;
+                exit(1);
+            }
+        } else {
+            cout << "Semantic analysis incorrect for Unary." << endl;
+            exit(1);
+        }
+
+        free(lastEvaluation);
+        lastEvaluation = evaluation;
     }
 
     void InterpreterExecution::visit(ast::ASTBinaryExprNode *node) {
