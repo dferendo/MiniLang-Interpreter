@@ -149,7 +149,20 @@ namespace visitor {
     }
 
     void InterpreterExecution::visit(ast::ASTBinaryExprNode *node) {
+        Evaluation *LHS, *RHS;
 
+        node->LHS->accept(this);
+        LHS = lastEvaluation;
+        // So that the last evaluation does not get freed
+        lastEvaluation = nullptr;
+        node->RHS->accept(this);
+        RHS = lastEvaluation;
+        lastEvaluation = nullptr;
+
+        handleOperator(LHS, RHS, node->operation);
+
+        free(LHS);
+        free(RHS);
     }
 
     void InterpreterExecution::pushScope(ScopeForInterpreter *scope) {
@@ -182,5 +195,105 @@ namespace visitor {
         // If this occurs, semantic analysis failed.
         cout << "Semantic analysis failed." << endl;
         exit(2);
+    }
+
+    void InterpreterExecution::handleOperator(Evaluation *LHS, Evaluation *RHS,
+                                              std::string currentOperator) {
+        switch (LHS->lastTypeUsed) {
+            case STRING:
+                handleType(LHS->getStringEvaluation(), RHS->getStringEvaluation(), currentOperator);
+                break;
+            case REAL:
+                handleType(LHS->getRealEvaluation(), RHS->getRealEvaluation(), currentOperator);
+                break;
+            case INT:
+                handleType(LHS->getIntEvaluation(), RHS->getIntEvaluation(), currentOperator);
+                break;
+            case BOOL:
+                handleType(LHS->getBoolEvaluation(), RHS->getBoolEvaluation(), currentOperator);
+                break;
+        }
+    }
+
+    void InterpreterExecution::handleType(std::string LHS, std::string RHS, std::string currentOperator) {
+        Evaluation * evaluation = new Evaluation();
+
+        if (!currentOperator.compare("+")) {
+            evaluation->setStringEvaluation(LHS + RHS);
+        } else {
+            cout << "Problem with Semantic analysis, operator not supported for string" << endl;
+        }
+        lastEvaluation = evaluation;
+    }
+
+    void InterpreterExecution::handleType(int LHS, int RHS, std::string currentOperator) {
+        Evaluation * evaluation = new Evaluation();
+
+        if (!currentOperator.compare("+")) {
+            evaluation->setIntEvaluation(LHS + RHS);
+        } else if (!currentOperator.compare("-")) {
+            evaluation->setIntEvaluation(LHS - RHS);
+        } else if (!currentOperator.compare("*")) {
+            evaluation->setIntEvaluation(LHS * RHS);
+        } else if (!currentOperator.compare("/")) {
+            evaluation->setIntEvaluation(LHS / RHS);
+        } else if (!currentOperator.compare("<")) {
+            evaluation->setBoolEvaluation(LHS < RHS);
+        } else if (!currentOperator.compare(">")) {
+            evaluation->setBoolEvaluation(LHS > RHS);
+        } else if (!currentOperator.compare("==")) {
+            evaluation->setBoolEvaluation(LHS == RHS);
+        } else if (!currentOperator.compare("!=")) {
+            evaluation->setBoolEvaluation(LHS != RHS);
+        } else if (!currentOperator.compare("<=")) {
+            evaluation->setBoolEvaluation(LHS <= RHS);
+        } else if (!currentOperator.compare(">=")) {
+            evaluation->setBoolEvaluation(LHS >= RHS);
+        } else {
+            cout << "Problem with Semantic analysis, operator not supported for int" << endl;
+        }
+        lastEvaluation = evaluation;
+    }
+
+    void InterpreterExecution::handleType(double LHS, double RHS, std::string currentOperator) {
+        Evaluation * evaluation = new Evaluation();
+
+        if (!currentOperator.compare("+")) {
+            evaluation->setRealEvaluation(LHS + RHS);
+        } else if (!currentOperator.compare("-")) {
+            evaluation->setRealEvaluation(LHS - RHS);
+        } else if (!currentOperator.compare("*")) {
+            evaluation->setRealEvaluation(LHS * RHS);
+        } else if (!currentOperator.compare("/")) {
+            evaluation->setRealEvaluation(LHS / RHS);
+        } else if (!currentOperator.compare("<")) {
+            evaluation->setBoolEvaluation(LHS < RHS);
+        } else if (!currentOperator.compare(">")) {
+            evaluation->setBoolEvaluation(LHS > RHS);
+        } else if (!currentOperator.compare("==")) {
+            evaluation->setBoolEvaluation(LHS == RHS);
+        } else if (!currentOperator.compare("!=")) {
+            evaluation->setBoolEvaluation(LHS != RHS);
+        } else if (!currentOperator.compare("<=")) {
+            evaluation->setBoolEvaluation(LHS <= RHS);
+        } else if (!currentOperator.compare(">=")) {
+            evaluation->setBoolEvaluation(LHS >= RHS);
+        } else {
+            cout << "Problem with Semantic analysis, operator not supported for real" << endl;
+        }
+        lastEvaluation = evaluation;
+    }
+
+    void InterpreterExecution::handleType(bool LHS, bool RHS, std::string currentOperator) {
+        Evaluation * evaluation = new Evaluation();
+
+        if (!currentOperator.compare("and")) {
+            evaluation->setRealEvaluation(LHS && RHS);
+        } else if (!currentOperator.compare("or")) {
+            evaluation->setRealEvaluation(LHS || RHS);
+        } else {
+            cout << "Problem with Semantic analysis, operator not supported for bool" << endl;
+        }
+        lastEvaluation = evaluation;
     }
 }

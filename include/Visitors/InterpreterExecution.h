@@ -46,6 +46,16 @@ namespace visitor {
         Evaluation * returnEvaluationOfIdentifierInAllScopes(std::stack<ScopeForInterpreter *> scopes,
                                                              std::string &identifier);
 
+        void handleOperator(Evaluation * LHS, Evaluation * RHS, std::string currentOperator);
+
+        void handleType(std::string LHS, std::string RHS, std::string currentOperator);
+
+        void handleType(int LHS, int RHS, std::string currentOperator);
+
+        void handleType(double LHS, double RHS, std::string currentOperator);
+
+        void handleType(bool LHS, bool RHS, std::string currentOperator);
+
         virtual void visit(ast::ASTNode *node) override;
 
         virtual void visit(ast::ASTVariableDeclaration *node) override;
