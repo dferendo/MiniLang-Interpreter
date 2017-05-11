@@ -8,10 +8,15 @@ void ast::ASTNode::accept(visitor::Visitor *v) {
     v->visit(this);
 }
 
-ast::ASTNode::ASTNode(const std::vector<ASTStatementNode *> &statements) : statements(statements) {}
-
 ast::ASTNode::~ASTNode() {
     for (auto const &statement : statements) {
         delete statement;
     }
 }
+
+ast::ASTNode::ASTNode() {}
+
+void ast::ASTNode::addStatements(std::vector<ASTStatementNode *> statements) {
+    this->statements.insert(this->statements.end(), statements.begin(), statements.end());
+}
+

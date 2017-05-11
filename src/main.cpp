@@ -2,6 +2,7 @@
 #include <fstream>
 #include "../include/Lexer/Lexer.h"
 #include "../include/Parser/Parser.h"
+#include "../include/MiniLangI.h"
 
 bool checkExtension(char *programPassed);
 std::string covertFileToString(std::ifstream & program);
@@ -10,17 +11,18 @@ using namespace lexer;
 using namespace parser;
 
 int main(int argc, char **argv) {
-
-    if (argc != 2) {
-        std::cout << "Program not passed through the arguments!" << std::endl;
-    } else if (!checkExtension(argv[1])) {
-        std::cout << "Extension of file not compatible" << std::endl;
-    } else {
-        std::ifstream program(argv[1]);
-        Lexer lexer(covertFileToString(program));
-        Parser parser(lexer);
-    }
-    return 0;
+    MiniLangI miniLangI;
+    miniLangI.setup();
+//    if (argc != 2) {
+//        std::cout << "Program not passed through the arguments!" << std::endl;
+//    } else if (!checkExtension(argv[1])) {
+//        std::cout << "Extension of file not compatible" << std::endl;
+//    } else {
+//        std::ifstream program(argv[1]);
+//        Lexer lexer(covertFileToString(program));
+//        Parser parser(lexer);
+//    }
+//    return 0;
 }
 
 /**

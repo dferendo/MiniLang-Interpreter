@@ -8,7 +8,6 @@
 #include "../Lexer/Lexer.h"
 #include "../AST/ASTNode.h"
 #include "../AST/ASTStatements/ASTStatementNode.h"
-#include "../Visitors/XMLConverterVisitor.h"
 #include "../AST/ASTStatements/ASTVariableDeclaration.h"
 #include "../AST/ASTExpression/ASTBooleanLiteral.h"
 #include "../AST/ASTExpression/ASTIntegerLiteral.h"
@@ -38,12 +37,6 @@ namespace parser {
          * Holds the current Token.
          */
         lexer::Token currentToken = lexer::Token(lexer::TOK_Error);
-
-        /**
-         * Starts the parser. The program can contains 0 or more statements. Parser will
-         * stop when TOK_EOF is encountered.
-         */
-        void parse();
 
         /**
          * Parse a statement. A statement can be initialised by the following.
@@ -202,6 +195,12 @@ namespace parser {
         lexer::TOKEN parseType();
     public:
         Parser(lexer::Lexer lexer);
+
+        /**
+         * Starts the parser. The program can contains 0 or more statements. Parser will
+         * stop when TOK_EOF is encountered.
+         */
+        std::vector<ast::ASTStatementNode *> parse();
     };
 }
 

@@ -9,10 +9,6 @@ using namespace std;
 
 namespace lexer {
 
-    Lexer::Lexer(string program) {
-        tokenization(program);
-    }
-
     void Lexer::tokenization(std::string &program) {
         int charIndex = 0;
         Token currentToken(TOK_Error);
@@ -24,7 +20,6 @@ namespace lexer {
                 allTokens.push_back(currentToken);
             }
         }
-//        printTokens();
     }
 
     Token Lexer::nextWord(std::string &program, int &charIndex) {
@@ -122,4 +117,11 @@ namespace lexer {
         return allTokens[currentIndex];
     }
 
+    Lexer::Lexer() {}
+
+    void Lexer::tokeninizeProgram(std::string &program) {
+        allTokens.clear();
+        currentIndex = 0;
+        tokenization(program);
+    }
 }

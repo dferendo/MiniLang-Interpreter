@@ -15,11 +15,9 @@ using namespace visitor;
 
 namespace parser {
 
-    Parser::Parser(Lexer lexer) : lexer(lexer) {
-        parse();
-    }
+    Parser::Parser(Lexer lexer) : lexer(lexer) {}
 
-    void Parser::parse() {
+    vector<ast::ASTStatementNode *> Parser::parse() {
         vector<ast::ASTStatementNode *> statements;
         // Program can contain 0 or more Statements. If the first token is
         // TOK_EOF, it indicates that the program is empty.
@@ -27,16 +25,10 @@ namespace parser {
             while (lexer.previewNextToken().tokenType != TOK_EOF) {
                 statements.push_back(parseStatement());
             }
-            Visitor * xmlConverter = new XMLConverterVisitor();
-            Visitor * semanticAnalysis = new SemanticAnalysis();
-            Visitor * interpreter = new InterpreterExecution();
-            ast::ASTNode * programNode = new ast::ASTNode(statements);
-            programNode->accept(xmlConverter);
-            programNode->accept(semanticAnalysis);
-            programNode->accept(interpreter);
         } catch (UnexpectedTokenWhileParsing &error) {
             cout << error.reasonForError << endl;
         }
+        return statements;
     }
 
     ast::ASTStatementNode * Parser::parseStatement() {
