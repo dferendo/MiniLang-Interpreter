@@ -24,7 +24,7 @@ using namespace std;
 using namespace lexer;
 
 namespace visitor {
-    
+
     void InterpreterExecution::visit(ast::ASTNode *node) {
         // Add Global scope
         ScopeForInterpreter * globalScope = new ScopeForInterpreter();
@@ -41,6 +41,12 @@ namespace visitor {
         ScopeForInterpreter * currentScope = getTopScope();
 
         node->expression->accept(this);
+
+        // A real variable can be declared with int variables, if so transfer the
+        // int variable to a real variable. (Semantic analysis accepts this)
+        if (node->tokenType == TOK_RealType && lastEvaluation->lastTypeUsed == INT) {
+            lastEvaluation->setRealEvaluation(lastEvaluation->getIntEvaluation());
+        }
 
         currentScope->addIdentifier(node->identifier, lastEvaluation);
         // So that lastEvaluation is not cleared.
@@ -61,7 +67,13 @@ namespace visitor {
                 assignmentEvaluation->setRealEvaluation(lastEvaluation->getRealEvaluation());
                 break;
             case INT:
-                assignmentEvaluation->setIntEvaluation(lastEvaluation->getIntEvaluation());
+                // If the previous evaluation was real, the new assignment will also be
+                // real, This is accepted by semantic analysis.
+                if (assignmentEvaluation->lastTypeUsed == REAL) {
+                    assignmentEvaluation->setRealEvaluation(lastEvaluation->getIntEvaluation());
+                } else {
+                    assignmentEvaluation->setIntEvaluation(lastEvaluation->getIntEvaluation());
+                }
                 break;
             case BOOL:
                 assignmentEvaluation->setBoolEvaluation(lastEvaluation->getBoolEvaluation());
@@ -164,7 +176,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTBooleanLiteral *node) {
         if (lastEvaluation != nullptr) {
-           // free(lastEvaluation);
+            // free(lastEvaluation);
         }
         lastEvaluation = new Evaluation();
         // Boolean literal are still an expression
@@ -275,7 +287,7 @@ namespace visitor {
     }
 
     Evaluation * InterpreterExecution::returnEvaluationOfIdentifierInAllScopes(stack<ScopeForInterpreter *> scopes,
-                                                                              string &identifier) {
+                                                                               string &identifier) {
         ScopeForInterpreter * currentScope;
         Evaluation * temp;
 
@@ -312,6 +324,20 @@ namespace visitor {
 
     void InterpreterExecution::handleOperator(Evaluation *LHS, Evaluation *RHS,
                                               std::string currentOperator) {
+        // In this case one is of type int and the other is real.
+        // Semantic analysis allows this.
+        if (LHS->lastTypeUsed != RHS->lastTypeUsed) {
+            if (LHS->lastTypeUsed == INT) {
+                LHS->setRealEvaluation(LHS->getIntEvaluation());
+            } else if (RHS->lastTypeUsed == INT) {
+                RHS->setRealEvaluation(RHS->getIntEvaluation());
+            } else {
+                cout << "Semantic analysis error, two different types are given"
+                        "which are not int or real!" << endl;
+                exit(1);
+            }
+        }
+
         switch (LHS->lastTypeUsed) {
             case STRING:
                 handleType(LHS->getStringEvaluation(), RHS->getStringEvaluation(), currentOperator);
@@ -349,6 +375,10 @@ namespace visitor {
         } else if (!currentOperator.compare("*")) {
             evaluation->setIntEvaluation(LHS * RHS);
         } else if (!currentOperator.compare("/")) {
+            if (RHS == 0) {
+                cout << "Division by 0 is not allowed." << endl;
+                exit(1);
+            }
             evaluation->setIntEvaluation(LHS / RHS);
         } else if (!currentOperator.compare("<")) {
             evaluation->setBoolEvaluation(LHS < RHS);
@@ -378,6 +408,10 @@ namespace visitor {
         } else if (!currentOperator.compare("*")) {
             evaluation->setRealEvaluation(LHS * RHS);
         } else if (!currentOperator.compare("/")) {
+            if (RHS == 0) {
+                cout << "Division by 0 is not allowed." << endl;
+                exit(1);
+            }
             evaluation->setRealEvaluation(LHS / RHS);
         } else if (!currentOperator.compare("<")) {
             evaluation->setBoolEvaluation(LHS < RHS);
