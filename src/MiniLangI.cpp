@@ -31,11 +31,13 @@ void MiniLangI::readCommand() {
     int commandReturn;
     // Set up lexer and parser.
     Parser parser(lexer);
-    ASTNode * programNode = new ASTNode();
+    ASTNode * mainProgramNode = new ASTNode();
+    ASTNode * tempNodeOfNewStatements;
     // Visitors
     Visitor * xmlConverter = new XMLConverterVisitor();
     Visitor * semanticAnalysis = new SemanticAnalysis();
     Visitor * interpreter = new InterpreterExecution();
+    vector<ast::ASTStatementNode *> newStatements;
 
     while (true) {
         cout << "MLi> ";
@@ -46,8 +48,8 @@ void MiniLangI::readCommand() {
 
             if (commandReturn == 2) {
                 break;
-            } else if (commandReturn == -1) {
-                // Error command continue
+            } else if (commandReturn == -1 || commandReturn == 4) {
+                // Error command continue or help display
                 continue;
             } else if (commandReturn == 3) {
                 // Print variables.
@@ -60,11 +62,22 @@ void MiniLangI::readCommand() {
             }
 
             // Run parser and add the new statements to the main node.
-            programNode->addStatements(parser.parse());
+            newStatements = parser.parse();
+            // Create a temp to execute the new statements.
+            tempNodeOfNewStatements = new ASTNode();
+            tempNodeOfNewStatements->addStatements(newStatements);
+
+            mainProgramNode->addStatements(newStatements);
             // Run Visitors
-            programNode->accept(xmlConverter);
-            programNode->accept(semanticAnalysis);
-            programNode->accept(interpreter);
+            // The global scope is saved in the visitor.
+            tempNodeOfNewStatements->accept(semanticAnalysis);
+            tempNodeOfNewStatements->accept(interpreter);
+
+            // Add the new statements to the main Node.
+            mainProgramNode->addStatements(newStatements);
+            mainProgramNode->accept(xmlConverter);
+            // Free the allocated temp node
+            free(tempNodeOfNewStatements);
         } catch (LexerFailed &error) {
             cout << error.reason << endl;
         } catch (UnexpectedTokenWhileParsing &error) {
@@ -108,6 +121,11 @@ int MiniLangI::checkCommand(string &lineRead) {
         return 2;
     } else if (lineRead.find("#st") != string::npos) {
         return 3;
+    } else if (lineRead.find("#help") != string::npos) {
+        cout << "#quit : Quit program." << endl;
+        cout << "#load : Load program. Takes .gulp extensions." << endl;
+        cout << "#st : Display current variables." << endl;
+        return 4;
     } else {
         cout << "Command not found." << endl;
         return -1;

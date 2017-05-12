@@ -52,6 +52,8 @@ namespace visitor {
         int getIntEvaluation() const;
 
         bool getBoolEvaluation() const;
+
+        virtual ~Evaluation();
     };
 }
 #endif //COMPILERTHEORY_LASTEVALUATION_H

@@ -38,3 +38,5 @@ int visitor::Evaluation::getIntEvaluation() const {
 bool visitor::Evaluation::getBoolEvaluation() const {
     return boolEvaluation;
 }
+
+visitor::Evaluation::~Evaluation() {}

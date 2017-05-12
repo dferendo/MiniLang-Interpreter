@@ -48,3 +48,10 @@ std::vector<ast::ASTFormalParam *> *visitor::Scope::returnFormalsOfFunction(std:
     // Return vector, nullptr if it does not exists
     return it->second->functionsParams;
 }
+
+visitor::Scope::~Scope() {
+// Free Evaluation
+    for (auto &identifier : scopeIdentifiers) {
+        free(identifier.second);
+    }
+}

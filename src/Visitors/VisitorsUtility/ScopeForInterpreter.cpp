@@ -28,3 +28,10 @@ ast::ASTFunctionDeclaration * visitor::ScopeForInterpreter::returnIdentifierFunc
     }
     return it->second;
 }
+
+visitor::ScopeForInterpreter::~ScopeForInterpreter() {
+    // Free Evaluation
+    for (auto &identifier : scopeIdentifiers) {
+        free(identifier.second);
+    }
+}

@@ -136,7 +136,11 @@ namespace visitor {
 
         virtual void visit(ast::ASTBinaryExprNode *node) override;
     public:
+        Scope * globalScope = new Scope();
+
         SemanticAnalysis();
+
+        virtual ~SemanticAnalysis();
     };
 
 }

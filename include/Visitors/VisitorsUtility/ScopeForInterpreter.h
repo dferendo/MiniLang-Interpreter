@@ -26,6 +26,8 @@ namespace visitor {
         Evaluation * returnIdentifierValue(std::string identifier);
 
         ast::ASTFunctionDeclaration * returnIdentifierFunctionBlock(std::string identifier);
+
+        ~ScopeForInterpreter();
     };
 
 }

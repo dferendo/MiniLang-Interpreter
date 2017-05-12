@@ -26,16 +26,20 @@ using namespace lexer;
 
 namespace visitor {
 
-    void InterpreterExecution::visit(ast::ASTNode *node) {
-        // Add Global scope
-        ScopeForInterpreter * globalScope = new ScopeForInterpreter();
+    InterpreterExecution::InterpreterExecution() {
+        // This global scope is made so that MiniLangI can use it.
         pushScope(globalScope);
+    }
 
+    InterpreterExecution::~InterpreterExecution() {
+        ScopeForInterpreter * globalScope = popScope();
+        free(globalScope);
+    }
+
+    void InterpreterExecution::visit(ast::ASTNode *node) {
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
-        popScope();
-        free(globalScope);
     }
 
     void InterpreterExecution::visit(ast::ASTVariableDeclaration *node) {
@@ -108,7 +112,7 @@ namespace visitor {
         ScopeForInterpreter *blockScope = new ScopeForInterpreter();
         ast::ASTFunctionDeclaration * functionDeclaration;
         // Push new Scope
-        allScopes.push(blockScope);
+        pushScope(blockScope);
 
         // Check if it was a function
         if (isNextBlockFunction) {
@@ -125,8 +129,7 @@ namespace visitor {
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
-        // Pop scope
-        allScopes.pop();
+        popScope();
         free(blockScope);
     }
 
@@ -466,4 +469,5 @@ namespace visitor {
         }
         lastEvaluation = evaluation;
     }
+
 }

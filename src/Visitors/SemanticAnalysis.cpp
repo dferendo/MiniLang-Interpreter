@@ -24,19 +24,23 @@ using namespace exceptions;
 
 namespace visitor {
 
+    SemanticAnalysis::SemanticAnalysis() {
+        // This global scope is made so that MiniLangI can use it.
+        pushScope(globalScope);
+    }
+
     void SemanticAnalysis::pushScope(Scope *scope) {
         allScopes.push(scope);
     }
 
     void SemanticAnalysis::visit(ASTNode *node) {
-        // Add Global scope
-        Scope * globalScope = new Scope();
-        pushScope(globalScope);
-
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
-        popScope();
+    }
+
+    SemanticAnalysis::~SemanticAnalysis() {
+        Scope * globalScope = popScope();
         free(globalScope);
     }
 
@@ -86,7 +90,7 @@ namespace visitor {
     void SemanticAnalysis::visit(ASTBlock *node) {
         Scope *blockScope = new Scope();
         // Push new Scope
-        allScopes.push(blockScope);
+        pushScope(blockScope);
 
         for (auto &function : functionsReturn) {
             if (!function->isFunctionDeclarationBlock) {
@@ -104,7 +108,7 @@ namespace visitor {
             childNode->accept(this);
         }
         // Pop scope
-        allScopes.pop();
+        popScope();
         free(blockScope);
     }
 
@@ -409,7 +413,5 @@ namespace visitor {
         }
         return nullptr;
     }
-
-    SemanticAnalysis::SemanticAnalysis() {}
 
 }
