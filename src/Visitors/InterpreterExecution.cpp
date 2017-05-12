@@ -471,26 +471,37 @@ namespace visitor {
     }
 
     void InterpreterExecution::printCurrentStatements() {
-        cout << "Variables: " << endl;
+        unsigned currentParamCounter;
 
         if (globalScope->scopeIdentifiers.size() != 0) {
+            cout << "Variables: " << endl;
+
             for (auto &identifier : globalScope->scopeIdentifiers) {
                 cout << identifier.first << " : " << TYPE_USED_STRING[identifier.second->lastTypeUsed]
                      << endl;
             }
         }
 
-        cout << "Functions: " << endl;
-
         if (globalScope->functionsBlock.size() != 0) {
+            cout << "Functions: " << endl;
+
             for (auto &identifier : globalScope->functionsBlock) {
+                currentParamCounter = 0;
                 cout << identifier.first << " : " << TYPE_USED_STRING[identifier.second->tokenType];
-                cout << "(";
+                cout << " params: (";
                 for (auto &param : identifier.second->formalParams) {
-                    cout << param->identifier << " : " << TOKEN_STRING[param->tokenType] << " ";
+                    if (currentParamCounter++ == identifier.second->formalParams.size() - 1) {
+                        cout << param->identifier << " : " << TOKEN_STRING[param->tokenType];
+                    } else {
+                        cout << param->identifier << " : " << TOKEN_STRING[param->tokenType] << ", ";
+                    }
                 }
                 cout << ")" << endl;
             }
+        }
+
+        if (globalScope->scopeIdentifiers.size() == 0 && globalScope->functionsBlock.size() == 0) {
+            cout << "Currently no statements!" << endl;
         }
     }
 }
