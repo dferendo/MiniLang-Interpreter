@@ -137,6 +137,8 @@ namespace visitor {
         }
         popScope();
         free(blockScope);
+        // If any blocks have any set or var, do not print the ans variable.
+        globalScope->updateSpecialVariableEvaluation(nullptr);
     }
 
     void InterpreterExecution::visit(ast::ASTIfStatement *node) {
