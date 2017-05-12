@@ -104,11 +104,12 @@ namespace visitor {
         virtual void visit(ast::ASTUnary *node) override;
 
         virtual void visit(ast::ASTBinaryExprNode *node) override;
-    public:
         /**
          * This will be an instance of the of the symbol table.
          */
         ScopeForInterpreter * globalScope = new ScopeForInterpreter();
+    public:
+        void printCurrentStatements();
 
         InterpreterExecution();
 

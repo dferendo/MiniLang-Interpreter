@@ -34,9 +34,9 @@ void MiniLangI::readCommand() {
     ASTNode * mainProgramNode = new ASTNode();
     ASTNode * tempNodeOfNewStatements;
     // Visitors
-    Visitor * xmlConverter = new XMLConverterVisitor();
-    Visitor * semanticAnalysis = new SemanticAnalysis();
-    Visitor * interpreter = new InterpreterExecution();
+    XMLConverterVisitor * xmlConverter = new XMLConverterVisitor();
+    SemanticAnalysis * semanticAnalysis = new SemanticAnalysis();
+    InterpreterExecution * interpreter = new InterpreterExecution();
     vector<ast::ASTStatementNode *> newStatements;
 
     while (true) {
@@ -45,7 +45,6 @@ void MiniLangI::readCommand() {
         commandReturn = checkCommand(lineRead);
 
         try {
-
             if (commandReturn == 2) {
                 break;
             } else if (commandReturn == -1 || commandReturn == 4) {
@@ -53,7 +52,8 @@ void MiniLangI::readCommand() {
                 continue;
             } else if (commandReturn == 3) {
                 // Print variables.
-                // TODO:
+                interpreter->printCurrentStatements();
+                continue;
             }
             // Run Lexer;
             if (commandReturn != 1) {

@@ -470,4 +470,27 @@ namespace visitor {
         lastEvaluation = evaluation;
     }
 
+    void InterpreterExecution::printCurrentStatements() {
+        cout << "Variables: " << endl;
+
+        if (globalScope->scopeIdentifiers.size() != 0) {
+            for (auto &identifier : globalScope->scopeIdentifiers) {
+                cout << identifier.first << " : " << TYPE_USED_STRING[identifier.second->lastTypeUsed]
+                     << endl;
+            }
+        }
+
+        cout << "Functions: " << endl;
+
+        if (globalScope->functionsBlock.size() != 0) {
+            for (auto &identifier : globalScope->functionsBlock) {
+                cout << identifier.first << " : " << TYPE_USED_STRING[identifier.second->tokenType];
+                cout << "(";
+                for (auto &param : identifier.second->formalParams) {
+                    cout << param->identifier << " : " << TOKEN_STRING[param->tokenType] << " ";
+                }
+                cout << ")" << endl;
+            }
+        }
+    }
 }
