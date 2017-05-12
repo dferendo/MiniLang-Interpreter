@@ -29,6 +29,8 @@ namespace visitor {
     InterpreterExecution::InterpreterExecution() {
         // This global scope is made so that MiniLangI can use it.
         pushScope(globalScope);
+        // Special variable "ans"
+        globalScope->addIdentifier(SPECIAL_VARIABLE, nullptr);
     }
 
     InterpreterExecution::~InterpreterExecution() {
@@ -54,6 +56,8 @@ namespace visitor {
         }
 
         currentScope->addIdentifier(node->identifier, lastEvaluation);
+        // Set the special variable.
+        globalScope->updateSpecialVariableEvaluation(lastEvaluation);
         // So that lastEvaluation is not cleared.
         lastEvaluation = nullptr;
     }
@@ -85,6 +89,7 @@ namespace visitor {
                 assignmentEvaluation->setBoolEvaluation(lastEvaluation->getBoolEvaluation());
                 break;
         }
+        globalScope->updateSpecialVariableEvaluation(lastEvaluation);
     }
 
     void InterpreterExecution::visit(ast::ASTPrintStatement *node) {
@@ -472,11 +477,14 @@ namespace visitor {
 
     void InterpreterExecution::printCurrentStatements() {
         unsigned currentParamCounter;
-
-        if (globalScope->scopeIdentifiers.size() != 0) {
+        // -1 to remove ans
+        if (globalScope->scopeIdentifiers.size() - 1 != 0) {
             cout << "Variables: " << endl;
 
             for (auto &identifier : globalScope->scopeIdentifiers) {
+                if (!identifier.first.compare(SPECIAL_VARIABLE)) {
+                    continue;
+                }
                 cout << identifier.first << " : " << TYPE_USED_STRING[identifier.second->lastTypeUsed]
                      << endl;
             }
@@ -502,6 +510,36 @@ namespace visitor {
 
         if (globalScope->scopeIdentifiers.size() == 0 && globalScope->functionsBlock.size() == 0) {
             cout << "Currently no statements!" << endl;
+        }
+    }
+
+    void InterpreterExecution::printSpecialVariableIfChanged() {
+        Evaluation * tempEvaluation;
+        std::map<std::string, Evaluation *>::iterator it = globalScope->scopeIdentifiers.find(SPECIAL_VARIABLE);
+
+        if (it == globalScope->scopeIdentifiers.end()) {
+            std::cout << "Special Variable not declared." << std::endl;
+            exit(2);
+        }
+        if (it->second != nullptr) {
+            tempEvaluation = it->second;
+            cout << "var " << SPECIAL_VARIABLE << " : " <<  TYPE_USED_STRING[tempEvaluation->lastTypeUsed] << " = ";
+            switch (tempEvaluation->lastTypeUsed) {
+                case STRING:
+                    cout << tempEvaluation->getStringEvaluation() << endl;
+                    break;
+                case REAL:
+                    cout << tempEvaluation->getRealEvaluation() << endl;
+                    break;
+                case INT:
+                    cout << tempEvaluation->getIntEvaluation() << endl;
+                    break;
+                case BOOL:
+                    cout << tempEvaluation->getBoolEvaluation() << endl;
+                    break;
+            }
+            // Resets the evaluation so that if for example a print statements comes after, it does not re-print.
+            it->second = nullptr;
         }
     }
 }

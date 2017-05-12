@@ -72,7 +72,8 @@ void MiniLangI::readCommand() {
             // The global scope is saved in the visitor.
             tempNodeOfNewStatements->accept(semanticAnalysis);
             tempNodeOfNewStatements->accept(interpreter);
-
+            // Print special variable.
+            interpreter->printSpecialVariableIfChanged();
             // Add the new statements to the main Node.
             mainProgramNode->addStatements(newStatements);
             mainProgramNode->accept(xmlConverter);

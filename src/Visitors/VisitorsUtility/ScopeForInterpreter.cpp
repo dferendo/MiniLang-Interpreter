@@ -2,6 +2,7 @@
 // Created by dylan on 11/05/2017.
 //
 #include "../../../include/Visitors/VisitorsUtility/ScopeForInterpreter.h"
+#include "../../../include/Visitors/InterpreterExecution.h"
 
 void visitor::ScopeForInterpreter::addIdentifier(std::string identifier, visitor::Evaluation *evaluation) {
     scopeIdentifiers.insert(std::pair<std::string, Evaluation *>(identifier, evaluation));
@@ -34,4 +35,14 @@ visitor::ScopeForInterpreter::~ScopeForInterpreter() {
     for (auto &identifier : scopeIdentifiers) {
         free(identifier.second);
     }
+}
+
+void visitor::ScopeForInterpreter::updateSpecialVariableEvaluation(visitor::Evaluation *evaluation) {
+    std::map<std::string, Evaluation *>::iterator it = scopeIdentifiers.find(SPECIAL_VARIABLE);
+
+    if (it == scopeIdentifiers.end()) {
+        std::cout << "Special Variable not declared." << std::endl;
+        exit(2);
+    }
+    it->second = evaluation;
 }

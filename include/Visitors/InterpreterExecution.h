@@ -11,6 +11,8 @@
 #include "VisitorsUtility/Evaluation.h"
 #include "VisitorsUtility/ScopeForInterpreter.h"
 
+#define SPECIAL_VARIABLE "ans"
+
 namespace visitor {
 
     class InterpreterExecution : public Visitor {
@@ -110,6 +112,8 @@ namespace visitor {
         ScopeForInterpreter * globalScope = new ScopeForInterpreter();
     public:
         void printCurrentStatements();
+
+        void printSpecialVariableIfChanged();
 
         InterpreterExecution();
 
