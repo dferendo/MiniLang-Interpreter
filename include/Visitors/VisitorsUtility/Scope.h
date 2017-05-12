@@ -71,6 +71,8 @@ namespace visitor {
          * @return: Vector containing the params, nullptr if not found.
          */
         std::vector<ast::ASTFormalParam *> * returnFormalsOfFunction(std::string &identifier);
+
+        ~Scope();
     };
 
 }

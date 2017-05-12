@@ -21,17 +21,20 @@
 #include "../../include/AST/ASTExpression/ASTUnary.h"
 #include "../../include/AST/ASTExpression/ASTSubExpression.h"
 #include "../../include/AST/ASTExpression/ASTBinaryExprNode.h"
+#include "../../include/AST/ASTStatements/ASTExprStatement.h"
 
 using namespace std;
 using namespace ast;
 
 namespace visitor {
 
-    XMLConverterVisitor::XMLConverterVisitor() : currentIndent(0) {
-        outputXML.open("program.xml");
-    }
+    XMLConverterVisitor::XMLConverterVisitor() {}
 
     void XMLConverterVisitor::visit(ASTNode *node) {
+        // Set default to the main node.
+        currentIndent = 0;
+        outputXML.open("program.xml");
+        // Start parsing main node.
         string word = getStartingPositionAfterIndent();
         outputXML << word << "<Program>" << endl;
 
@@ -41,6 +44,7 @@ namespace visitor {
         }
         currentIndent--;
         outputXML << word << "</Program>" << endl;
+        outputXML.close();
     }
 
     void XMLConverterVisitor::visit(ASTVariableDeclaration *node) {
@@ -159,6 +163,16 @@ namespace visitor {
         } else {
             outputXML << word << "<Boolean>false</Boolean>" << endl;
         }
+    }
+
+    void XMLConverterVisitor::visit(ast::ASTExprStatement *node) {
+        string word = getStartingPositionAfterIndent();
+
+        outputXML << word << "<Identifier>" << endl;
+        currentIndent++;
+        node->exprNode->accept(this);
+        currentIndent--;
+        outputXML << word << "</Identifier>" << endl;
     }
 
     void XMLConverterVisitor::visit(ASTIntegerLiteral *node) {

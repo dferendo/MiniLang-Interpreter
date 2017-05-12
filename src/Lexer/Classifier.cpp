@@ -17,6 +17,7 @@ int lexer::getClassifier(char &currentCharacter) {
         case ';':
             return PUNCTUATION;
         case EOF:
+        case '\0':
             return END_OF_FILE;
         case '0':
         case '1':

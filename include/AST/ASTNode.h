@@ -23,7 +23,7 @@ namespace ast {
          */
         std::vector<ASTStatementNode *> statements;
 
-        ASTNode(const std::vector<ASTStatementNode *> &statements);
+        ASTNode();
 
         /**
          * Deallocate the statements found in the vector.
@@ -32,9 +32,12 @@ namespace ast {
 
         /**
          * Visitor Class.
+         *
          * @param v Visitor.
          */
         virtual void accept(visitor::Visitor * v);
+
+        void addStatements(std::vector<ASTStatementNode *> statements);
     };
 }
 

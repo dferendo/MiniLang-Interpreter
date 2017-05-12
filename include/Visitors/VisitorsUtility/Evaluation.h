@@ -7,12 +7,6 @@
 
 #include <string>
 
-/**
- * Macro used to determine the type of the evaluation that will be used by the template.
- */
-// TODO Macros
-#define TYPE(x) ((x) == (1) ? (double) : ((x) == (2) ? (int) : ((x) == (3) ? (bool) : string)))
-
 namespace visitor {
 
     enum TYPE_USED {
@@ -20,6 +14,13 @@ namespace visitor {
         REAL = 1,
         INT = 2,
         BOOL = 3
+    };
+
+    const std::string TYPE_USED_STRING[] = {
+            "string",
+            "real",
+            "int",
+            "bool"
     };
 
     /**
@@ -52,6 +53,8 @@ namespace visitor {
         int getIntEvaluation() const;
 
         bool getBoolEvaluation() const;
+
+        virtual ~Evaluation();
     };
 }
 #endif //COMPILERTHEORY_LASTEVALUATION_H

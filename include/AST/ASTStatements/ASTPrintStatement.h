@@ -18,7 +18,7 @@ namespace ast {
 
         void accept(visitor::Visitor *v) override;
 
-        virtual ~ASTPrintStatement();
+        ~ASTPrintStatement();
     };
 
 }

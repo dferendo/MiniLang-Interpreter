@@ -15,26 +15,33 @@
 #include "../../include/AST/ASTStatements/ASTIfStatement.h"
 #include "../../include/AST/ASTStatements/ASTWhileStatement.h"
 #include "../../include/AST/ASTStatements/ASTReturnStatement.h"
+#include "../../include/Exceptions/SemanticAnalysisError.h"
+#include "../../include/AST/ASTStatements/ASTExprStatement.h"
 
 using namespace ast;
 using namespace std;
 using namespace lexer;
+using namespace exceptions;
 
 namespace visitor {
+
+    SemanticAnalysis::SemanticAnalysis() {
+        // This global scope is made so that MiniLangI can use it.
+        pushScope(globalScope);
+    }
 
     void SemanticAnalysis::pushScope(Scope *scope) {
         allScopes.push(scope);
     }
 
     void SemanticAnalysis::visit(ASTNode *node) {
-        // Add Global scope
-        Scope * globalScope = new Scope();
-        pushScope(globalScope);
-
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
-        popScope();
+    }
+
+    SemanticAnalysis::~SemanticAnalysis() {
+        Scope * globalScope = popScope();
         free(globalScope);
     }
 
@@ -44,8 +51,7 @@ namespace visitor {
         // Check if identifier exists. Do not add it yet to avoid
         // var test4 : int = test4;
         if (currentScope->identifierExists(node->identifier)) {
-            cout << "Duplicate declaration of local variable '" << node->identifier << "'" << endl;
-            exit(1);
+            throw SemanticAnalysisError("Duplicate declaration of local variable '" + node->identifier + "'");
         }
         // Get the expression type
         node->expression->accept(this);
@@ -55,9 +61,7 @@ namespace visitor {
             currentScope->addIdentifier(node);
             return;
         } else if (lastToken != node->tokenType) {
-            cout << "Incompatible types, expected '" << TOKEN_STRING[node->tokenType]
-                 << "'" << endl;
-            exit(1);
+            throw SemanticAnalysisError("Incompatible types, expected '" + TOKEN_STRING[node->tokenType] + "'");
         }
         // Add the identifier
         currentScope->addIdentifier(node);
@@ -67,8 +71,7 @@ namespace visitor {
         TOKEN identifierToken = returnTokenOfIdentifierInAllScopes(allScopes, node->identifier);
         // Check if the identifier exists, if not exits.
         if (identifierToken == TOK_Error) {
-            cout << "Can't resolve variable '" << node->identifier << "'" << endl;
-            exit(1);
+            throw SemanticAnalysisError("Can't resolve variable '" + node->identifier + "'");
         }
         // Get the expression type
         node->exprNode->accept(this);
@@ -76,9 +79,7 @@ namespace visitor {
         if ((identifierToken == TOK_RealType) && lastToken == TOK_IntType) {
             return;
         } else if (lastToken != identifierToken) {
-            cout << "Incompatible types, expected '" << TOKEN_STRING[identifierToken]
-                 << "'" << endl;
-            exit(1);
+            throw SemanticAnalysisError("Incompatible types, expected '" + TOKEN_STRING[identifierToken] + "'");
         }
     }
 
@@ -90,7 +91,7 @@ namespace visitor {
     void SemanticAnalysis::visit(ASTBlock *node) {
         Scope *blockScope = new Scope();
         // Push new Scope
-        allScopes.push(blockScope);
+        pushScope(blockScope);
 
         for (auto &function : functionsReturn) {
             if (!function->isFunctionDeclarationBlock) {
@@ -108,7 +109,7 @@ namespace visitor {
             childNode->accept(this);
         }
         // Pop scope
-        allScopes.pop();
+        popScope();
         free(blockScope);
     }
 
@@ -116,8 +117,7 @@ namespace visitor {
         node->exprNode->accept(this);
 
         if (lastToken != TOK_BoolType) {
-            cout << "If only supports boolean. " << endl;
-            exit(1);
+            throw SemanticAnalysisError("If only supports boolean. ");
         }
         node->astBlockForIF->accept(this);
         // Go to else block as well
@@ -130,8 +130,7 @@ namespace visitor {
         node->exprNode->accept(this);
 
         if (lastToken != TOK_BoolType) {
-            cout << "While only supports boolean. " << endl;
-            exit(1);
+            throw SemanticAnalysisError("While only supports boolean. ");
         }
         node->astBlock->accept(this);
     }
@@ -144,10 +143,8 @@ namespace visitor {
         returnCheckForFunctionDeclaration = functionsReturn.back();
 
         if (lastToken != returnCheckForFunctionDeclaration->functionDeclaration->tokenType) {
-            cout << "Returning '" << TOKEN_STRING[lastToken] << "' when expecting '"
-                 << TOKEN_STRING[returnCheckForFunctionDeclaration->functionDeclaration->tokenType]
-                 << "'" << endl;
-            exit(1);
+            throw SemanticAnalysisError("Returning '" + TOKEN_STRING[lastToken] + "' when expecting '"
+                                                      + TOKEN_STRING[returnCheckForFunctionDeclaration->functionDeclaration->tokenType]);
         }
         returnCheckForFunctionDeclaration->isReturnFound = true;
     }
@@ -156,8 +153,7 @@ namespace visitor {
         Scope * currentScope = getTopScope();
         // Check if identifier exists
         if (currentScope->identifierExists(node->identifier)) {
-            cout << "Duplicate declaration of local variable '" << node->identifier << "'" << endl;
-            exit(1);
+            throw SemanticAnalysisError("Duplicate declaration of local variable '" + node->identifier + "'");
         }
         // Add the identifier
         currentScope->addIdentifier(node);
@@ -169,9 +165,7 @@ namespace visitor {
         Scope * currentScope = getTopScope();
         // Check if function exists
         if (currentScope->identifierExists(node->identifier)) {
-            cout << "Duplicate declaration of variable for function '" << node->identifier << "'"
-                 << endl;
-            exit(1);
+            throw SemanticAnalysisError("Duplicate declaration of variable for function '" + node->identifier + "'");
         }
         // Add function
         currentScope->addIdentifier(node);
@@ -190,10 +184,13 @@ namespace visitor {
         returnCheckForFunctionDeclaration = functionsReturn.back();
         functionsReturn.pop_back();
         if (!returnCheckForFunctionDeclaration->isReturnFound) {
-            cout << "Control reaches end of non-void function, return required. " << endl;
-            exit(1);
+            throw SemanticAnalysisError("Control reaches end of non-void function, return required. ");
         }
         free(returnCheckForFunctionDeclaration);
+    }
+
+    void SemanticAnalysis::visit(ast::ASTExprStatement *node) {
+        node->exprNode->accept(this);
     }
 
     void SemanticAnalysis::visit(ASTBooleanLiteral *node) {
@@ -221,8 +218,7 @@ namespace visitor {
         TOKEN identifierToken = returnTokenOfIdentifierInAllScopes(allScopes, node->identifier);
 
         if (identifierToken == TOK_Error) {
-            cout << "Can't resolve variable '" << node->identifier << "'" << endl;
-            exit(1);
+            throw SemanticAnalysisError("Can't resolve variable '" + node->identifier + "'");
         }
         lastToken = identifierToken;
     }
@@ -236,13 +232,11 @@ namespace visitor {
                 returnFunctionParamsInAllScopes(allScopes, node->identifier);
 
         if (params == nullptr) {
-            cout << "Can't resolve function '" << node->identifier << "'" << endl;
-            exit(1);
+            throw SemanticAnalysisError("Can't resolve function '" + node->identifier + "'");
         }
         // Check if params match
         if (params->size() != node->actualParams.size()) {
-            cout << "Incorrect arguments passed, expected " << params->size() << endl;
-            exit(1);
+            throw SemanticAnalysisError("Incorrect arguments passed, expected " + params->size());
         }
 
         for (size_t i = 0; i < node->actualParams.size(); i++) {
@@ -254,9 +248,8 @@ namespace visitor {
             }
 
             if (lastToken != (*params)[i]->tokenType) {
-                cout << "Parameter type mismatch, expecting '" << TOKEN_STRING[(*params)[i]->tokenType]
-                     << "'" << endl;
-                exit(1);
+                throw SemanticAnalysisError("Parameter type mismatch, expecting '" + TOKEN_STRING[(*params)[i]->tokenType]
+                                            + "'");
             }
         }
         // Set the return type
@@ -268,27 +261,23 @@ namespace visitor {
         node->unaryExpression->accept(this);
 
         if (lastToken == TOK_StringType) {
-            cout << "Operator not supported for "
-                 << TOKEN_STRING[TOK_StringType] << endl;
-            exit(1);
+            throw SemanticAnalysisError("Operator not supported for "
+                                        + TOKEN_STRING[TOK_StringType]);
         } else if (lastToken == TOK_BoolType) {
             // Not can only be applied to boolean, compare returns 0
             // if equal
             if (node->unary.compare("not")) {
-                cout << "Operator not supported for "
-                     << TOKEN_STRING[TOK_BoolType] << endl;
-                exit(1);
+                throw SemanticAnalysisError("Operator not supported for "
+                                            + TOKEN_STRING[TOK_BoolType]);
             }
         } else if (lastToken == TOK_IntType || lastToken == TOK_RealType) {
             // - can only be applied to int and real
             if (node->unary.compare("-")) {
-                cout << "Operator not supported for "
-                     << TOKEN_STRING[lastToken] << endl;
-                exit(1);
+                throw SemanticAnalysisError("Operator not supported for "
+                                            + TOKEN_STRING[lastToken]);
             }
         } else {
-            cout << "Type not supported." << endl;
-            exit(1);
+            throw SemanticAnalysisError("Type not supported.");
         }
     }
 
@@ -304,17 +293,14 @@ namespace visitor {
         operatorReturn = handleOperatorType(tokenLHS, tokenRHS, node->operation);
         // Handle operator compatible type
         if (operatorReturn == -1) {
-            cout << "Operator not supported for one of the types "
-                 << TOKEN_STRING[tokenLHS] << " or "
-                 << TOKEN_STRING[tokenRHS] << endl;
-            exit(1);
+            throw SemanticAnalysisError("Operator not supported for one of the types "
+                                        + TOKEN_STRING[tokenLHS] + " or "
+                                        + TOKEN_STRING[tokenRHS] + ".");
         } else if (operatorReturn == -2) {
-            cout << "Incompatible types of " << TOKEN_STRING[tokenLHS]
-                 << " and " << TOKEN_STRING[tokenRHS] << endl;
-            exit(1);
+            throw SemanticAnalysisError("Incompatible types of " + TOKEN_STRING[tokenLHS]
+                                        + " and " + TOKEN_STRING[tokenRHS]);
         } else if (operatorReturn == -3) {
-            cout << "Operator not found, problem with lexer." << endl;
-            exit(1);
+            throw SemanticAnalysisError("Operator not found, problem with lexer.");
         }
     }
 
@@ -432,7 +418,5 @@ namespace visitor {
         }
         return nullptr;
     }
-
-    SemanticAnalysis::SemanticAnalysis() {}
 
 }

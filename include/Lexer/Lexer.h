@@ -16,18 +16,9 @@ namespace lexer {
 
     class Lexer {
     public:
-        Lexer(std::string program);
+        Lexer();
 
-        /**
-         * This vector holds all the Tokens for a given program. These Tokens need to be passed to the
-         * Parser.
-         */
-        std::vector<Token> allTokens;
-
-        /**
-         * Used as a counter to the next Token for the parser.
-         */
-        std::vector<Token>::size_type currentIndex = 0;
+        void tokenizeProgram(std::string &program);
 
         /**
          * Returns the next Token.
@@ -43,6 +34,17 @@ namespace lexer {
          */
         Token previewNextToken();
     private:
+        /**
+         * This vector holds all the Tokens for a given program. These Tokens need to be passed to the
+         * Parser.
+         */
+        std::vector<Token> allTokens;
+
+        /**
+         * Used as a counter to the next Token for the parser.
+         */
+        std::vector<Token>::size_type currentIndex = 0;
+
         /**
          * Transition function. Excel formed found in documentation/Transition.ods.
          */

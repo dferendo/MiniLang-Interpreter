@@ -13,11 +13,11 @@
 namespace visitor {
 
     class ScopeForInterpreter {
-    private:
+    public:
         std::map<std::string, Evaluation *> scopeIdentifiers;
 
         std::map<std::string, ast::ASTFunctionDeclaration *> functionsBlock;
-    public:
+
         void addIdentifier(std::string identifier, Evaluation * evaluation);
 
         void addFunctionBlock(std::string identifier,
@@ -26,6 +26,10 @@ namespace visitor {
         Evaluation * returnIdentifierValue(std::string identifier);
 
         ast::ASTFunctionDeclaration * returnIdentifierFunctionBlock(std::string identifier);
+
+        void updateSpecialVariableEvaluation(Evaluation * evaluation);
+
+        ~ScopeForInterpreter();
     };
 
 }

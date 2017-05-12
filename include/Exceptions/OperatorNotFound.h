@@ -12,6 +12,7 @@ namespace exceptions {
     class OperatorNotFound {
     public:
         std::string reason;
+
         OperatorNotFound(const std::string &reason);
     };
 

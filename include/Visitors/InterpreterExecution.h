@@ -11,6 +11,8 @@
 #include "VisitorsUtility/Evaluation.h"
 #include "VisitorsUtility/ScopeForInterpreter.h"
 
+#define SPECIAL_VARIABLE "ans"
+
 namespace visitor {
 
     class InterpreterExecution : public Visitor {
@@ -87,6 +89,8 @@ namespace visitor {
 
         virtual void visit(ast::ASTFunctionDeclaration *node) override;
 
+        virtual void visit(ast::ASTExprStatement *node) override;
+
         virtual void visit(ast::ASTBooleanLiteral *node) override;
 
         virtual void visit(ast::ASTIntegerLiteral *node) override;
@@ -104,6 +108,18 @@ namespace visitor {
         virtual void visit(ast::ASTUnary *node) override;
 
         virtual void visit(ast::ASTBinaryExprNode *node) override;
+        /**
+         * This will be an instance of the of the symbol table.
+         */
+        ScopeForInterpreter * globalScope = new ScopeForInterpreter();
+    public:
+        void printCurrentStatements();
+
+        void printSpecialVariableIfChanged();
+
+        InterpreterExecution();
+
+        ~InterpreterExecution();
     };
 
 };

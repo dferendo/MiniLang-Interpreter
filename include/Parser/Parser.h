@@ -8,7 +8,6 @@
 #include "../Lexer/Lexer.h"
 #include "../AST/ASTNode.h"
 #include "../AST/ASTStatements/ASTStatementNode.h"
-#include "../Visitors/XMLConverterVisitor.h"
 #include "../AST/ASTStatements/ASTVariableDeclaration.h"
 #include "../AST/ASTExpression/ASTBooleanLiteral.h"
 #include "../AST/ASTExpression/ASTIntegerLiteral.h"
@@ -24,6 +23,7 @@
 #include "../AST/ASTStatements/ASTWhileStatement.h"
 #include "../AST/ASTStatements/ASTReturnStatement.h"
 #include "../AST/ASTStatements/ASTFunctionDeclaration.h"
+#include "../AST/ASTStatements/ASTExprStatement.h"
 
 namespace parser {
 
@@ -32,18 +32,12 @@ namespace parser {
         /**
          * Holds the lexer that will be used to pass the tokens.
          */
-        lexer::Lexer lexer;
+        lexer::Lexer * lexer;
 
         /**
          * Holds the current Token.
          */
         lexer::Token currentToken = lexer::Token(lexer::TOK_Error);
-
-        /**
-         * Starts the parser. The program can contains 0 or more statements. Parser will
-         * stop when TOK_EOF is encountered.
-         */
-        void parse();
 
         /**
          * Parse a statement. A statement can be initialised by the following.
@@ -108,6 +102,13 @@ namespace parser {
          * @throw UnexpectedTokenWhileParsing will be thrown if unexpected token.
          */
         ast::ASTReturnStatement * parseReturnStatement();
+
+        /**
+         * Parses an expression statement. Used for MiniLangI.
+         * @return Returns the AST of an Expression statement.
+         * @throw UnexpectedTokenWhileParsing will be thrown if unexpected token.
+         */
+        ast::ASTExprStatement * parseExpressionStatement();
 
         /**
          * Parses a function declaration. After the keyword 'def' which is taken by the statement,
@@ -201,7 +202,13 @@ namespace parser {
          */
         lexer::TOKEN parseType();
     public:
-        Parser(lexer::Lexer lexer);
+        Parser(lexer::Lexer * lexer);
+
+        /**
+         * Starts the parser. The program can contains 0 or more statements. Parser will
+         * stop when TOK_EOF is encountered.
+         */
+        std::vector<ast::ASTStatementNode *> parse();
     };
 }
 

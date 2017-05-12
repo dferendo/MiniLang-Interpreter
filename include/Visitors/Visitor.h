@@ -17,6 +17,7 @@ namespace ast {
     class ASTReturnStatement;
     class ASTFormalParam;
     class ASTFunctionDeclaration;
+    class ASTExprStatement;
     // Expressions
     class ASTExprNode;
     class ASTBooleanLiteral;
@@ -42,6 +43,7 @@ namespace visitor {
         virtual void visit(ast::ASTIfStatement * node) = 0;
         virtual void visit(ast::ASTWhileStatement * node) = 0;
         virtual void visit(ast::ASTReturnStatement * node) = 0;
+        virtual void visit(ast::ASTExprStatement * node) = 0;
         virtual void visit(ast::ASTFormalParam * node) = 0;
         virtual void visit(ast::ASTFunctionDeclaration * node) = 0;
         virtual void visit(ast::ASTBooleanLiteral * node) = 0;

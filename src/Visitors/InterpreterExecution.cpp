@@ -18,6 +18,8 @@
 #include "../../include/AST/ASTExpression/ASTBooleanLiteral.h"
 #include "../../include/AST/ASTExpression/ASTIntegerLiteral.h"
 #include "../../include/AST/ASTExpression/ASTRealLiteral.h"
+#include "../../include/Exceptions/InterpreterError.h"
+#include "../../include/AST/ASTStatements/ASTExprStatement.h"
 
 using namespace ast;
 using namespace std;
@@ -25,16 +27,22 @@ using namespace lexer;
 
 namespace visitor {
 
-    void InterpreterExecution::visit(ast::ASTNode *node) {
-        // Add Global scope
-        ScopeForInterpreter * globalScope = new ScopeForInterpreter();
+    InterpreterExecution::InterpreterExecution() {
+        // This global scope is made so that MiniLangI can use it.
         pushScope(globalScope);
+        // Special variable "ans"
+        globalScope->addIdentifier(SPECIAL_VARIABLE, nullptr);
+    }
 
+    InterpreterExecution::~InterpreterExecution() {
+        ScopeForInterpreter * globalScope = popScope();
+        free(globalScope);
+    }
+
+    void InterpreterExecution::visit(ast::ASTNode *node) {
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
-        popScope();
-        free(globalScope);
     }
 
     void InterpreterExecution::visit(ast::ASTVariableDeclaration *node) {
@@ -49,6 +57,8 @@ namespace visitor {
         }
 
         currentScope->addIdentifier(node->identifier, lastEvaluation);
+        // Set the special variable.
+        globalScope->updateSpecialVariableEvaluation(lastEvaluation);
         // So that lastEvaluation is not cleared.
         lastEvaluation = nullptr;
     }
@@ -80,6 +90,7 @@ namespace visitor {
                 assignmentEvaluation->setBoolEvaluation(lastEvaluation->getBoolEvaluation());
                 break;
         }
+        globalScope->updateSpecialVariableEvaluation(lastEvaluation);
     }
 
     void InterpreterExecution::visit(ast::ASTPrintStatement *node) {
@@ -107,7 +118,7 @@ namespace visitor {
         ScopeForInterpreter *blockScope = new ScopeForInterpreter();
         ast::ASTFunctionDeclaration * functionDeclaration;
         // Push new Scope
-        allScopes.push(blockScope);
+        pushScope(blockScope);
 
         // Check if it was a function
         if (isNextBlockFunction) {
@@ -124,8 +135,7 @@ namespace visitor {
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
         }
-        // Pop scope
-        allScopes.pop();
+        popScope();
         free(blockScope);
     }
 
@@ -175,6 +185,12 @@ namespace visitor {
         currentScope->addFunctionBlock(node->identifier, node);
     }
 
+    void InterpreterExecution::visit(ast::ASTExprStatement *node) {
+        node->exprNode->accept(this);
+
+        globalScope->updateSpecialVariableEvaluation(lastEvaluation);
+    }
+
     void InterpreterExecution::visit(ast::ASTBooleanLiteral *node) {
         if (lastEvaluation != nullptr) {
             free(lastEvaluation);
@@ -219,7 +235,7 @@ namespace visitor {
         switch (evaluation->lastTypeUsed) {
             case STRING:
                 lastEvaluation->setStringEvaluation(evaluation->getStringEvaluation());
-            break;
+                break;
             case REAL:
                 lastEvaluation->setRealEvaluation(evaluation->getRealEvaluation());
                 break;
@@ -381,6 +397,7 @@ namespace visitor {
             evaluation->setStringEvaluation(LHS + RHS);
         } else {
             cout << "Problem with Semantic analysis, operator not supported for string" << endl;
+            exit(1);
         }
         lastEvaluation = evaluation;
     }
@@ -396,8 +413,7 @@ namespace visitor {
             evaluation->setIntEvaluation(LHS * RHS);
         } else if (!currentOperator.compare("/")) {
             if (RHS == 0) {
-                cout << "Division by 0 is not allowed." << endl;
-                exit(1);
+                throw exceptions::InterpreterError("Division by 0 is not allowed.");
             }
             evaluation->setIntEvaluation(LHS / RHS);
         } else if (!currentOperator.compare("<")) {
@@ -414,6 +430,7 @@ namespace visitor {
             evaluation->setBoolEvaluation(LHS >= RHS);
         } else {
             cout << "Problem with Semantic analysis, operator not supported for int" << endl;
+            exit(1);
         }
         lastEvaluation = evaluation;
     }
@@ -429,8 +446,7 @@ namespace visitor {
             evaluation->setRealEvaluation(LHS * RHS);
         } else if (!currentOperator.compare("/")) {
             if (RHS == 0) {
-                cout << "Division by 0 is not allowed." << endl;
-                exit(1);
+                throw exceptions::InterpreterError("Division by 0 is not allowed.");
             }
             evaluation->setRealEvaluation(LHS / RHS);
         } else if (!currentOperator.compare("<")) {
@@ -447,6 +463,7 @@ namespace visitor {
             evaluation->setBoolEvaluation(LHS >= RHS);
         } else {
             cout << "Problem with Semantic analysis, operator not supported for real" << endl;
+            exit(1);
         }
         lastEvaluation = evaluation;
     }
@@ -460,7 +477,77 @@ namespace visitor {
             evaluation->setBoolEvaluation(LHS || RHS);
         } else {
             cout << "Problem with Semantic analysis, operator not supported for bool" << endl;
+            exit(1);
         }
         lastEvaluation = evaluation;
     }
+
+    void InterpreterExecution::printCurrentStatements() {
+        unsigned currentParamCounter;
+        // -1 to remove ans
+        if (globalScope->scopeIdentifiers.size() - 1 != 0) {
+            cout << "Variables: " << endl;
+
+            for (auto &identifier : globalScope->scopeIdentifiers) {
+                if (!identifier.first.compare(SPECIAL_VARIABLE)) {
+                    continue;
+                }
+                cout << identifier.first << " : " << TYPE_USED_STRING[identifier.second->lastTypeUsed]
+                     << endl;
+            }
+        }
+
+        if (globalScope->functionsBlock.size() != 0) {
+            cout << "Functions: " << endl;
+
+            for (auto &identifier : globalScope->functionsBlock) {
+                currentParamCounter = 0;
+                cout << identifier.first << " : " << TYPE_USED_STRING[identifier.second->tokenType];
+                cout << " params: (";
+                for (auto &param : identifier.second->formalParams) {
+                    if (currentParamCounter++ == identifier.second->formalParams.size() - 1) {
+                        cout << param->identifier << " : " << TOKEN_STRING[param->tokenType];
+                    } else {
+                        cout << param->identifier << " : " << TOKEN_STRING[param->tokenType] << ", ";
+                    }
+                }
+                cout << ")" << endl;
+            }
+        }
+
+        if (globalScope->scopeIdentifiers.size() == 0 && globalScope->functionsBlock.size() == 0) {
+            cout << "Currently no statements!" << endl;
+        }
+    }
+
+    void InterpreterExecution::printSpecialVariableIfChanged() {
+        Evaluation * tempEvaluation;
+        std::map<std::string, Evaluation *>::iterator it = globalScope->scopeIdentifiers.find(SPECIAL_VARIABLE);
+
+        if (it == globalScope->scopeIdentifiers.end()) {
+            std::cout << "Special Variable not declared." << std::endl;
+            exit(2);
+        }
+        if (it->second != nullptr) {
+            tempEvaluation = it->second;
+            cout << "var " << SPECIAL_VARIABLE << " : " <<  TYPE_USED_STRING[tempEvaluation->lastTypeUsed] << " = ";
+            switch (tempEvaluation->lastTypeUsed) {
+                case STRING:
+                    cout << tempEvaluation->getStringEvaluation() << endl;
+                    break;
+                case REAL:
+                    cout << tempEvaluation->getRealEvaluation() << endl;
+                    break;
+                case INT:
+                    cout << tempEvaluation->getIntEvaluation() << endl;
+                    break;
+                case BOOL:
+                    cout << tempEvaluation->getBoolEvaluation() << endl;
+                    break;
+            }
+            // Resets the evaluation so that if for example a print statements comes after, it does not re-print.
+            it->second = nullptr;
+        }
+    }
+
 }
