@@ -19,6 +19,7 @@
 #include "../../include/AST/ASTExpression/ASTIntegerLiteral.h"
 #include "../../include/AST/ASTExpression/ASTRealLiteral.h"
 #include "../../include/Exceptions/InterpreterError.h"
+#include "../../include/AST/ASTStatements/ASTExprStatement.h"
 
 using namespace ast;
 using namespace std;
@@ -182,6 +183,12 @@ namespace visitor {
         // called and hold the parameters so the arguments of function call
         // can be substituted with the parameters of the function.
         currentScope->addFunctionBlock(node->identifier, node);
+    }
+
+    void InterpreterExecution::visit(ast::ASTExprStatement *node) {
+        node->exprNode->accept(this);
+
+        globalScope->updateSpecialVariableEvaluation(lastEvaluation);
     }
 
     void InterpreterExecution::visit(ast::ASTBooleanLiteral *node) {
@@ -542,4 +549,5 @@ namespace visitor {
             it->second = nullptr;
         }
     }
+
 }

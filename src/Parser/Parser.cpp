@@ -54,6 +54,20 @@ namespace parser {
             case TOK_LeftCurlyBracket:
                 currentToken = lexer->getNextToken();
                 return parseBlock();
+            case TOK_BooleanLiteral:
+            case TOK_IntegerLiteral:
+            case TOK_Printable:
+            case TOK_Identifier:
+            case TOK_LeftParenthesis:
+            case TOK_AdditiveOperator:
+                if (currentToken.tokenType == TOK_AdditiveOperator && currentToken.tokenName != "-") {
+                    UnexpectedTokenWhileParsing("Unexpected token found while parsing. Expecting Statement Token.");
+                }
+            case TOK_Logic:
+                if (currentToken.tokenType == TOK_Logic && currentToken.tokenName != "not") {
+                    UnexpectedTokenWhileParsing("Unexpected token found while parsing. Expecting Statement Token.");
+                }
+                return parseExpressionStatement();
             default:
                 throw UnexpectedTokenWhileParsing("Unexpected token found while parsing. Expecting Statement Token.");
         }
@@ -265,6 +279,17 @@ namespace parser {
             throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected '}' after Block.");
         }
         return block;
+    }
+
+    ast::ASTExprStatement *Parser::parseExpressionStatement() {
+        ast::ASTExprNode * expression = parseExpression();
+
+        currentToken = lexer->getNextToken();
+
+        if (currentToken.tokenType != TOK_SemiColon) {
+            throw UnexpectedTokenWhileParsing("Unexpected Token found while parsing. Expected ';' after declaration.");
+        }
+        return new ast::ASTExprStatement(expression);
     }
 
     ast::ASTExprNode * Parser::parseExpression() {

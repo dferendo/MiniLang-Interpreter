@@ -136,22 +136,10 @@ int MiniLangI::checkCommand(string &lineRead) {
     }
 }
 
-/**
- * Check if the program passed matched the file extension.
- *
- * @param programPassed
- * @return True if the program has the correct extension, false otherwise.
- */
 bool MiniLangI::checkExtension(string & programPassed) {
     return programPassed.substr(programPassed.find_last_of(".") + 1) == "gulp";
 }
 
-/**
- * Convert the given file into a single string.
- *
- * @param program: The file stream.
- * @return String containing all the contents has the file.
- */
 std::string MiniLangI::covertFileToString(std::ifstream & program) {
     std::string sProgram = "", temp;
 

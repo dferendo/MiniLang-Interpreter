@@ -23,6 +23,7 @@
 #include "../AST/ASTStatements/ASTWhileStatement.h"
 #include "../AST/ASTStatements/ASTReturnStatement.h"
 #include "../AST/ASTStatements/ASTFunctionDeclaration.h"
+#include "../AST/ASTStatements/ASTExprStatement.h"
 
 namespace parser {
 
@@ -101,6 +102,13 @@ namespace parser {
          * @throw UnexpectedTokenWhileParsing will be thrown if unexpected token.
          */
         ast::ASTReturnStatement * parseReturnStatement();
+
+        /**
+         * Parses an expression statement. Used for MiniLangI.
+         * @return Returns the AST of an Expression statement.
+         * @throw UnexpectedTokenWhileParsing will be thrown if unexpected token.
+         */
+        ast::ASTExprStatement * parseExpressionStatement();
 
         /**
          * Parses a function declaration. After the keyword 'def' which is taken by the statement,

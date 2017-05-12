@@ -16,6 +16,7 @@
 #include "../../include/AST/ASTStatements/ASTWhileStatement.h"
 #include "../../include/AST/ASTStatements/ASTReturnStatement.h"
 #include "../../include/Exceptions/SemanticAnalysisError.h"
+#include "../../include/AST/ASTStatements/ASTExprStatement.h"
 
 using namespace ast;
 using namespace std;
@@ -186,6 +187,10 @@ namespace visitor {
             throw SemanticAnalysisError("Control reaches end of non-void function, return required. ");
         }
         free(returnCheckForFunctionDeclaration);
+    }
+
+    void SemanticAnalysis::visit(ast::ASTExprStatement *node) {
+        node->exprNode->accept(this);
     }
 
     void SemanticAnalysis::visit(ASTBooleanLiteral *node) {

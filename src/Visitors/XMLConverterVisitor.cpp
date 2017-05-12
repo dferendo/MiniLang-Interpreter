@@ -21,6 +21,7 @@
 #include "../../include/AST/ASTExpression/ASTUnary.h"
 #include "../../include/AST/ASTExpression/ASTSubExpression.h"
 #include "../../include/AST/ASTExpression/ASTBinaryExprNode.h"
+#include "../../include/AST/ASTStatements/ASTExprStatement.h"
 
 using namespace std;
 using namespace ast;
@@ -164,6 +165,16 @@ namespace visitor {
         }
     }
 
+    void XMLConverterVisitor::visit(ast::ASTExprStatement *node) {
+        string word = getStartingPositionAfterIndent();
+
+        outputXML << word << "<Identifier>" << endl;
+        currentIndent++;
+        node->exprNode->accept(this);
+        currentIndent--;
+        outputXML << word << "</Identifier>" << endl;
+    }
+
     void XMLConverterVisitor::visit(ASTIntegerLiteral *node) {
         string word = getStartingPositionAfterIndent();
         outputXML << word << "<Integer>" << node->literalValue << "</Integer>" << endl;
@@ -263,4 +274,5 @@ namespace visitor {
             return currentOperator;
         }
     }
+
 }

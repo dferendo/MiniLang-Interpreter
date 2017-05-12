@@ -11,7 +11,7 @@
 
 namespace ast {
     /**
-     *
+     * Statement Node
      */
     class ASTStatementNode {
     public:

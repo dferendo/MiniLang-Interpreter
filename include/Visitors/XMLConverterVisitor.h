@@ -67,6 +67,8 @@ namespace visitor {
 
         virtual void visit(ast::ASTFunctionDeclaration *node) override;
 
+        virtual void visit(ast::ASTExprStatement * node) override;
+
         virtual void visit(ast::ASTBooleanLiteral *node) override;
 
         virtual void visit(ast::ASTIntegerLiteral *node) override;

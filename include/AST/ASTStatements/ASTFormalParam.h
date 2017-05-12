@@ -20,7 +20,7 @@ namespace ast {
 
         void accept(visitor::Visitor *v);
 
-        virtual ~ASTFormalParam();
+        ~ASTFormalParam();
     };
 
 }
