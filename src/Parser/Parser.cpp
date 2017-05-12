@@ -27,24 +27,32 @@ namespace parser {
     }
 
     ast::ASTStatementNode * Parser::parseStatement() {
-        currentToken = lexer->getNextToken();
+        currentToken = lexer->previewNextToken();
 
         switch (currentToken.tokenType) {
             case TOK_Var:
+                currentToken = lexer->getNextToken();
                 return parseVariableDeclarationStatement();
             case TOK_Set:
+                currentToken = lexer->getNextToken();
                 return parseAssignmentStatement();
             case TOK_Print:
+                currentToken = lexer->getNextToken();
                 return parsePrintStatement();
             case TOK_If:
+                currentToken = lexer->getNextToken();
                 return parseIfStatement();
             case TOK_While:
+                currentToken = lexer->getNextToken();
                 return parseWhileStatement();
             case TOK_Return:
+                currentToken = lexer->getNextToken();
                 return parseReturnStatement();
             case TOK_Def:
+                currentToken = lexer->getNextToken();
                 return parseFunctionDeclarationStatement();
             case TOK_LeftCurlyBracket:
+                currentToken = lexer->getNextToken();
                 return parseBlock();
             default:
                 throw UnexpectedTokenWhileParsing("Unexpected token found while parsing. Expecting Statement Token.");

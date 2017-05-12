@@ -12,6 +12,8 @@ class MiniLangI {
 private:
     lexer::Lexer * lexer = new lexer::Lexer();
 
+    long currentBlockAmount = 0;
+
     void readCommand();
 
     int checkCommand(std::string &lineRead);
@@ -19,6 +21,8 @@ private:
     bool checkExtension(std::string & programPassed);
 
     std::string covertFileToString(std::ifstream & program);
+
+    std::string multipleLineStatement(std::string lineRead);
 public:
     void setup();
 };

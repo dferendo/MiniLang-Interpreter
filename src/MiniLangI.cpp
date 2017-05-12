@@ -45,6 +45,7 @@ void MiniLangI::readCommand() {
         commandReturn = checkCommand(lineRead);
 
         try {
+            // Handle command
             if (commandReturn == 2) {
                 break;
             } else if (commandReturn == -1 || commandReturn == 4) {
@@ -55,6 +56,8 @@ void MiniLangI::readCommand() {
                 interpreter->printCurrentStatements();
                 continue;
             }
+            // Check if multiple line command.
+            lineRead = multipleLineStatement(lineRead);
             // Run Lexer;
             if (commandReturn != 1) {
                 lineRead += '\0';
@@ -160,4 +163,31 @@ std::string MiniLangI::covertFileToString(std::ifstream & program) {
         std::cout << "Error opening file!" << std::endl;
     }
     return sProgram;
+}
+
+std::string MiniLangI::multipleLineStatement(std::string lineRead) {
+    std::string tempNewLine;
+
+    if (lineRead.find("{") != string::npos) {
+        // Count the number of occurrences, the user needs to enter '}'.
+        currentBlockAmount = count(lineRead.begin(), lineRead.end(), '{');
+        // If user enter '}' in the same line remove them.
+        currentBlockAmount -= count(lineRead.begin(), lineRead.end(), '}');
+
+        if (currentBlockAmount == 0) {
+            return lineRead;
+        } else {
+            while (currentBlockAmount > 0) {
+                cout << ".... ";
+                getline(cin, tempNewLine);
+                // Count the number of occurrences, the user needs to enter '}'.
+                currentBlockAmount += count(tempNewLine.begin(), tempNewLine.end(), '{');
+                // If user enter '}' in the same line remove them.
+                currentBlockAmount -= count(tempNewLine.begin(), tempNewLine.end(), '}');
+
+                lineRead = lineRead + tempNewLine;
+            }
+        }
+    }
+    return lineRead;
 }
