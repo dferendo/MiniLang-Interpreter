@@ -1,0 +1,283 @@
+<Program>
+	<FunctionDeclaration type="real">
+		<Identifier>funcPow</Identifier>
+		<FormalParams>
+			<FormalParam type="real">
+				<Identifier>x</Identifier>
+			</FormalParam>
+			<FormalParam type="int">
+				<Identifier>n</Identifier>
+			</FormalParam>
+		</FormalParams>
+		<Block>
+			<VariableDeclaration type="real">
+				<Identifier>y</Identifier>
+				<Expression>
+					<Real>1</Real>
+				</Expression>
+			</VariableDeclaration>
+			<IfStatement>
+			<BinaryExprNode op="&gt;">
+				<Identifier>n</Identifier>
+				<Integer>0</Integer>
+			</BinaryExprNode>
+				<Block>
+					<WhileStatement>
+					<BinaryExprNode op="&gt;">
+						<Identifier>n</Identifier>
+						<Integer>0</Integer>
+					</BinaryExprNode>
+						<Block>
+							<Assignment>
+								<Identifier>y</Identifier>
+								<BinaryExprNode op="*">
+									<Identifier>y</Identifier>
+									<Identifier>x</Identifier>
+								</BinaryExprNode>
+							</Assignment>
+							<Assignment>
+								<Identifier>n</Identifier>
+								<BinaryExprNode op="-">
+									<Identifier>n</Identifier>
+									<Integer>1</Integer>
+								</BinaryExprNode>
+							</Assignment>
+						</Block>
+					</WhileStatement>
+				</Block>
+				<Block>
+					<WhileStatement>
+					<BinaryExprNode op="&lt;">
+						<Identifier>n</Identifier>
+						<Integer>0</Integer>
+					</BinaryExprNode>
+						<Block>
+							<Assignment>
+								<Identifier>y</Identifier>
+								<BinaryExprNode op="/">
+									<Identifier>y</Identifier>
+									<Identifier>x</Identifier>
+								</BinaryExprNode>
+							</Assignment>
+							<Assignment>
+								<Identifier>n</Identifier>
+								<BinaryExprNode op="+">
+									<Identifier>n</Identifier>
+									<Integer>1</Integer>
+								</BinaryExprNode>
+							</Assignment>
+						</Block>
+					</WhileStatement>
+				</Block>
+			</IfStatement>
+			<ReturnStatement>
+				<Expression>
+					<Identifier>y</Identifier>
+				</Expression>
+			</ReturnStatement>
+		</Block>
+	</FunctionDeclaration>
+	<VariableDeclaration type="real">
+		<Identifier>temp</Identifier>
+		<Expression>
+			<Integer>2</Integer>
+		</Expression>
+	</VariableDeclaration>
+	<VariableDeclaration type="int">
+		<Identifier>temp2</Identifier>
+		<Expression>
+			<Integer>5</Integer>
+		</Expression>
+	</VariableDeclaration>
+	<PrintStatement>
+		<Expression>
+			<FunctionCall>
+				<Identifier>funcPow</Identifier>
+				<ActualParams>
+					<Identifier>temp</Identifier>
+					<Identifier>temp2</Identifier>
+				</ActualParams>
+			</FunctionCall>
+		</Expression>
+	</PrintStatement>
+	<Assignment>
+		<Identifier>temp2</Identifier>
+		<Expression>
+			<Unary op="-">
+				<Integer>5</Integer>
+			</Unary>
+		</Expression>
+	</Assignment>
+	<PrintStatement>
+		<Expression>
+			<FunctionCall>
+				<Identifier>funcPow</Identifier>
+				<ActualParams>
+					<Identifier>temp</Identifier>
+					<Identifier>temp2</Identifier>
+				</ActualParams>
+			</FunctionCall>
+		</Expression>
+	</PrintStatement>
+	<Assignment>
+		<Identifier>temp2</Identifier>
+		<Expression>
+			<Integer>10</Integer>
+		</Expression>
+	</Assignment>
+	<PrintStatement>
+		<BinaryExprNode op="&gt;">
+			<FunctionCall>
+				<Identifier>funcPow</Identifier>
+				<ActualParams>
+					<Identifier>temp</Identifier>
+					<Identifier>temp2</Identifier>
+				</ActualParams>
+			</FunctionCall>
+			<Unary op="-">
+				<Integer>34</Integer>
+			</Unary>
+		</BinaryExprNode>
+	</PrintStatement>
+	<FunctionDeclaration type="real">
+		<Identifier>funcPow</Identifier>
+		<FormalParams>
+			<FormalParam type="real">
+				<Identifier>x</Identifier>
+			</FormalParam>
+			<FormalParam type="int">
+				<Identifier>n</Identifier>
+			</FormalParam>
+		</FormalParams>
+		<Block>
+			<VariableDeclaration type="real">
+				<Identifier>y</Identifier>
+				<Expression>
+					<Real>1</Real>
+				</Expression>
+			</VariableDeclaration>
+			<IfStatement>
+			<BinaryExprNode op="&gt;">
+				<Identifier>n</Identifier>
+				<Integer>0</Integer>
+			</BinaryExprNode>
+				<Block>
+					<WhileStatement>
+					<BinaryExprNode op="&gt;">
+						<Identifier>n</Identifier>
+						<Integer>0</Integer>
+					</BinaryExprNode>
+						<Block>
+							<Assignment>
+								<Identifier>y</Identifier>
+								<BinaryExprNode op="*">
+									<Identifier>y</Identifier>
+									<Identifier>x</Identifier>
+								</BinaryExprNode>
+							</Assignment>
+							<Assignment>
+								<Identifier>n</Identifier>
+								<BinaryExprNode op="-">
+									<Identifier>n</Identifier>
+									<Integer>1</Integer>
+								</BinaryExprNode>
+							</Assignment>
+						</Block>
+					</WhileStatement>
+				</Block>
+				<Block>
+					<WhileStatement>
+					<BinaryExprNode op="&lt;">
+						<Identifier>n</Identifier>
+						<Integer>0</Integer>
+					</BinaryExprNode>
+						<Block>
+							<Assignment>
+								<Identifier>y</Identifier>
+								<BinaryExprNode op="/">
+									<Identifier>y</Identifier>
+									<Identifier>x</Identifier>
+								</BinaryExprNode>
+							</Assignment>
+							<Assignment>
+								<Identifier>n</Identifier>
+								<BinaryExprNode op="+">
+									<Identifier>n</Identifier>
+									<Integer>1</Integer>
+								</BinaryExprNode>
+							</Assignment>
+						</Block>
+					</WhileStatement>
+				</Block>
+			</IfStatement>
+			<ReturnStatement>
+				<Expression>
+					<Identifier>y</Identifier>
+				</Expression>
+			</ReturnStatement>
+		</Block>
+	</FunctionDeclaration>
+	<VariableDeclaration type="real">
+		<Identifier>temp</Identifier>
+		<Expression>
+			<Integer>2</Integer>
+		</Expression>
+	</VariableDeclaration>
+	<VariableDeclaration type="int">
+		<Identifier>temp2</Identifier>
+		<Expression>
+			<Integer>5</Integer>
+		</Expression>
+	</VariableDeclaration>
+	<PrintStatement>
+		<Expression>
+			<FunctionCall>
+				<Identifier>funcPow</Identifier>
+				<ActualParams>
+					<Identifier>temp</Identifier>
+					<Identifier>temp2</Identifier>
+				</ActualParams>
+			</FunctionCall>
+		</Expression>
+	</PrintStatement>
+	<Assignment>
+		<Identifier>temp2</Identifier>
+		<Expression>
+			<Unary op="-">
+				<Integer>5</Integer>
+			</Unary>
+		</Expression>
+	</Assignment>
+	<PrintStatement>
+		<Expression>
+			<FunctionCall>
+				<Identifier>funcPow</Identifier>
+				<ActualParams>
+					<Identifier>temp</Identifier>
+					<Identifier>temp2</Identifier>
+				</ActualParams>
+			</FunctionCall>
+		</Expression>
+	</PrintStatement>
+	<Assignment>
+		<Identifier>temp2</Identifier>
+		<Expression>
+			<Integer>10</Integer>
+		</Expression>
+	</Assignment>
+	<PrintStatement>
+		<BinaryExprNode op="&gt;">
+			<FunctionCall>
+				<Identifier>funcPow</Identifier>
+				<ActualParams>
+					<Identifier>temp</Identifier>
+					<Identifier>temp2</Identifier>
+				</ActualParams>
+			</FunctionCall>
+			<Unary op="-">
+				<Integer>34</Integer>
+			</Unary>
+		</BinaryExprNode>
+	</PrintStatement>
+</Program>
+

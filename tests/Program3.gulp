@@ -1,0 +1,39 @@
+/*
+ * Test 3.
+ * Function definition for Power.
+ */
+def funcPow(x : real, n : int) : real {
+    // Declare y and set it to 1.0
+    var y : real = 1.0;
+
+    if (n > 0) {
+        while (n > 0) {
+            // Assignment y = y * x;
+            set y = y * x;
+            // Assignment n = n - 1;
+            set n = n - 1;
+        }
+    } else {
+        while (n < 0) {
+            //Assignment y = y / x;
+            set y = y / x;
+            // Assignment n = n + 1;
+            set n = n + 1;
+        }
+    }
+    // return y as the result;
+    return y;
+}
+
+var temp : real = 2;
+var temp2 : int = 5;
+// Should print 32
+print funcPow(temp, temp2);
+
+set temp2 = -5;
+// Should print 0.03125
+print funcPow(temp, temp2);
+
+set temp2 = 10;
+// Should print true.
+print funcPow(temp, temp2) > - 34;

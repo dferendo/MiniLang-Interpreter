@@ -409,6 +409,10 @@ namespace visitor {
 
         if (!currentOperator.compare("+")) {
             evaluation->setStringEvaluation(LHS + RHS);
+        } else if (!currentOperator.compare("==")) {
+            evaluation->setBoolEvaluation(LHS == RHS);
+        } else if (!currentOperator.compare("!=")) {
+            evaluation->setBoolEvaluation(LHS != RHS);
         } else {
             cout << "Problem with Semantic analysis, operator not supported for string" << endl;
             exit(1);
@@ -489,6 +493,10 @@ namespace visitor {
             evaluation->setBoolEvaluation(LHS && RHS);
         } else if (!currentOperator.compare("or")) {
             evaluation->setBoolEvaluation(LHS || RHS);
+        } else if (!currentOperator.compare("==")) {
+            evaluation->setBoolEvaluation(LHS == RHS);
+        } else if (!currentOperator.compare("!=")) {
+            evaluation->setBoolEvaluation(LHS != RHS);
         } else {
             cout << "Problem with Semantic analysis, operator not supported for bool" << endl;
             exit(1);
@@ -556,7 +564,11 @@ namespace visitor {
                     cout << tempEvaluation->getIntEvaluation() << endl;
                     break;
                 case BOOL:
-                    cout << tempEvaluation->getBoolEvaluation() << endl;
+                    if (tempEvaluation->getBoolEvaluation()) {
+                        cout << "true" << endl;
+                    } else {
+                        cout << "false" << endl;
+                    }
                     break;
             }
             // Resets the evaluation so that if for example a print statements comes after, it does not re-print.
