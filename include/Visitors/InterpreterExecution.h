@@ -109,14 +109,27 @@ namespace visitor {
 
         virtual void visit(ast::ASTBinaryExprNode *node) override;
         /**
-         * This will be an instance of the of the symbol table.
+         * Global scope for the program. Created globally instead inside the ASTNode.
+         * Used for MiniLangI.
          */
         ScopeForInterpreter * globalScope = new ScopeForInterpreter();
     public:
+        /**
+         * Print the variables and function declaration found in the global
+         * symbol table.
+         */
         void printCurrentStatements();
 
+        /**
+         * Print the last expression evaluated. This was made to only work
+         * when there is a variable decl, assignment or annoynous expression.
+         */
         void printSpecialVariableIfChanged();
 
+        /**
+         * Push the global scope to the stack and also push the special variable
+         * in the symbol table.
+         */
         InterpreterExecution();
 
         ~InterpreterExecution();

@@ -104,7 +104,8 @@ namespace parser {
         ast::ASTReturnStatement * parseReturnStatement();
 
         /**
-         * Parses an expression statement. Used for MiniLangI.
+         * Parses an expression statement. Expects expression followed by a ';'.
+         * Used for MiniLangI.
          * @return Returns the AST of an Expression statement.
          * @throw UnexpectedTokenWhileParsing will be thrown if unexpected token.
          */

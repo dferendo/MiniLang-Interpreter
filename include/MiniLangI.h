@@ -10,12 +10,34 @@
 
 class MiniLangI {
 private:
+    /**
+     * Creates an instance of the lexer. One instance is enough, it will not be needed
+     * to re-instance.
+     */
     lexer::Lexer * lexer = new lexer::Lexer();
 
+    /**
+     * This is used for multi line commands and it holds the number of { used.
+     * When there is a } the number will decrease.
+     */
     long currentBlockAmount = 0;
 
+    /**
+     * The main loop of MiniLangI. Will continue to read commands until #quit is found.
+     */
     void readCommand();
 
+    /**
+     * Checks if the user entered a special command starting with '#'. If so the appriopiate
+     * action and return are completed.
+     * @param lineRead: The command inputted in the terminal.
+     * @return -1: If the command inputted was bad (like empty string). Re-read another command.
+     *          0: No special command found.
+     *          1: #load command was successful.
+     *          2: Quit program.
+     *          3: Show statements in the symbol table.
+     *          4: Printed #help.
+     */
     int checkCommand(std::string &lineRead);
 
     /**
@@ -34,6 +56,11 @@ private:
      */
     std::string covertFileToString(std::ifstream & program);
 
+    /**
+     * Reads multiple line.
+     * @param lineRead The command that enable multiple lines.
+     * @return All the commands inputted.
+     */
     std::string multipleLineStatement(std::string lineRead);
 public:
     void setup();

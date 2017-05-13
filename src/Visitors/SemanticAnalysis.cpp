@@ -2,7 +2,6 @@
 // Created by dylan on 25/04/2017.
 //
 #include "../../include/Visitors/SemanticAnalysis.h"
-#include "../../include/AST/ASTStatements/ASTStatementNode.h"
 #include "../../include/AST/ASTStatements/ASTVariableDeclaration.h"
 #include "../../include/AST/ASTStatements/ASTBlock.h"
 #include "../../include/AST/ASTStatements/ASTAssignment.h"

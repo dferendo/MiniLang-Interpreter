@@ -138,11 +138,19 @@ namespace visitor {
 
         virtual void visit(ast::ASTBinaryExprNode *node) override;
     public:
+        /**
+         * Global scope for the program. Created globally instead inside the ASTNode.
+         * Used for MiniLangI.
+         */
         Scope * globalScope = new Scope();
 
+        /**
+         * Push the global scope to the stack and also push the special variable
+         * in the symbol table.
+         */
         SemanticAnalysis();
 
-        virtual ~SemanticAnalysis();
+        ~SemanticAnalysis();
     };
 
 }
