@@ -17,6 +17,7 @@
 #include "../../include/AST/ASTStatements/ASTReturnStatement.h"
 #include "../../include/Exceptions/SemanticAnalysisError.h"
 #include "../../include/AST/ASTStatements/ASTExprStatement.h"
+#include "../../include/Visitors/InterpreterExecution.h"
 
 using namespace ast;
 using namespace std;
@@ -28,6 +29,8 @@ namespace visitor {
     SemanticAnalysis::SemanticAnalysis() {
         // This global scope is made so that MiniLangI can use it.
         pushScope(globalScope);
+        // Special variable "ans"
+        globalScope->addIdentifier(SPECIAL_VARIABLE);
     }
 
     void SemanticAnalysis::pushScope(Scope *scope) {

@@ -48,6 +48,11 @@ namespace visitor {
         void addIdentifier(ast::ASTFunctionDeclaration *function);
 
         /**
+         * Add only an identifier used for special variable. (ans)
+         * @param identifier: The identifier that will be added.
+         */
+        void addIdentifier(std::string identifier);
+        /**
          * Add the params of a function with the given scope as an identifier.
          *
          * @param param: The param of the function.

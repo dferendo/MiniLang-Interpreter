@@ -60,7 +60,7 @@ void MiniLangI::readCommand() {
             lineRead = multipleLineStatement(lineRead);
             // Run Lexer;
             if (commandReturn != 1) {
-                lineRead += '\0';
+                lineRead += "\n\0";
                 lexer->tokenizeProgram(lineRead);
             }
 
@@ -96,6 +96,10 @@ void MiniLangI::readCommand() {
 
 int MiniLangI::checkCommand(string &lineRead) {
     string fileRead;
+    // Empty string return
+    if (lineRead == "") {
+        return -1;
+    }
     // Check if first character is #
     if (lineRead.at(0) != '#') {
         return 0;
@@ -128,7 +132,7 @@ int MiniLangI::checkCommand(string &lineRead) {
     } else if (lineRead.find("#help") != string::npos) {
         cout << "#quit : Quit program." << endl;
         cout << "#load : Load program. Takes .gulp extensions." << endl;
-        cout << "#st : Display current variables." << endl;
+        cout << "#st   : Display current variables." << endl;
         return 4;
     } else {
         cout << "Command not found." << endl;
