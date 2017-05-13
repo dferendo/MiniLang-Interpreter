@@ -22,7 +22,15 @@ namespace visitor {
             std::string identifier;
         } FunctionCalled;
 
+        /**
+         * Holds the last evaluation of an expression.
+         */
         Evaluation * lastEvaluation = nullptr;
+
+        /**
+         * Return is found, stop parsing block function.
+         */
+        bool isReturnFound = false;
 
         /**
          * All the scopes of the program.

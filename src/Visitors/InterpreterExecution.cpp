@@ -117,6 +117,7 @@ namespace visitor {
     void InterpreterExecution::visit(ast::ASTBlock *node) {
         ScopeForInterpreter *blockScope = new ScopeForInterpreter();
         ast::ASTFunctionDeclaration * functionDeclaration;
+        bool functionBlock = isNextBlockFunction;
         // Push new Scope
         pushScope(blockScope);
 
@@ -134,6 +135,14 @@ namespace visitor {
 
         for (auto const &childNode : node->statements) {
             childNode->accept(this);
+            // Stop parsing if return is found.
+            if (isReturnFound) {
+                break;
+            }
+            // Only the function can mark to stop the return
+            if (functionBlock && isReturnFound) {
+                isReturnFound = false;
+            }
         }
         popScope();
         free(blockScope);
@@ -169,6 +178,8 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTReturnStatement *node) {
         node->exprNode->accept(this);
+        // Stop parsing the function block.
+        isReturnFound = true;
     }
 
     void InterpreterExecution::visit(ast::ASTFormalParam *node) {
