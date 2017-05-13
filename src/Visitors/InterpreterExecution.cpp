@@ -269,6 +269,7 @@ namespace visitor {
         ast::ASTFunctionDeclaration * functionDeclaration;
         // Set variables so that block knows the new function
         isNextBlockFunction = true;
+        isReturnFound = false;
         functionCalled.identifier = node->identifier;
         functionCalled.paramsOfAFunction = node->actualParams;
 

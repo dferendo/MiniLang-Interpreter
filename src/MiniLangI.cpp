@@ -122,7 +122,12 @@ int MiniLangI::checkCommand(string &lineRead) {
         if (fileRead == "") {
             return -1;
         } else {
-            lexer->tokenizeProgram(fileRead);
+            try {
+                lexer->tokenizeProgram(fileRead);
+            } catch (LexerFailed & error) {
+                cout << error.reason << endl;
+                return -1;
+            }
             return 1;
         }
     } else if (lineRead.find("#quit") != string::npos) {

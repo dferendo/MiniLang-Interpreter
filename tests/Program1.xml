@@ -1,0 +1,145 @@
+<Program>
+	<FunctionDeclaration type="real">
+		<Identifier>max</Identifier>
+		<FormalParams>
+			<FormalParam type="real">
+				<Identifier>x</Identifier>
+			</FormalParam>
+			<FormalParam type="real">
+				<Identifier>y</Identifier>
+			</FormalParam>
+		</FormalParams>
+		<Block>
+			<IfStatement>
+			<BinaryExprNode op="&gt;">
+				<Identifier>x</Identifier>
+				<Identifier>y</Identifier>
+			</BinaryExprNode>
+				<Block>
+					<ReturnStatement>
+						<Expression>
+							<Identifier>x</Identifier>
+						</Expression>
+					</ReturnStatement>
+				</Block>
+			</IfStatement>
+			<ReturnStatement>
+				<Expression>
+					<Identifier>y</Identifier>
+				</Expression>
+			</ReturnStatement>
+		</Block>
+	</FunctionDeclaration>
+	<VariableDeclaration type="int">
+		<Identifier>x</Identifier>
+		<Expression>
+			<Integer>23</Integer>
+		</Expression>
+	</VariableDeclaration>
+	<VariableDeclaration type="real">
+		<Identifier>y</Identifier>
+		<Expression>
+			<Integer>100</Integer>
+		</Expression>
+	</VariableDeclaration>
+	<PrintStatement>
+		<Expression>
+			<FunctionCall>
+				<Identifier>max</Identifier>
+				<ActualParams>
+					<Identifier>x</Identifier>
+					<Identifier>y</Identifier>
+				</ActualParams>
+			</FunctionCall>
+		</Expression>
+	</PrintStatement>
+	<Assignment>
+		<Identifier>x</Identifier>
+		<Expression>
+			<Integer>200</Integer>
+		</Expression>
+	</Assignment>
+	<PrintStatement>
+		<Expression>
+			<FunctionCall>
+				<Identifier>max</Identifier>
+				<ActualParams>
+					<Identifier>x</Identifier>
+					<Identifier>y</Identifier>
+				</ActualParams>
+			</FunctionCall>
+		</Expression>
+	</PrintStatement>
+	<FunctionDeclaration type="real">
+		<Identifier>max</Identifier>
+		<FormalParams>
+			<FormalParam type="real">
+				<Identifier>x</Identifier>
+			</FormalParam>
+			<FormalParam type="real">
+				<Identifier>y</Identifier>
+			</FormalParam>
+		</FormalParams>
+		<Block>
+			<IfStatement>
+			<BinaryExprNode op="&gt;">
+				<Identifier>x</Identifier>
+				<Identifier>y</Identifier>
+			</BinaryExprNode>
+				<Block>
+					<ReturnStatement>
+						<Expression>
+							<Identifier>x</Identifier>
+						</Expression>
+					</ReturnStatement>
+				</Block>
+			</IfStatement>
+			<ReturnStatement>
+				<Expression>
+					<Identifier>y</Identifier>
+				</Expression>
+			</ReturnStatement>
+		</Block>
+	</FunctionDeclaration>
+	<VariableDeclaration type="int">
+		<Identifier>x</Identifier>
+		<Expression>
+			<Integer>23</Integer>
+		</Expression>
+	</VariableDeclaration>
+	<VariableDeclaration type="real">
+		<Identifier>y</Identifier>
+		<Expression>
+			<Integer>100</Integer>
+		</Expression>
+	</VariableDeclaration>
+	<PrintStatement>
+		<Expression>
+			<FunctionCall>
+				<Identifier>max</Identifier>
+				<ActualParams>
+					<Identifier>x</Identifier>
+					<Identifier>y</Identifier>
+				</ActualParams>
+			</FunctionCall>
+		</Expression>
+	</PrintStatement>
+	<Assignment>
+		<Identifier>x</Identifier>
+		<Expression>
+			<Integer>200</Integer>
+		</Expression>
+	</Assignment>
+	<PrintStatement>
+		<Expression>
+			<FunctionCall>
+				<Identifier>max</Identifier>
+				<ActualParams>
+					<Identifier>x</Identifier>
+					<Identifier>y</Identifier>
+				</ActualParams>
+			</FunctionCall>
+		</Expression>
+	</PrintStatement>
+</Program>
+

@@ -142,6 +142,10 @@ namespace visitor {
 
         node->exprNode->accept(this);
 
+        if (functionsReturn.size() == 0) {
+            throw SemanticAnalysisError("Returning outside a function.");
+        }
+
         returnCheckForFunctionDeclaration = functionsReturn.back();
 
         if (lastToken != returnCheckForFunctionDeclaration->functionDeclaration->tokenType) {
