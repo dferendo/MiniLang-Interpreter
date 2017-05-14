@@ -10,4 +10,6 @@ visitor::SymbolTable::SymbolTable(lexer::TOKEN returnType, std::vector<ast::ASTF
     this->functionsParams = new std::vector<ast::ASTFormalParam *>(functionsParams);
 }
 
-visitor::SymbolTable::~SymbolTable() {}
+visitor::SymbolTable::~SymbolTable() {
+    delete functionsParams;
+}
