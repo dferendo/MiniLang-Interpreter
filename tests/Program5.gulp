@@ -1,0 +1,10 @@
+/*
+ * Test 5.
+ * Multiple variable declaration in different blocks and Scopes.
+ */
+var x : string = "outside";
+{
+    var x : string = "inside";
+    print x;
+}
+print x;

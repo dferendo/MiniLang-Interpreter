@@ -1,0 +1,50 @@
+<Program>
+    <VariableDeclaration type="string">
+        <Identifier>x</Identifier>
+        <Expression>
+            <String>outside</String>
+        </Expression>
+    </VariableDeclaration>
+    <Block>
+        <VariableDeclaration type="string">
+            <Identifier>x</Identifier>
+            <Expression>
+                <String>inside</String>
+            </Expression>
+        </VariableDeclaration>
+        <PrintStatement>
+            <Expression>
+                <Identifier>x</Identifier>
+            </Expression>
+        </PrintStatement>
+    </Block>
+    <PrintStatement>
+        <Expression>
+            <Identifier>x</Identifier>
+        </Expression>
+    </PrintStatement>
+    <VariableDeclaration type="string">
+        <Identifier>x</Identifier>
+        <Expression>
+            <String>outside</String>
+        </Expression>
+    </VariableDeclaration>
+    <Block>
+        <VariableDeclaration type="string">
+            <Identifier>x</Identifier>
+            <Expression>
+                <String>inside</String>
+            </Expression>
+        </VariableDeclaration>
+        <PrintStatement>
+            <Expression>
+                <Identifier>x</Identifier>
+            </Expression>
+        </PrintStatement>
+    </Block>
+    <PrintStatement>
+        <Expression>
+            <Identifier>x</Identifier>
+        </Expression>
+    </PrintStatement>
+</Program>
