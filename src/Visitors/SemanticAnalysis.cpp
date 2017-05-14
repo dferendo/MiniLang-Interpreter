@@ -150,7 +150,8 @@ namespace visitor {
 
         if (lastToken != returnCheckForFunctionDeclaration->functionDeclaration->tokenType) {
             throw SemanticAnalysisError("Returning '" + TOKEN_STRING[lastToken] + "' when expecting '"
-                                                      + TOKEN_STRING[returnCheckForFunctionDeclaration->functionDeclaration->tokenType]);
+                                        + TOKEN_STRING[returnCheckForFunctionDeclaration->functionDeclaration->tokenType]
+                                        + "'");
         }
         returnCheckForFunctionDeclaration->isReturnFound = true;
     }
@@ -173,8 +174,6 @@ namespace visitor {
         if (currentScope->identifierExists(node->identifier)) {
             throw SemanticAnalysisError("Duplicate declaration of variable for function '" + node->identifier + "'");
         }
-        // Add function
-        currentScope->addIdentifier(node);
 
         returnCheckForFunctionDeclaration = new ReturnCheckForFunctionDeclaration();
         // Variable used to check if there was a return
@@ -192,6 +191,8 @@ namespace visitor {
         if (!returnCheckForFunctionDeclaration->isReturnFound) {
             throw SemanticAnalysisError("Control reaches end of non-void function, return required. ");
         }
+        // Add function
+        currentScope->addIdentifier(node);
         free(returnCheckForFunctionDeclaration);
     }
 

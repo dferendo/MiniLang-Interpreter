@@ -182,7 +182,7 @@ std::string MiniLangI::multipleLineStatement(std::string lineRead) {
                 // If user enter '}' in the same line remove them.
                 currentBlockAmount -= count(tempNewLine.begin(), tempNewLine.end(), '}');
 
-                lineRead = lineRead + tempNewLine;
+                lineRead = lineRead + "\n" + tempNewLine;
             }
         }
     }
