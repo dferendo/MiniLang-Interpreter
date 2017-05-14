@@ -32,7 +32,7 @@ void MiniLangI::readCommand() {
     // Set up lexer and parser.
     Parser parser(lexer);
     ASTNode * mainProgramNode = new ASTNode();
-    ASTNode * tempNodeOfNewStatements;
+    ASTNode * tempNodeOfNewStatements = new ASTNode();
     // Visitors
     XMLConverterVisitor * xmlConverter = new XMLConverterVisitor();
     SemanticAnalysis * semanticAnalysis = new SemanticAnalysis();
@@ -67,7 +67,6 @@ void MiniLangI::readCommand() {
             // Run parser and add the new statements to the main node.
             newStatements = parser.parse();
             // Create a temp to execute the new statements.
-            tempNodeOfNewStatements = new ASTNode();
             tempNodeOfNewStatements->addStatements(newStatements);
 
             mainProgramNode->addStatements(newStatements);
@@ -78,10 +77,9 @@ void MiniLangI::readCommand() {
             // Print special variable.
             interpreter->printSpecialVariableIfChanged();
             // Add the new statements to the main Node.
-            mainProgramNode->addStatements(newStatements);
             mainProgramNode->accept(xmlConverter);
-            // Free the allocated temp node
-            free(tempNodeOfNewStatements);
+
+            tempNodeOfNewStatements->clearStatements();
         } catch (LexerFailed &error) {
             cout << error.reason << endl;
         } catch (UnexpectedTokenWhileParsing &error) {
@@ -92,6 +90,12 @@ void MiniLangI::readCommand() {
             cout << error.reason << endl;
         }
     }
+
+    delete mainProgramNode;
+    delete tempNodeOfNewStatements;
+    delete xmlConverter;
+    delete semanticAnalysis;
+    delete interpreter;
 }
 
 int MiniLangI::checkCommand(string &lineRead) {
@@ -187,4 +191,8 @@ std::string MiniLangI::multipleLineStatement(std::string lineRead) {
         }
     }
     return lineRead;
+}
+
+MiniLangI::~MiniLangI() {
+    delete lexer;
 }

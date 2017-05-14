@@ -36,7 +36,11 @@ namespace visitor {
 
     InterpreterExecution::~InterpreterExecution() {
         ScopeForInterpreter * globalScope = popScope();
-        free(globalScope);
+        delete globalScope;
+
+        if (lastEvaluation != nullptr) {
+            delete lastEvaluation;
+        }
     }
 
     void InterpreterExecution::visit(ast::ASTNode *node) {
@@ -145,7 +149,7 @@ namespace visitor {
             }
         }
         popScope();
-        free(blockScope);
+        delete blockScope;
         // If any blocks have any set or var, do not print the ans variable.
         globalScope->updateSpecialVariableEvaluation(nullptr);
     }
@@ -206,7 +210,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTBooleanLiteral *node) {
         if (lastEvaluation != nullptr) {
-            free(lastEvaluation);
+            delete lastEvaluation;
         }
         lastEvaluation = new Evaluation();
         // Boolean literal are still an expression
@@ -215,7 +219,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTIntegerLiteral *node) {
         if (lastEvaluation != nullptr) {
-            free(lastEvaluation);
+            delete lastEvaluation;
         }
         lastEvaluation = new Evaluation();
         lastEvaluation->setIntEvaluation(node->literalValue);
@@ -223,7 +227,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTRealLiteral *node) {
         if (lastEvaluation != nullptr) {
-            free(lastEvaluation);
+            delete lastEvaluation;
         }
         lastEvaluation = new Evaluation();
         lastEvaluation->setRealEvaluation(node->realValue);
@@ -231,7 +235,7 @@ namespace visitor {
 
     void InterpreterExecution::visit(ast::ASTStringLiteral *node) {
         if (lastEvaluation != nullptr) {
-            free(lastEvaluation);
+            delete lastEvaluation;
         }
         lastEvaluation = new Evaluation();
         lastEvaluation->setStringEvaluation(node->literalString);
@@ -240,7 +244,7 @@ namespace visitor {
     void InterpreterExecution::visit(ast::ASTIdentifier *node) {
         Evaluation * evaluation;
         if (lastEvaluation != nullptr) {
-            free(lastEvaluation);
+            delete lastEvaluation;
         }
         lastEvaluation = new Evaluation();
         evaluation = returnEvaluationOfIdentifierInAllScopes(allScopes, node->identifier);
@@ -300,7 +304,7 @@ namespace visitor {
         }
 
         if (lastEvaluation != nullptr) {
-            free(lastEvaluation);
+            delete lastEvaluation;
         }
         lastEvaluation = evaluation;
     }
@@ -318,8 +322,8 @@ namespace visitor {
 
         handleOperator(LHS, RHS, node->operation);
 
-        free(LHS);
-        free(RHS);
+        delete LHS;
+        delete RHS;
     }
 
     void InterpreterExecution::pushScope(ScopeForInterpreter *scope) {

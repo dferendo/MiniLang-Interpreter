@@ -20,3 +20,7 @@ void ast::ASTNode::addStatements(std::vector<ASTStatementNode *> statements) {
     this->statements.insert(this->statements.end(), statements.begin(), statements.end());
 }
 
+void ast::ASTNode::clearStatements() {
+    statements.clear();
+}
+

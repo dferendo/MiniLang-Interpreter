@@ -54,8 +54,8 @@ std::vector<ast::ASTFormalParam *> *visitor::Scope::returnFormalsOfFunction(std:
 }
 
 visitor::Scope::~Scope() {
-// Free Evaluation
+    // Free Symbol table
     for (auto &identifier : scopeIdentifiers) {
-        free(identifier.second);
+        delete identifier.second;
     }
 }

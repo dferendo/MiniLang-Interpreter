@@ -150,7 +150,7 @@ namespace visitor {
          */
         SemanticAnalysis();
 
-        ~SemanticAnalysis();
+        virtual ~SemanticAnalysis();
     };
 
 }

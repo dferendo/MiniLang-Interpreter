@@ -140,7 +140,7 @@ namespace visitor {
          */
         InterpreterExecution();
 
-        ~InterpreterExecution();
+        virtual ~InterpreterExecution();
     };
 
 };

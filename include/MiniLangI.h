@@ -64,6 +64,8 @@ private:
     std::string multipleLineStatement(std::string lineRead);
 public:
     void setup();
+
+    virtual ~MiniLangI();
 };
 
 #endif //COMPILERTHEORY_MINILANGI_H

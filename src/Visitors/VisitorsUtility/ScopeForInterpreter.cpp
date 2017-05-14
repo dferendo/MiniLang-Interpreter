@@ -33,7 +33,7 @@ ast::ASTFunctionDeclaration * visitor::ScopeForInterpreter::returnIdentifierFunc
 visitor::ScopeForInterpreter::~ScopeForInterpreter() {
     // Free Evaluation
     for (auto &identifier : scopeIdentifiers) {
-        free(identifier.second);
+        delete identifier.second;
     }
 }
 

@@ -275,4 +275,6 @@ namespace visitor {
         }
     }
 
+    XMLConverterVisitor::~XMLConverterVisitor() {}
+
 }

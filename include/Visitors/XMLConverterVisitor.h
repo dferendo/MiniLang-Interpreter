@@ -88,6 +88,8 @@ namespace visitor {
         virtual void visit(ast::ASTBinaryExprNode *node) override;
     public:
         XMLConverterVisitor();
+
+        virtual ~XMLConverterVisitor();
     };
 }
 

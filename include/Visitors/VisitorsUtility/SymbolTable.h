@@ -37,6 +37,8 @@ namespace visitor {
          * @param functionsParams: The parameters of the function.
          */
         SymbolTable(lexer::TOKEN returnType, std::vector<ast::ASTFormalParam *> functionsParams);
+
+        ~SymbolTable();
     };
 
 }

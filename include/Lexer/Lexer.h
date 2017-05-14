@@ -115,6 +115,8 @@ namespace lexer {
          * @param filledStack: The stack that needs to be emptied.
          */
         void clear(std::stack<STATE> &filledStack);
+    public:
+        ~Lexer();
     };
 }
 

@@ -44,7 +44,7 @@ namespace visitor {
 
     SemanticAnalysis::~SemanticAnalysis() {
         Scope * globalScope = popScope();
-        free(globalScope);
+        delete globalScope;
     }
 
     void SemanticAnalysis::visit(ASTVariableDeclaration *node) {
@@ -112,7 +112,7 @@ namespace visitor {
         }
         // Pop scope
         popScope();
-        free(blockScope);
+        delete blockScope;
     }
 
     void SemanticAnalysis::visit(ASTIfStatement *node) {
@@ -193,7 +193,7 @@ namespace visitor {
         }
         // Add function
         currentScope->addIdentifier(node);
-        free(returnCheckForFunctionDeclaration);
+        delete returnCheckForFunctionDeclaration;
     }
 
     void SemanticAnalysis::visit(ast::ASTExprStatement *node) {

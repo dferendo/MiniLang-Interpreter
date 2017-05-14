@@ -130,4 +130,6 @@ namespace lexer {
         currentIndex = 0;
         tokenization(program);
     }
+
+    Lexer::~Lexer() {}
 }
