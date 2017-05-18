@@ -116,6 +116,14 @@ namespace visitor {
     }
 
     void SemanticAnalysis::visit(ASTIfStatement *node) {
+        ReturnCheckForFunctionDeclaration * returnCheckForFunctionDeclaration;
+
+        if (functionsReturn.size() != 0) {
+            returnCheckForFunctionDeclaration = functionsReturn.back();
+            returnCheckForFunctionDeclaration->numberOfIfEncountered++;
+            returnCheckForFunctionDeclaration->currentBlockIndex++;
+        }
+
         node->exprNode->accept(this);
 
         if (lastToken != TOK_BoolType) {
@@ -125,6 +133,11 @@ namespace visitor {
         // Go to else block as well
         if (node->astBlockForElse != nullptr) {
             node->astBlockForElse->accept(this);
+        }
+
+        if (functionsReturn.size() != 0) {
+            returnCheckForFunctionDeclaration = functionsReturn.back();
+            returnCheckForFunctionDeclaration->currentBlockIndex--;
         }
     }
 
@@ -153,7 +166,12 @@ namespace visitor {
                                         + TOKEN_STRING[returnCheckForFunctionDeclaration->functionDeclaration->tokenType]
                                         + "'");
         }
-        returnCheckForFunctionDeclaration->isReturnFound = true;
+        // The whole function returns.
+        if (returnCheckForFunctionDeclaration->currentBlockIndex == 0) {
+            returnCheckForFunctionDeclaration->isReturnFoundGlobal = true;
+        } else {
+            returnCheckForFunctionDeclaration->numberOfReturnsEncountered++;
+        }
     }
 
     void SemanticAnalysis::visit(ASTFormalParam *node) {
@@ -177,9 +195,12 @@ namespace visitor {
 
         returnCheckForFunctionDeclaration = new ReturnCheckForFunctionDeclaration();
         // Variable used to check if there was a return
-        returnCheckForFunctionDeclaration->isReturnFound = false;
         returnCheckForFunctionDeclaration->isFunctionDeclarationBlock = false;
         returnCheckForFunctionDeclaration->functionDeclaration = node;
+        returnCheckForFunctionDeclaration->isReturnFoundGlobal = false;
+        returnCheckForFunctionDeclaration->numberOfReturnsEncountered = 0;
+        returnCheckForFunctionDeclaration->numberOfIfEncountered = 0;
+        returnCheckForFunctionDeclaration->currentBlockIndex = 0;
         functionsReturn.push_back(returnCheckForFunctionDeclaration);
 
         // Go to block
@@ -188,7 +209,9 @@ namespace visitor {
         // Check if there was a return.
         returnCheckForFunctionDeclaration = functionsReturn.back();
         functionsReturn.pop_back();
-        if (!returnCheckForFunctionDeclaration->isReturnFound) {
+        if (!returnCheckForFunctionDeclaration->isReturnFoundGlobal ||
+                returnCheckForFunctionDeclaration->numberOfIfEncountered * 2
+                == returnCheckForFunctionDeclaration->numberOfReturnsEncountered) {
             throw SemanticAnalysisError("Control reaches end of non-void function, return required. ");
         }
         // Add function

@@ -21,7 +21,10 @@ namespace visitor {
          * of the function to its corresponding scope.
          */
         typedef struct ReturnCheckForFunctionDeclaration {
-            bool isReturnFound;
+            bool isReturnFoundGlobal;
+            int currentBlockIndex;
+            int numberOfIfEncountered;
+            int numberOfReturnsEncountered;
             bool isFunctionDeclarationBlock;
             ast::ASTFunctionDeclaration * functionDeclaration;
         } ReturnCheckForFunctionDeclaration;
