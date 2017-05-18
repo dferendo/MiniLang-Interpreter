@@ -209,10 +209,16 @@ namespace visitor {
         // Check if there was a return.
         returnCheckForFunctionDeclaration = functionsReturn.back();
         functionsReturn.pop_back();
-        if (!returnCheckForFunctionDeclaration->isReturnFoundGlobal ||
-                returnCheckForFunctionDeclaration->numberOfIfEncountered * 2
-                == returnCheckForFunctionDeclaration->numberOfReturnsEncountered) {
-            throw SemanticAnalysisError("Control reaches end of non-void function, return required. ");
+        // Check if returns were good
+        if (!returnCheckForFunctionDeclaration->isReturnFoundGlobal) {
+            if (returnCheckForFunctionDeclaration->numberOfIfEncountered * 2
+                != returnCheckForFunctionDeclaration->numberOfReturnsEncountered) {
+                throw SemanticAnalysisError("Control reaches end of non-void function, return required. ");
+            } else if (returnCheckForFunctionDeclaration->numberOfIfEncountered == 0) {
+                // No return found.
+                throw SemanticAnalysisError("Control reaches end of non-void function, return required. ");
+            }
+            // Else it is correct
         }
         // Add function
         currentScope->addIdentifier(node);

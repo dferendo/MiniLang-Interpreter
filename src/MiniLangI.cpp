@@ -40,6 +40,7 @@ void MiniLangI::readCommand() {
     vector<ast::ASTStatementNode *> newStatements;
 
     while (true) {
+        tempNodeOfNewStatements->clearStatements();
         cout << "MLi> ";
         getline(cin, lineRead);
         commandReturn = checkCommand(lineRead);
@@ -78,8 +79,6 @@ void MiniLangI::readCommand() {
             interpreter->printSpecialVariableIfChanged();
             // Add the new statements to the main Node.
             mainProgramNode->accept(xmlConverter);
-
-            tempNodeOfNewStatements->clearStatements();
         } catch (LexerFailed &error) {
             cout << error.reason << endl;
         } catch (UnexpectedTokenWhileParsing &error) {
