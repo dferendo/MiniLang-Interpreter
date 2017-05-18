@@ -5,6 +5,7 @@
 #include "../../../include/AST/ASTStatements/ASTVariableDeclaration.h"
 #include "../../../include/AST/ASTStatements/ASTFunctionDeclaration.h"
 #include <algorithm>
+#include <iostream>
 
 bool visitor::Scope::identifierExists(std::string &identifier) {
     return scopeIdentifiers.find(identifier) != scopeIdentifiers.end();
@@ -51,6 +52,15 @@ std::vector<ast::ASTFormalParam *> *visitor::Scope::returnFormalsOfFunction(std:
     }
     // Return vector, nullptr if it does not exists
     return it->second->functionsParams;
+}
+
+void visitor::Scope::removeIdentifier(std::string identifier) {
+    std::map<std::string, SymbolTable* >::iterator it = scopeIdentifiers.find(identifier);
+
+    if (it == scopeIdentifiers.end()) {
+        std::cout << "Expected Error." << std::endl;
+    }
+    scopeIdentifiers.erase(it);
 }
 
 visitor::Scope::~Scope() {

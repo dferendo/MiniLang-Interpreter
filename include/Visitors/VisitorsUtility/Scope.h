@@ -62,6 +62,13 @@ namespace visitor {
         void addIdentifier(ast::ASTFormalParam * param);
 
         /**
+         * Removes identifier.
+         *
+         * @param identifier: The identifier that will be deleted.
+         */
+        void removeIdentifier(std::string identifier);
+
+        /**
          * Return the type of the identifier.
          *
          * @param identifier: The identifier to be searched.

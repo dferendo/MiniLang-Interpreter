@@ -203,8 +203,16 @@ namespace visitor {
         returnCheckForFunctionDeclaration->currentBlockIndex = 0;
         functionsReturn.push_back(returnCheckForFunctionDeclaration);
 
+        // Add function
+        currentScope->addIdentifier(node);
         // Go to block
-        node->astBlock->accept(this);
+        // If error is encountered, remove the added identifier.
+        try {
+            node->astBlock->accept(this);
+        } catch (SemanticAnalysisError &error) {
+            currentScope->removeIdentifier(node->identifier);
+            throw SemanticAnalysisError(error.reason);
+        }
 
         // Check if there was a return.
         returnCheckForFunctionDeclaration = functionsReturn.back();
@@ -213,15 +221,16 @@ namespace visitor {
         if (!returnCheckForFunctionDeclaration->isReturnFoundGlobal) {
             if (returnCheckForFunctionDeclaration->numberOfIfEncountered * 2
                 != returnCheckForFunctionDeclaration->numberOfReturnsEncountered) {
+                currentScope->removeIdentifier(node->identifier);
                 throw SemanticAnalysisError("Control reaches end of non-void function, return required. ");
             } else if (returnCheckForFunctionDeclaration->numberOfIfEncountered == 0) {
                 // No return found.
+                currentScope->removeIdentifier(node->identifier);
                 throw SemanticAnalysisError("Control reaches end of non-void function, return required. ");
             }
             // Else it is correct
         }
-        // Add function
-        currentScope->addIdentifier(node);
+
         delete returnCheckForFunctionDeclaration;
     }
 
