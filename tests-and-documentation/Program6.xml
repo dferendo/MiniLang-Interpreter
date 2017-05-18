@@ -1,0 +1,56 @@
+<Program>
+    <FunctionDeclaration type="int">
+        <Identifier>addition</Identifier>
+        <FormalParams>
+            <FormalParam type="int">
+                <Identifier>a</Identifier>
+            </FormalParam>
+            <FormalParam type="int">
+                <Identifier>b</Identifier>
+            </FormalParam>
+        </FormalParams>
+        <Block>
+            <IfStatement>
+                <BinaryExprNode op="==">
+                    <Identifier>b</Identifier>
+                    <Integer>0</Integer>
+                </BinaryExprNode>
+                <Block>
+                    <ReturnStatement>
+                        <Expression>
+                            <Identifier>a</Identifier>
+                        </Expression>
+                    </ReturnStatement>
+                </Block>
+            </IfStatement>
+            <ReturnStatement>
+                <Expression>
+                    <FunctionCall>
+                        <Identifier>addition</Identifier>
+                        <ActualParams>
+                            <BinaryExprNode op="+">
+                                <Identifier>a</Identifier>
+                                <Integer>1</Integer>
+                            </BinaryExprNode>
+                            <BinaryExprNode op="-">
+                                <Identifier>b</Identifier>
+                                <Integer>1</Integer>
+                            </BinaryExprNode>
+                        </ActualParams>
+                    </FunctionCall>
+                </Expression>
+            </ReturnStatement>
+        </Block>
+    </FunctionDeclaration>
+    <PrintStatement>
+        <Expression>
+            <FunctionCall>
+                <Identifier>addition</Identifier>
+                <ActualParams>
+                    <Integer>10</Integer>
+                    <Integer>12</Integer>
+                </ActualParams>
+            </FunctionCall>
+        </Expression>
+    </PrintStatement>
+</Program>
