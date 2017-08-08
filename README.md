@@ -2,6 +2,89 @@
 
 The following shows how a table-driven lexer, hand-crafted top-down parser, visitor classes to perform semantic analysis and execution on the AST produced and REPL were designed.
 
+## MiniLang (EBNF)
+
+〈Letter〉 ::= [A-Za-z]
+
+〈Digit〉 ::= [0-9]
+
+〈Printable〉 ::= [\x20-\x7E]
+
+〈Type〉 ::= ‘real’|‘int’|‘bool’|‘string’
+
+〈BooleanLiteral〉 ::= ‘true’|‘false’
+
+〈IntegerLiteral〉 ::=〈Digit〉 { 〈Digit〉 }
+
+〈RealLiteral〉 ::=〈Digit〉 { 〈Digit〉 }‘.’〈Digit〉 { 〈Digit〉 }
+
+〈StringLiteral〉 ::= ‘"’{ 〈Printable〉 }‘"’
+
+〈Literal〉 ::=〈BooleanLiteral〉
+	     | 〈IntegerLiteral〉
+	     | 〈RealLiteral〉
+	     | 〈StringLiteral〉
+
+〈Identifier〉 ::= ( ‘ ’| 〈Letter〉){‘ ’| 〈Letter〉 | 〈Digit〉 }
+
+〈MultiplicativeOp〉::= ‘*’|‘/’|‘and’
+
+
+〈AdditiveOp〉 ::= ‘+’|‘-’|‘or’
+
+〈RelationalOp〉 ::= ‘<’|‘>’|‘==’|‘!=’|‘<=’|‘>=’
+
+〈ActualParams〉 ::=〈Expression〉 {‘,’〈Expression〉 }
+
+〈FunctionCall〉 ::=〈Identifier〉‘(’ [〈ActualParams〉] ‘)’
+
+〈SubExpression〉 ::= ‘(’〈Expression〉‘)’
+
+〈Unary〉 ::= ( ‘-’|‘not’ )〈Expression〉
+
+〈Factor〉 ::=〈Literal〉
+	    | 〈Identifier〉
+	    | 〈FunctionCall〉
+	    | 〈SubExpression〉
+	    | 〈Unary〉
+
+〈Term〉 ::=〈Factor〉 { 〈MultiplicativeOp〉 〈Factor〉 }
+
+〈SimpleExpression〉::=〈Term〉 { 〈AdditiveOp〉 〈Term〉 }
+
+〈Expression〉 ::=〈SimpleExpression〉 { 〈RelationalOp〉 〈SimpleExpression〉 }
+
+〈Assignment〉 ::= ‘set’〈Identifier〉‘=’〈Expression〉
+
+〈VariableDecl〉 ::= ‘var’〈Identifier〉‘:’〈Type〉‘=’〈Expression〉
+
+〈PrintStatement〉 ::= ‘print’〈Expression〉
+
+〈ReturnStatement〉::= ‘return’〈Expression〉
+
+〈IfStatement〉 ::= ‘if’ ‘(’〈Expression〉‘)’〈Block〉[ ‘else’〈Block〉]
+
+〈WhileStatement〉::= ‘while’ ‘(’〈Expression〉‘)’〈Block〉
+
+〈FormalParam〉 ::=〈Identifier〉‘:’〈Type〉
+
+〈FormalParams〉 ::=〈FormalParam〉 {‘,’〈FormalParam〉 }
+
+〈FunctionDecl〉 ::= ‘def’〈Identifier〉‘(’ [〈FormalParams〉] ‘)’ ‘:’〈Type〉 〈Block〉
+
+〈Statement〉 ::=〈VariableDecl〉‘;’
+	       | 〈Assignment〉‘;’
+	       | 〈PrintStatement〉‘;’
+	       | 〈IfStatement〉
+	       | 〈WhileStatement〉
+	       | 〈ReturnStatement〉‘;’
+	       | 〈FunctionDecl〉
+	       | 〈Block〉
+
+〈Block〉 ::= ‘{’{ 〈Statement〉 }‘}’
+
+〈Program〉 ::={ 〈Statement〉 }
+
 ## Table-Driven Lexer
 
 The lexer will be implemented using the table-driven approach which encodes the DFA transition function of the MiniLang micro-syntax. The lexer will be implemented in such a way that lexical errors found in the input program will be detected and showing the line number of the error.
